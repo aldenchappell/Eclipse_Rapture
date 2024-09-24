@@ -2,9 +2,11 @@
 
 #pragma once
 
+
 #include "InputActionValue.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "CharacterTypes.h"
 #include "EclipseRaptureCharacter.generated.h"
 
 //Forward Declarations
@@ -21,13 +23,14 @@ public:
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 #pragma endregion
-
+	virtual void Jump() override;
 	
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void Jump() override;
+	
 #pragma region Input Actions
 
 	UPROPERTY(EditAnywhere, Category = Input)
