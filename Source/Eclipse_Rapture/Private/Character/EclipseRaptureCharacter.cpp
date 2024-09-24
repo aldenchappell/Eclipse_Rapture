@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "Character/EclipseRaptureCharacter.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "InputActionValue.h"
-#include "Character/EclipseRaptureCharacter.h"
+
 
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
@@ -69,6 +69,16 @@ void AEclipseRaptureCharacter::Jump()
 	Super::Jump();
 }
 
+void AEclipseRaptureCharacter::Crouch()
+{
+	Super::Crouch();
+}
+
+void AEclipseRaptureCharacter::Prone()
+{
+
+}
+
 void AEclipseRaptureCharacter::Interact()
 {
 
@@ -89,12 +99,6 @@ void AEclipseRaptureCharacter::Aim()
 
 }
 
-void AEclipseRaptureCharacter::Prone()
-{
 
-}
-void AEclipseRaptureCharacter::Crouch()
-{
 
-}
 #pragma endregion
