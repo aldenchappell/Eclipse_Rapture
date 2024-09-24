@@ -24,12 +24,39 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
+	void CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult) override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Crouch)
+	FVector CrouchEyeOffset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Crouch)
+	float CrouchEntranceSpeed;
+
+
 #pragma endregion
 	virtual void Jump() override;
 	
 
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
+	float WalkMovementSpeed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
+	float SprintMovementSpeed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
+	float ProneMovementSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = FOV)
+	float DefaultFOV;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FOV)
+	float SprintFOV;
+
 	
 #pragma region Input Actions
 
@@ -62,6 +89,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* MeleeAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* SprintAction;
+	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -71,12 +102,26 @@ protected:
 	void Shoot();
 	void Melee();
 	void Aim();
-	void Prone();
-	void DoCrouch();
+	void StartProne();
+	void EndProne();
+	void StartSprint();
+	void EndSprint();
+	void StartCrouch();
+	void EndCrouch();
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FirstPersonCamera;
+
+private:
+	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+
+	bool ShouldSprint;
+
+	UFUNCTION()
+	bool CanSprint();
+	//Getters and Setters
 public:	
+
 	
 	
 
