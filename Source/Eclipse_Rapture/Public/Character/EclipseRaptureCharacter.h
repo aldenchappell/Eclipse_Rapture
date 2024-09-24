@@ -72,7 +72,10 @@ protected:
 	void Melee();
 	void Aim();
 	void Prone();
-	void Crouch();
+	void DoCrouch();
+
+	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UCameraComponent* FirstPersonCamera;
 public:	
 	
 	
