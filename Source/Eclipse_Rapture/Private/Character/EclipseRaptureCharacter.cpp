@@ -8,31 +8,44 @@
 #include "InputActionValue.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "CharacterTypes.generated.h"
 
 
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
- 	
 	PrimaryActorTick.bCanEverTick = true;
 
-
-	// Set size for collision capsule
+	//Setup collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
 
-	// Create a CameraComponent	
+	//Setup movement speeds
+	WalkMovementSpeed = 450.f;
+	SprintMovementSpeed = 600.f;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = 150.f;
+	ProneMovementSpeed = 100.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkMovementSpeed;
+
+	//Setup camera
 	FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f)); // Position the camera
 	FirstPersonCamera->bUsePawnControlRotation = true;
+	DefaultFOV = FirstPersonCamera->FieldOfView;
+	SprintFOV = DefaultFOV * 1.1f;
 
-	// Create a mesh component that will be used when being viewed from a '1st person' view (when controlling this pawn)
+	//Setup mesh
 	GetMesh()->SetOnlyOwnerSee(true);
 	GetMesh()->SetupAttachment(FirstPersonCamera);
 	GetMesh()->bCastDynamicShadow = false;
 	GetMesh()->CastShadow = false;
-	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	GetMesh()->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+
+	//Setup crouching
+	CrouchEyeOffset = FVector(0.f);
+	CrouchEntranceSpeed = 12.f;
+
+
 }
 
 
@@ -44,10 +57,14 @@ void AEclipseRaptureCharacter::BeginPlay()
 }
 
 
-
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+#pragma region Handle Crouching
+	float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
+	CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
+#pragma endregion
 
 }
 
@@ -60,9 +77,23 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
 	{
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Look);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Jump);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::DoCrouch);
-		EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Prone);
+
+		//Jumping
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
+
+		//Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartCrouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndCrouch);
+
+		//Sprinting
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
+
+		//Proning
+		EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartProne);
+		EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndProne);
+
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Shoot);
 		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Melee);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Aim);
@@ -70,22 +101,40 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
 	}
 }
 
+void AEclipseRaptureCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	if (HalfHeightAdjust == 0.f) return;
+
+	float StartBaseEyeHeight = BaseEyeHeight;
+	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight + HalfHeightAdjust;
+	FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+}
+
+void AEclipseRaptureCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
+{
+	if (HalfHeightAdjust == 0.f) return;
+
+	float StartBaseEyeHeight = BaseEyeHeight;
+	Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
+	CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight - HalfHeightAdjust;
+	FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+}
+
+void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)
+{
+	if (FirstPersonCamera)
+	{
+		FirstPersonCamera->GetCameraView(DeltaTime, OutResult);
+		OutResult.Location += CrouchEyeOffset;
+	}
+}
+
 #pragma region Input Functions
 
 
 
-void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
-	{
-		// add movement 
-		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-		AddMovementInput(GetActorRightVector(), MovementVector.X);
-	}
-}
 
 void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
 {
@@ -100,27 +149,80 @@ void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+#pragma region Movement
+void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
+{
+	// input is a Vector2D
+	FVector2D MovementVector = Value.Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		// add movement 
+		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+		AddMovementInput(GetActorRightVector(), MovementVector.X);
+	}
+}
+
 void AEclipseRaptureCharacter::Jump()
 {
 	Super::Jump();
 }
 
-void AEclipseRaptureCharacter::DoCrouch()
+void AEclipseRaptureCharacter::StartCrouch()
 {
-	if (!GetCharacterMovement()->IsCrouching())
-	{
-		Crouch();
-	}
-	else
-	{
-		UnCrouch();
-	}
+	Crouch();
+	GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeedCrouched;
 }
 
-void AEclipseRaptureCharacter::Prone()
+void AEclipseRaptureCharacter::EndCrouch()
+{
+	UnCrouch();
+	GetCharacterMovement()->MaxWalkSpeed = WalkMovementSpeed;
+}
+
+void AEclipseRaptureCharacter::StartProne()
 {
 
 }
+
+void AEclipseRaptureCharacter::EndProne()
+{
+
+}
+
+void AEclipseRaptureCharacter::StartSprint()
+{
+	if (!CanSprint()) return;
+
+	CurrentMovementState = ECharacterMovementState::ECMS_Sprinting;
+
+	GetCharacterMovement()->MaxWalkSpeed = SprintMovementSpeed;
+	FirstPersonCamera->FieldOfView = SprintFOV;
+
+}
+
+void AEclipseRaptureCharacter::EndSprint()
+{
+	CurrentMovementState = ECharacterMovementState::ECMS_Walking;
+
+	GetCharacterMovement()->MaxWalkSpeed = WalkMovementSpeed;
+
+	FirstPersonCamera->FieldOfView = DefaultFOV;
+}
+
+
+bool AEclipseRaptureCharacter::CanSprint()
+{
+	// Ensure the character is moving and not in a crouching or prone state
+	return CurrentMovementState != ECharacterMovementState::ECMS_Crouching &&
+		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
+		GetVelocity().Size() > 0;  // Ensure the character is moving
+}
+
+#pragma endregion
+
+
+
 
 void AEclipseRaptureCharacter::Interact()
 {
