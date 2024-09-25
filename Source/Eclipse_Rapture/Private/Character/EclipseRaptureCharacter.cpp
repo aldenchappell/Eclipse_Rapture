@@ -42,6 +42,11 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //Setup crouching
     CrouchEyeOffset = FVector(0.f);
     CrouchEntranceSpeed = 12.f;
+
+    //Setup proning
+    ProneEyeOffset = FVector(0.f);
+    ProneEntranceSpeed = 2.f;
+    ProneEyeHeightZ = -50.f;
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -70,10 +75,10 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-    // Bind Inputs
+    //Bind Inputs
     if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
-        / Movement
+        //Movement
         EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
 
         //Looking
@@ -83,21 +88,20 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
 
-        //Crouching
-        EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartCrouch);
-        EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndCrouch);
+        //Crouching (Toggled)
+        EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleCrouch);
 
         //Sprinting
         EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
         EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
 
-        //Proning
-        EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartProne);
-        EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndProne);
+        //Proning (Toggled)
+        EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
 
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
     }
 }
+
 
 #pragma region Movement
 
@@ -129,6 +133,7 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
         OutResult.Location += CrouchEyeOffset;
     }
 }
+
 
 void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
 {
@@ -184,15 +189,61 @@ void AEclipseRaptureCharacter::EndCrouch()
     }
 }
 
+void AEclipseRaptureCharacter::ToggleCrouch()
+{
+    //Check if the player is already crouching
+    if (CurrentMovementState == ECharacterMovementState::ECMS_Crouching)
+    {
+        EndCrouch();
+    }
+    else
+    {
+        StartCrouch();
+    }
+}
+
+void AEclipseRaptureCharacter::Interact()
+{
+
+}
+
 void AEclipseRaptureCharacter::StartProne()
 {
-    // Add functionality for prone if needed
+    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting || CurrentMovementState == ECharacterMovementState::ECMS_Crouching) return;
+
+    //Enter prone state
+    GetCharacterMovement()->MaxWalkSpeed = ProneMovementSpeed;
+    CurrentMovementState = ECharacterMovementState::ECMS_Prone;
+
+    //Transition to prone eye offset
+    ProneEyeOffset.Z = ProneEyeHeightZ; //this value dictates the Z position of the camera when entering the prone position
+    FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, ProneEyeOffset.Z), false);
 }
 
 void AEclipseRaptureCharacter::EndProne()
 {
-    // Add functionality for prone if needed
+    //Exit prone state and return to walking speed and state
+    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
+    CurrentMovementState = ECharacterMovementState::ECMS_Walking;
+
+    //Transition to default eye offset
+    ProneEyeOffset.Z = 0.f;
+    FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
 }
+
+
+void AEclipseRaptureCharacter::ToggleProne()
+{
+    if (CurrentMovementState == ECharacterMovementState::ECMS_Prone)
+    {
+        EndProne();
+    }
+    else
+    {
+        StartProne();
+    }
+}
+
 
 void AEclipseRaptureCharacter::StartSprint()
 {
@@ -212,7 +263,7 @@ void AEclipseRaptureCharacter::EndSprint()
 bool AEclipseRaptureCharacter::CanSprint()
 {
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking &&
-        GetVelocity().Size() > 0;  // Make sure player is moving
+        GetVelocity().Size() > 0;  //Make sure player is moving
 }
 
 #pragma endregion
