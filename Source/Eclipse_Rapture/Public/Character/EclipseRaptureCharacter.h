@@ -42,6 +42,12 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	float StoredWalkSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	float StoredSprintSpeed;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
 	float WalkMovementSpeed;
 
@@ -81,14 +87,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* ProneAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* ShootAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* AimAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* MeleeAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* SprintAction;
@@ -99,9 +97,6 @@ protected:
 
 
 	void Interact();
-	void Shoot();
-	void Melee();
-	void Aim();
 	void StartProne();
 	void EndProne();
 	void StartSprint();
