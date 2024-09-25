@@ -10,4 +10,15 @@ enum class ECharacterState : uint8
 	ECS_ShotgunEquipped UMETA(DisplayName = "Shotgun Equipped")
 };
 
+UENUM(BlueprintType)
+enum class ECharacterMovementState : uint8
+{
+	ECMS_Idle UMETA(DisplayName = "Idle"),
+	ECMS_Walking UMETA(DisplayName = "Walking"),
+	ECMS_Sprinting UMETA(DisplayName = "Sprinting"),
+	ECMS_Crouching UMETA(DisplayName = "Crouching"),
+	ECMS_Prone UMETA(DisplayName = "Prone"),
+	ECMS_Jumping UMETA(DisplayName = "Jumping")
+};
+
 
