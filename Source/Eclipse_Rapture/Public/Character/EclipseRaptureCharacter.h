@@ -35,6 +35,15 @@ public:
 	float CrouchEntranceSpeed;
 
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Prone)
+	FVector ProneEyeOffset;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Prone)
+	float ProneEntranceSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Prone)
+	float ProneEyeHeightZ;
+
 #pragma endregion
 	virtual void Jump() override;
 	
@@ -99,10 +108,12 @@ protected:
 	void Interact();
 	void StartProne();
 	void EndProne();
+	void ToggleProne();
 	void StartSprint();
 	void EndSprint();
 	void StartCrouch();
 	void EndCrouch();
+	void ToggleCrouch();
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	UCameraComponent* FirstPersonCamera;
