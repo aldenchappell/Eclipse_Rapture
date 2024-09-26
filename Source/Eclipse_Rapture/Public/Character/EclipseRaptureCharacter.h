@@ -57,16 +57,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
 	float StoredSprintSpeed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
 	float WalkMovementSpeed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
 	float SprintMovementSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
 	float ProneMovementSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = FOV)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FOV)
 	float DefaultFOV;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FOV)
@@ -115,11 +115,8 @@ protected:
 	void EndCrouch();
 	void ToggleCrouch();
 
-	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
-
-	UPROPERTY(EditDefaultsOnly, Category = Mesh)
-	TObjectPtr<USkeletalMeshComponent> PlayerBody;
 
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
@@ -135,8 +132,8 @@ private:
 	float InputPitch;
 	//Getters and Setters
 public:	
-
-	
+	UFUNCTION(Blueprintcallable)
+	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	
 
 };

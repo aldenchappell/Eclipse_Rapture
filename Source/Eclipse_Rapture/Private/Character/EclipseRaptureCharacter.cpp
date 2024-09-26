@@ -31,14 +31,6 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     GetMesh()->CastShadow = false;
     GetMesh()->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
-    //Setup camera
-    FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-    FirstPersonCamera->SetupAttachment(PlayerBody);
-    FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f));
-    FirstPersonCamera->bUsePawnControlRotation = true;
-    DefaultFOV = FirstPersonCamera->FieldOfView;
-    SprintFOV = DefaultFOV * SprintFOVMultiplier;
-
     //Setup crouching
     CrouchEyeOffset = FVector(0.f);
     CrouchEntranceSpeed = 12.f;
@@ -112,7 +104,12 @@ void AEclipseRaptureCharacter::OnStartCrouch(float HalfHeightAdjust, float Scale
     float StartBaseEyeHeight = BaseEyeHeight;
     Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
     CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight + HalfHeightAdjust;
-    FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+
+    if (FirstPersonCamera)
+    {
+        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+    }
+    
 }
 
 void AEclipseRaptureCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
@@ -122,7 +119,12 @@ void AEclipseRaptureCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledH
     float StartBaseEyeHeight = BaseEyeHeight;
     Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
     CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight - HalfHeightAdjust;
-    FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+
+    if (FirstPersonCamera)
+    {
+        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+    }
+    
 }
 
 void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)
@@ -146,8 +148,7 @@ void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
         AddControllerPitchInput(LookAxisVector.Y);
 
 		InputPitch += LookAxisVector.Y;
-		InputPitch = FMath::Clamp(InputPitch, -18.f, 18.f);
-		UE_LOG(LogTemp, Warning, TEXT("InputPitch: %f"), InputPitch);
+		InputPitch = FMath::Clamp(InputPitch, -10.f, 18.f);
     }
 }
 
@@ -221,7 +222,11 @@ void AEclipseRaptureCharacter::StartProne()
 
     //Transition to prone eye offset
     ProneEyeOffset.Z = ProneEyeHeightZ; //this value dictates the Z position of the camera when entering the prone position
-    FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, ProneEyeOffset.Z), false);
+
+    if(FirstPersonCamera)
+    {
+        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, ProneEyeOffset.Z), false);
+    }
 }
 
 void AEclipseRaptureCharacter::EndProne()
@@ -232,7 +237,11 @@ void AEclipseRaptureCharacter::EndProne()
 
     //Transition to default eye offset
     ProneEyeOffset.Z = 0.f;
-    FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+
+	if (FirstPersonCamera)
+	{
+		FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+	}
 }
 
 
