@@ -76,29 +76,29 @@ protected:
 #pragma region Input Actions
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputMappingContext* EclipseRaptureMapping;
+	TObjectPtr<UInputMappingContext> EclipseRaptureMapping;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* MovementAction;
+	TObjectPtr<UInputAction> MovementAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* LookAction;
+	TObjectPtr<UInputAction> LookAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* InteractAction;
+	TObjectPtr<UInputAction> InteractAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* JumpAction;
+	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* CrouchAction;
+	TObjectPtr<UInputAction> CrouchAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* ProneAction;
+	TObjectPtr<UInputAction> ProneAction;
 
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	UInputAction* SprintAction;
+	TObjectPtr<UInputAction> SprintAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
@@ -116,7 +116,10 @@ protected:
 	void ToggleCrouch();
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
-	UCameraComponent* FirstPersonCamera;
+	TObjectPtr<UCameraComponent> FirstPersonCamera;
+
+	UPROPERTY(EditDefaultsOnly, Category = Mesh)
+	TObjectPtr<USkeletalMeshComponent> PlayerBody;
 
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
@@ -127,6 +130,9 @@ private:
 	bool CanSprint();
 
 	float SprintFOVMultiplier = 1.2f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	float InputPitch;
 	//Getters and Setters
 public:	
 
