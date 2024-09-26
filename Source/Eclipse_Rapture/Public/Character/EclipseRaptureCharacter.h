@@ -125,6 +125,8 @@ private:
 
 	UFUNCTION()
 	bool CanSprint();
+
+	float SprintFOVMultiplier = 1.2f;
 	//Getters and Setters
 public:	
 

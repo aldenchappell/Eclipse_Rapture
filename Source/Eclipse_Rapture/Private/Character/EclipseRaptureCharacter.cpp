@@ -30,7 +30,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f));
     FirstPersonCamera->bUsePawnControlRotation = true;
     DefaultFOV = FirstPersonCamera->FieldOfView;
-    SprintFOV = DefaultFOV * 1.1f;
+    SprintFOV = DefaultFOV * SprintFOVMultiplier;
 
     //Setup player mesh
     GetMesh()->SetOnlyOwnerSee(true);
