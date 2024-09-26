@@ -137,20 +137,33 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
 }
 
 
-void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
-{
-    FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-    if (Controller != nullptr)
-    {
-        // add yaw and pitch input to controller
-        AddControllerYawInput(LookAxisVector.X);
-        AddControllerPitchInput(LookAxisVector.Y);
-
-		InputPitch += LookAxisVector.Y;
-		InputPitch = FMath::Clamp(InputPitch, -10.f, 18.f);
-    }
-}
+//void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
+//{
+//    FVector2D LookAxisVector = Value.Get<FVector2D>();
+//
+//    if (Controller != nullptr)
+//    {  
+//        float SetVertSens = GetVerticalSensitivity() / 2.5f;
+//        // add yaw and pitch input to controller
+//        AddControllerYawInput(LookAxisVector.X);
+//        if (bEnableSensitivityChanges)
+//        {
+//            AddControllerPitchInput(LookAxisVector.Y * SetVertSens);
+//        }
+//        else
+//        {
+//            AddControllerPitchInput(LookAxisVector.Y);
+//        }
+//
+//        //TODO: Come back to this to make it so the player's head turns with input
+//        InputYaw = LookAxisVector.X * .25f;
+//        InputYaw = FMath::Clamp(InputYaw, -15.f, 15.f);
+//        
+//
+//		InputPitch += LookAxisVector.Y;
+//		InputPitch = FMath::Clamp(InputPitch, -10.f, 18.f);
+//    }
+//}
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
@@ -158,9 +171,12 @@ void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 
     if (Controller != nullptr)
     {
+        
         // add movement 
         AddMovementInput(GetActorForwardVector(), MovementVector.Y);
         AddMovementInput(GetActorRightVector(), MovementVector.X);
+
+        
     }
 }
 
