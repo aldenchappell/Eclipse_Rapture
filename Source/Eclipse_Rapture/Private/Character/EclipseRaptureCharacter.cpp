@@ -24,20 +24,20 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     ProneMovementSpeed = 100.f;
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
 
+    //Setup player mesh
+    GetMesh()->SetOnlyOwnerSee(true);
+    GetMesh()->SetupAttachment(GetRootComponent());
+    GetMesh()->bCastDynamicShadow = false;
+    GetMesh()->CastShadow = false;
+    GetMesh()->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+
     //Setup camera
     FirstPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-    FirstPersonCamera->SetupAttachment(GetCapsuleComponent());
+    FirstPersonCamera->SetupAttachment(PlayerBody);
     FirstPersonCamera->SetRelativeLocation(FVector(-10.f, 0.f, 60.f));
     FirstPersonCamera->bUsePawnControlRotation = true;
     DefaultFOV = FirstPersonCamera->FieldOfView;
     SprintFOV = DefaultFOV * SprintFOVMultiplier;
-
-    //Setup player mesh
-    GetMesh()->SetOnlyOwnerSee(true);
-    GetMesh()->SetupAttachment(FirstPersonCamera);
-    GetMesh()->bCastDynamicShadow = false;
-    GetMesh()->CastShadow = false;
-    GetMesh()->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
     //Setup crouching
     CrouchEyeOffset = FVector(0.f);
@@ -144,6 +144,10 @@ void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
         // add yaw and pitch input to controller
         AddControllerYawInput(LookAxisVector.X);
         AddControllerPitchInput(LookAxisVector.Y);
+
+		InputPitch += LookAxisVector.Y;
+		InputPitch = FMath::Clamp(InputPitch, -18.f, 18.f);
+		UE_LOG(LogTemp, Warning, TEXT("InputPitch: %f"), InputPitch);
     }
 }
 
