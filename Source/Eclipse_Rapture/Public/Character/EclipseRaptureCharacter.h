@@ -99,6 +99,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> SprintAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> LeanAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
@@ -119,6 +122,10 @@ protected:
 	void EndCrouch();
 	void ToggleCrouch();
 
+	UPROPERTY(BlueprintReadWrite, Category = Leaning)
+	bool bResetLeaning;
+	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
 
@@ -131,7 +138,7 @@ protected:
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 
-	bool ShouldSprint;
+	
 
 	UFUNCTION()
 	bool CanSprint();
@@ -144,6 +151,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	float InputYaw;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	float InputRoll;
 
 	bool bEnableSensitivityChanges = false;
 	
