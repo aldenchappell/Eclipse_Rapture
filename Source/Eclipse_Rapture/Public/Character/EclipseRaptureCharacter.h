@@ -102,7 +102,11 @@ protected:
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
+
+	/* LOOK INPUT MOVED TO BLUEPRINT
+	//void Look(const FInputActionValue& Value);
+	*/
+	
 
 
 	void Interact();

@@ -73,8 +73,8 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Movement
         EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
 
-        //Looking
-        EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Look);
+		//Looking **MOVED TO BLUEPRINT**
+        //EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Look);
 
         //Jumping
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
@@ -136,8 +136,8 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
     }
 }
 
-
-//void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
+/* LOOK INPUT MOVED TO BLUEPRINT
+* //void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
 //{
 //    FVector2D LookAxisVector = Value.Get<FVector2D>();
 //
@@ -164,6 +164,8 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
 //		InputPitch = FMath::Clamp(InputPitch, -10.f, 18.f);
 //    }
 //}
+*/
+
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
