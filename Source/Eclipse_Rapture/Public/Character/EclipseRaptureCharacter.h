@@ -118,6 +118,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Sensitivity)
+	float HorizontalSensitivity = 0.6f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Sensitivity)
+	float VerticalSensitivity = 0.6f;
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 
@@ -128,12 +134,30 @@ private:
 
 	float SprintFOVMultiplier = 1.2f;
 
+	//Sensitivity and Input values
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	float InputPitch;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	float InputYaw;
+
+	bool bEnableSensitivityChanges = false;
+	
 	//Getters and Setters
 public:	
 	UFUNCTION(Blueprintcallable)
 	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	
+	UFUNCTION(Blueprintcallable)
+	float GetHorizontalSensitivity() const { return HorizontalSensitivity; }
 
+	UFUNCTION(Blueprintcallable)
+	float GetVerticalSensitivity() const { return VerticalSensitivity; }
+
+
+	UFUNCTION(Blueprintcallable)
+	float SetHorizontalSensitivity(float Sensitivity) { return HorizontalSensitivity = Sensitivity; }
+
+	UFUNCTION(Blueprintcallable)
+	float SetVerticalSensitivity(float Sensitivity) { return VerticalSensitivity = Sensitivity; }
 };
