@@ -1,0 +1,30 @@
+#pragma once
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	EWT_Unarmed UMETA(DisplayName = "Unarmed"),
+	EWT_Melee UMETA(DisplayName = "Melee"),
+	EWT_Pistol UMETA(DisplayName = "Pistol"),
+	EWT_Rifle UMETA(DisplayName = "Rifle")
+	//EWT_Shotgun UMETA(DisplayName = "Shotgun"),
+	//EWT_Sniper UMETA(DisplayName = "Sniper")
+};
+
+UENUM(BlueprintType)
+enum class EWeaponFireMode : uint8
+{
+	EWFM_SemiAuto UMETA(DisplayName = "Semi-Auto"),
+	EWFM_Automatic UMETA(DisplayName = "Automatic")
+};
+
+UENUM(BlueprintType)
+enum class EWeaponName : uint8
+{
+	EWN_Unarmed UMETA(DisplayName = "Unarmed"),
+	EWN_Melee UMETA(DisplayName = "Melee"),
+	EWN_Pistol UMETA(DisplayName = "Pistol"),
+	EWN_Rifle UMETA(DisplayName = "Rifle")
+	//EWN_Shotgun UMETA(DisplayName = "Shotgun"),
+	//EWN_Sniper UMETA(DisplayName = "Sniper")
+};

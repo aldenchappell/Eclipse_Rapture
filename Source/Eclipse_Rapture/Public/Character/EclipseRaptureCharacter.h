@@ -23,53 +23,53 @@ public:
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+#pragma endregion
 	void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	void CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult) override;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Crouch)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	FVector CrouchEyeOffset;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Crouch)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	float CrouchEntranceSpeed;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Prone)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	FVector ProneEyeOffset;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Prone)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	float ProneEntranceSpeed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Prone)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	float ProneEyeHeightZ;
 
-#pragma endregion
+
 	virtual void Jump() override;
 	
 
 protected:
 	virtual void BeginPlay() override;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredWalkSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredSprintSpeed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float WalkMovementSpeed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float SprintMovementSpeed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
 	float ProneMovementSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FOV)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | FOV")
 	float DefaultFOV;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = FOV)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
 	float SprintFOV;
 
 	
@@ -99,6 +99,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> SprintAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> LeanAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
@@ -119,19 +122,23 @@ protected:
 	void EndCrouch();
 	void ToggleCrouch();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera)
+	UPROPERTY(BlueprintReadWrite, Category = Leaning)
+	bool bResetLeaning;
+	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
 
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Sensitivity)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
 	float HorizontalSensitivity = 0.6f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Sensitivity)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
 	float VerticalSensitivity = 0.6f;
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 
-	bool ShouldSprint;
+	
 
 	UFUNCTION()
 	bool CanSprint();
@@ -145,10 +152,13 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
 	float InputYaw;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	float InputRoll;
+
 	bool bEnableSensitivityChanges = false;
 	
-	//Getters and Setters
-public:	
+	
+public:	//Getters and Setters
 	UFUNCTION(Blueprintcallable)
 	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	
