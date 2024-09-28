@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Weapons/Weapon.h"
+#include "Weapons/WeaponBase.h"
 #include "CoreMinimal.h"
 #include "Items/Item.h"
 #include "WeaponPickup.generated.h"
@@ -21,8 +21,8 @@ public:
 	
 
 protected:
-	UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
-	TSubclassOf<class AWeapon> WeaponToSpawn;
+	//UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
+	//TSubclassOf<class WeaponBase> WeaponToSpawn;
 
 private:
 
