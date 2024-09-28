@@ -1,3 +1,5 @@
+
+
 #include "Character/EclipseRaptureCharacter.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
@@ -7,6 +9,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterTypes.generated.h"
+#include "Items/Item.h"
+
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -227,7 +231,18 @@ void AEclipseRaptureCharacter::ToggleCrouch()
 
 void AEclipseRaptureCharacter::Interact()
 {
+    TArray<AActor*> OverlappingActors;
+    GetOverlappingActors(OverlappingActors);
+    for(auto Actor : OverlappingActors)
+    {
+        OverlappingActors.AddUnique(Actor);
+		AItem* OverlappingItem = Cast<AItem>(Actor);
 
+        if (OverlappingItem)
+        {
+            OverlappingItem->Interact(this);
+        }
+    }
 }
 
 void AEclipseRaptureCharacter::StartProne()
