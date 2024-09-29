@@ -23,8 +23,10 @@ enum class EWeaponName : uint8
 {
 	EWN_Unarmed UMETA(DisplayName = "Unarmed"),
 	EWN_Melee UMETA(DisplayName = "Melee"),
-	EWN_Pistol UMETA(DisplayName = "Pistol"),
-	EWN_Rifle UMETA(DisplayName = "Rifle")
+	EWN_Pistol_A UMETA(DisplayName = "Pistol_A"),
+	EWN_Pistol_B UMETA(DisplayName = "Pistol_B"),
+	EWN_Rifle_A UMETA(DisplayName = "Rifle_A"),
+	EWN_Rifle_B UMETA(DisplayName = "Rifle_B")
 	//EWN_Shotgun UMETA(DisplayName = "Shotgun"),
 	//EWN_Sniper UMETA(DisplayName = "Sniper")
 };

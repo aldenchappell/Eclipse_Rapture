@@ -13,6 +13,8 @@
 class UInputMappingContext;
 class UInputAction;
 class UCameraComponent;
+class UWeaponBase;
+class AItem;
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter
 {
@@ -23,6 +25,8 @@ public:
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	
 #pragma endregion
 	void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
 	void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
@@ -47,10 +51,14 @@ public:
 
 	virtual void Jump() override;
 	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon")
+	void SpawnItem(TSubclassOf<UWeaponBase> WeaponToSpawn, FVector PickupLocation);
+
 
 protected:
 	virtual void BeginPlay() override;
 	
+#pragma region Movement Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredWalkSpeed;
 
@@ -71,7 +79,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
 	float SprintFOV;
-
+#pragma endregion
 	
 #pragma region Input Actions
 
@@ -135,9 +143,14 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
 	float VerticalSensitivity = 0.6f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	TObjectPtr<class UWeaponBase> CurrentWeapon;
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 
+	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class AItem> CurrentOverlappingItem;
 	
 
 	UFUNCTION()
@@ -174,4 +187,8 @@ public:	//Getters and Setters
 
 	UFUNCTION(Blueprintcallable)
 	float SetVerticalSensitivity(float Sensitivity) { return VerticalSensitivity = Sensitivity; }
+
+	UFUNCTION(Blueprintcallable)
+	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
 };
+

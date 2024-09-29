@@ -7,7 +7,6 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "WeaponBase.generated.h"
 
-class AWeaponPickup;
 /**
  * 
  */
@@ -17,9 +16,8 @@ class ECLIPSE_RAPTURE_API UWeaponBase : public USkeletalMeshComponent
 	GENERATED_BODY()
 	
 public:
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AWeaponPickup> WeaponPickup;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
+	TSubclassOf<class AWeaponPickup> WeaponPickup;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	FName SocketName;
@@ -88,7 +86,12 @@ protected:
 #pragma endregion
 
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponType WeaponType = EWeaponType::EWT_Unarmed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponFireMode WeaponFireMode = EWeaponFireMode::EWFM_SemiAuto;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 };
