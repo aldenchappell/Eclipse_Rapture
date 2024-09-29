@@ -19,10 +19,10 @@ public:
 	AWeaponPickup();
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
 	
-
-protected:
 	UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
 	TSubclassOf<class UWeaponBase> WeaponToSpawn;
+protected:
+	
 
 private:
 

@@ -10,6 +10,10 @@ AWeaponPickup::AWeaponPickup()
 
 void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
-
+	if (Character)
+	{
+		Character->SpawnItem(WeaponToSpawn);
+		Destroy();
+	}
 }
 
