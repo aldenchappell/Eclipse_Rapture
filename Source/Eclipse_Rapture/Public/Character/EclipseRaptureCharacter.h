@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterTypes.h"
+#include "WeaponTypes.h"
 #include "EclipseRaptureCharacter.generated.h"
 
 //Forward Declarations
@@ -52,7 +53,7 @@ public:
 	virtual void Jump() override;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon")
-	void SpawnItem(TSubclassOf<UWeaponBase> WeaponToSpawn, FVector PickupLocation);
+	void SpawnItem(TSubclassOf<UWeaponBase> WeaponToSpawn);
 
 
 protected:
@@ -146,8 +147,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
 	TObjectPtr<class UWeaponBase> CurrentWeapon;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+	
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;

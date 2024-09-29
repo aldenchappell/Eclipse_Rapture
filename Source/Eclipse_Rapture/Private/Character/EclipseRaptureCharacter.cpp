@@ -104,11 +104,12 @@ void AEclipseRaptureCharacter::Interact()
     {
         // Call the Execute_Interact function for the interface
         IInteractInterface::Execute_Interact(CurrentOverlappingItem, this);
+		CurrentOverlappingItem = nullptr;
     }
 }
 
 
-void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<UWeaponBase> WeaponToSpawn, FVector PickupLocation)
+void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<UWeaponBase> WeaponToSpawn)
 {
 }
 
