@@ -94,10 +94,23 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Proning (Toggled)
         EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
 
+        //Interact
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
     }
 }
+void AEclipseRaptureCharacter::Interact()
+{
+    if (CurrentOverlappingItem && CurrentOverlappingItem->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
+    {
+        // Call the Execute_Interact function for the interface
+        IInteractInterface::Execute_Interact(CurrentOverlappingItem, this);
+    }
+}
 
+
+void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<UWeaponBase> WeaponToSpawn, FVector PickupLocation)
+{
+}
 
 #pragma region Movement
 
@@ -139,7 +152,7 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
         OutResult.Location += CrouchEyeOffset;
     }
 }
-
+#pragma region Deprecated Look Input
 /* LOOK INPUT MOVED TO BLUEPRINT
 * //void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
 //{
@@ -169,7 +182,7 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
 //    }
 //}
 */
-
+#pragma endregion
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
@@ -191,6 +204,10 @@ void AEclipseRaptureCharacter::Jump()
     Super::Jump();
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
+
+
+
+
 
 void AEclipseRaptureCharacter::StartCrouch()
 {
@@ -229,21 +246,7 @@ void AEclipseRaptureCharacter::ToggleCrouch()
     }
 }
 
-void AEclipseRaptureCharacter::Interact()
-{
-    TArray<AActor*> OverlappingActors;
-    GetOverlappingActors(OverlappingActors);
-    for(auto Actor : OverlappingActors)
-    {
-        OverlappingActors.AddUnique(Actor);
-		AItem* OverlappingItem = Cast<AItem>(Actor);
 
-        if (OverlappingItem)
-        {
-            OverlappingItem->Interact(this);
-        }
-    }
-}
 
 void AEclipseRaptureCharacter::StartProne()
 {

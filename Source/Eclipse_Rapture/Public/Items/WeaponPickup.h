@@ -21,8 +21,8 @@ public:
 	
 
 protected:
-	//UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
-	//TSubclassOf<class WeaponBase> WeaponToSpawn;
+	UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
+	TSubclassOf<class UWeaponBase> WeaponToSpawn;
 
 private:
 
