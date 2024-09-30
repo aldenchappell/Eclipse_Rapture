@@ -11,11 +11,12 @@
  * 
  */
 UCLASS()
-class ECLIPSE_RAPTURE_API UWeaponBase : public USkeletalMeshComponent
+class ECLIPSE_RAPTURE_API AWeaponBase : public AActor
 {
 	GENERATED_BODY()
 	
 public:
+	AWeaponBase();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<class AWeaponPickup> WeaponPickup;
 
@@ -23,7 +24,8 @@ public:
 	FName SocketName;
 
 protected:
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
 #pragma region WeaponStats
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")

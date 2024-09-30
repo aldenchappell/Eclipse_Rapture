@@ -20,7 +20,10 @@ public:
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
 	
 	UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
-	TSubclassOf<class UWeaponBase> WeaponToSpawn;
+	TSubclassOf<class AWeaponBase> WeaponToSpawn;
+
+	UPROPERTY(BlueprintReadonly, EditAnywhere, Category = "Weapon Properties")
+	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 protected:
 	
 
