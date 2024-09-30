@@ -2,16 +2,20 @@
 
 #pragma once
 
+
+#include "Interfaces/Fire.h"
 #include "WeaponTypes.h"
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "WeaponBase.generated.h"
 
-/**
- * 
- */
+//Forward Declarations
+class UAnimationAsset;
+
+
+
 UCLASS()
-class ECLIPSE_RAPTURE_API AWeaponBase : public AActor
+class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
 {
 	GENERATED_BODY()
 	
@@ -23,7 +27,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	FName SocketName;
 
+	virtual void Fire_Implementation() override;
+
 protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
@@ -33,6 +41,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
 	float Range;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
+	float FireRate;
 #pragma endregion
 
 #pragma region Ammo
@@ -87,6 +98,12 @@ protected:
 	TObjectPtr<USoundBase> UnaimSound;
 #pragma endregion
 
+#pragma region Animation
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
+	TObjectPtr<UAnimSequence> FireAnimation;
+
+#pragma endregion
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponType WeaponType = EWeaponType::EWT_Unarmed;
@@ -96,4 +113,15 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
+
+	bool bCanFire = true;
+
+public: //Getters and Setters
+	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
+	FORCEINLINE EWeaponFireMode GetWeaponFireMode() const { return WeaponFireMode; }
+	FORCEINLINE EWeaponName GetWeaponName() const { return WeaponName; }
+	FORCEINLINE float GetFireRate() const { return FireRate; }
+	FORCEINLINE bool GetCanFire() const { return bCanFire; }
+    FORCEINLINE void SetCanFire(bool NewCanFire) { bCanFire = NewCanFire; }
+	FORCEINLINE float GetCurrentClipAmmo() const { return CurrentClipAmmo; }
 };

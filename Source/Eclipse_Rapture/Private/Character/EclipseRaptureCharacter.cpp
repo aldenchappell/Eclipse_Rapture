@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "CharacterTypes.generated.h"
 #include "Items/Item.h"
+#include "Weapons/WeaponBase.h"
 
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
@@ -34,6 +35,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     GetMesh()->bCastDynamicShadow = false;
     GetMesh()->CastShadow = false;
     GetMesh()->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+    GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 
     //Setup crouching
     CrouchEyeOffset = FVector(0.f);
@@ -66,7 +68,7 @@ void AEclipseRaptureCharacter::Tick(float DeltaTime)
     float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
     CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
 }
-
+#pragma region Setup Input
 void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
     Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -96,8 +98,13 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
         //Interact
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
+
+        //Shoot
+        EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartShooting);
+        EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopShooting);
     }
 }
+#pragma endregion
 void AEclipseRaptureCharacter::Interact()
 {
     if (CurrentOverlappingItem && CurrentOverlappingItem->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
@@ -108,10 +115,61 @@ void AEclipseRaptureCharacter::Interact()
     }
 }
 
+void AEclipseRaptureCharacter::StartShooting()
+{
+    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent shooting while sprinting
+
+    if (CurrentWeapon && !GetWorldTimerManager().IsTimerActive(ShootTimer) && CurrentWeapon->GetCanFire())
+    {
+        float FireRate = CurrentWeapon->GetFireRate();
+    
+        // Semi-auto fires once per click
+        if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_SemiAuto)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Weapon in semi-auto mode"));
+            CurrentWeapon->Execute_Fire(CurrentWeapon);  // Fire once
+            CurrentWeapon->SetCanFire(false);  // Prevent further shooting until timer expires
+            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::ShootTimerExpired, FireRate, false);
+        }
+        // Automatic continues firing until the button is released
+        else if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Weapon in automatic mode"));
+            CurrentWeapon->Execute_Fire(CurrentWeapon);  // Fire once
+            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false);  // Continuously shoot
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Cannot fire! Either `CurrentWeapon` is null or weapon is on cooldown."));
+    }
+}
+
+void AEclipseRaptureCharacter::StopShooting()
+{
+    if (CurrentWeapon && CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Stopping automatic firing"));
+        GetWorldTimerManager().ClearTimer(ShootTimer);  // Stop continuous firing for automatic weapons
+    }
+}
+
+void AEclipseRaptureCharacter::ShootTimerExpired()
+{
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->SetCanFire(true);  // Allow firing again
+        UE_LOG(LogTemp, Warning, TEXT("Shoot timer expired! Weapon can fire again."));
+    }
+    GetWorldTimerManager().ClearTimer(ShootTimer);  // Clear the timer
+}
+
+
 
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
 }
+
 
 #pragma region Movement
 
@@ -249,6 +307,8 @@ void AEclipseRaptureCharacter::ToggleCrouch()
 
 
 
+
+
 void AEclipseRaptureCharacter::StartProne()
 {
     if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting || CurrentMovementState == ECharacterMovementState::ECMS_Crouching) return;
@@ -315,5 +375,8 @@ bool AEclipseRaptureCharacter::CanSprint()
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking &&
         GetVelocity().Size() > 0;  //Make sure player is moving
 }
+
+
+
 
 #pragma endregion
