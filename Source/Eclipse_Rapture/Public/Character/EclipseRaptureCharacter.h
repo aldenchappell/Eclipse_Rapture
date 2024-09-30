@@ -111,6 +111,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> LeanAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> ShootAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
@@ -130,7 +133,8 @@ protected:
 	void StartCrouch();
 	void EndCrouch();
 	void ToggleCrouch();
-
+	void StartShooting();
+	void StopShooting();
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 	
@@ -175,6 +179,12 @@ private:
 
 	bool bEnableSensitivityChanges = false;
 	
+	//Shooting Properties
+	UPROPERTY(VisibleAnywhere, Category = "Shooting | Shooting Properties")
+	FTimerHandle ShootTimer;
+
+	UFUNCTION()
+	void ShootTimerExpired();
 	
 public:	//Getters and Setters
 	UFUNCTION(Blueprintcallable)
