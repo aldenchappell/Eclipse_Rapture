@@ -53,7 +53,7 @@ public:
 	virtual void Jump() override;
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon")
-	void SpawnItem(TSubclassOf<UWeaponBase> WeaponToSpawn);
+	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
 
 protected:
@@ -146,7 +146,7 @@ protected:
 	float VerticalSensitivity = 0.6f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
-	TObjectPtr<class UWeaponBase> CurrentWeapon;
+	TObjectPtr<class AWeaponBase> CurrentWeapon;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
 	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;

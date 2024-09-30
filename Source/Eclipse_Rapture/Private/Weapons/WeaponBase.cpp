@@ -2,3 +2,11 @@
 
 
 #include "Weapons/WeaponBase.h"
+
+AWeaponBase::AWeaponBase()
+{
+	PrimaryActorTick.bCanEverTick = true;
+
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->SetupAttachment(GetRootComponent());
+}

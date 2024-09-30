@@ -109,7 +109,7 @@ void AEclipseRaptureCharacter::Interact()
 }
 
 
-void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<UWeaponBase> WeaponToSpawn)
+void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
 }
 
