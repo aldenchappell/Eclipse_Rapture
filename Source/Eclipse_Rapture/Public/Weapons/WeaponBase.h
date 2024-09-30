@@ -112,14 +112,20 @@ private:
 	EWeaponFireMode WeaponFireMode = EWeaponFireMode::EWFM_SemiAuto;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	EWeaponClass WeaponClass = EWeaponClass::EWC_Unarmed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 
 	bool bCanFire = true;
+
+	TArray<TObjectPtr<AActor>> IgnoreActors;
 
 public: //Getters and Setters
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 	FORCEINLINE EWeaponFireMode GetWeaponFireMode() const { return WeaponFireMode; }
 	FORCEINLINE EWeaponName GetWeaponName() const { return WeaponName; }
+	FORCEINLINE EWeaponClass GetWeaponClass() const { return WeaponClass; }
 	FORCEINLINE float GetFireRate() const { return FireRate; }
 	FORCEINLINE bool GetCanFire() const { return bCanFire; }
     FORCEINLINE void SetCanFire(bool NewCanFire) { bCanFire = NewCanFire; }

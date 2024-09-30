@@ -30,3 +30,13 @@ enum class EWeaponName : uint8
 	//EWN_Shotgun UMETA(DisplayName = "Shotgun"),
 	//EWN_Sniper UMETA(DisplayName = "Sniper")
 };
+
+UENUM(BlueprintType)
+enum class EWeaponClass : uint8
+{
+	EWC_Unarmed UMETA(DisplayName = "Unarmed"),
+	EWC_Melee UMETA(DisplayName = "Melee"),
+	EWC_Primary UMETA(DisplayName = "Primary"),
+	EWC_Secondary UMETA(DisplayName = "Secondary"),
+};
+
