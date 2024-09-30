@@ -25,6 +25,8 @@ public:
 #pragma region Setup
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
+	void HandleCrouch(float DeltaTime);
+	void HandleFOV(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
@@ -75,11 +77,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
 	float ProneMovementSpeed;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
+	float AimMovementSpeed;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | FOV")
 	float DefaultFOV;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
 	float SprintFOV;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
+	float AimFOV;
+
 #pragma endregion
 	
 #pragma region Input Actions
@@ -114,6 +123,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> ShootAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> AimAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
@@ -121,8 +133,6 @@ protected:
 	/* LOOK INPUT MOVED TO BLUEPRINT
 	//void Look(const FInputActionValue& Value);
 	*/
-	
-
 
 	void Interact();
 	void StartProne();
@@ -135,8 +145,14 @@ protected:
 	void ToggleCrouch();
 	void StartShooting();
 	void StopShooting();
+	void StartAiming();
+	void StopAiming();
+
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
+
+	UPROPERTY(BlueprintReadWrite, Category = Aiming)
+	bool IsAiming;
 	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
@@ -154,9 +170,11 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
 	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	int CurrentWeaponIndex;
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
-	
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;
@@ -166,6 +184,7 @@ private:
 	bool CanSprint();
 
 	float SprintFOVMultiplier = 1.2f;
+	float AimFOVMultiplier = .6f;
 
 	//Sensitivity and Input values
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))

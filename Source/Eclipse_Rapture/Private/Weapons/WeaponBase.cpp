@@ -18,6 +18,9 @@ void AWeaponBase::BeginPlay()
     CurrentClipAmmo = ClipSize;  // Initialize with full clip
 }
 
+/// <summary>
+/// Implements the fire function for the weapon(Line trace(raycast) is handled in blueprint.
+/// </summary>
 void AWeaponBase::Fire_Implementation()
 {
     if (bCanFire && CurrentClipAmmo > 0)
@@ -25,38 +28,22 @@ void AWeaponBase::Fire_Implementation()
         // Decrease the ammo in the current clip
         CurrentClipAmmo--;
 
-        UE_LOG(LogTemp, Warning, TEXT("Shot fired! Ammo left in clip: %d"), CurrentClipAmmo);
+        UE_LOG(LogTemp, Warning, TEXT("Shot fired. Ammo left in clip: %d"), CurrentClipAmmo);
 
         if (FireAnimation)
         {
 			WeaponMesh->PlayAnimation(FireAnimation, false);
         }
 
-        // Play Shoot Sound
-        if (ShootSound)
-        {
-            UGameplayStatics::PlaySoundAtLocation(this, ShootSound, GetActorLocation());
-        }
-
         // Check if the clip is empty
         if (CurrentClipAmmo <= 0)
         {
-            bCanFire = false;  // Prevent further shooting until reloaded
-            UE_LOG(LogTemp, Warning, TEXT("Clip empty! Cannot fire anymore until reloaded."));
+            bCanFire = false;
 
-            // Optionally, trigger reload or play out-of-ammo sound
             if (OutOfAmmoSound)
             {
                 UGameplayStatics::PlaySoundAtLocation(this, OutOfAmmoSound, GetActorLocation());
             }
         }
-    }
-    else if (CurrentClipAmmo <= 0)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Cannot fire! Out of ammo in the clip."));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Cannot fire! `bCanFire` is set to false."));
     }
 }

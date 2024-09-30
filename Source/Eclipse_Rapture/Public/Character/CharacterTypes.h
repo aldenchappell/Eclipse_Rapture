@@ -15,6 +15,7 @@ enum class ECharacterMovementState : uint8
 {
 	ECMS_Idle UMETA(DisplayName = "Idle"),
 	ECMS_Walking UMETA(DisplayName = "Walking"),
+	ECMS_Aiming UMETA(DisplayName = "Aiming"),
 	ECMS_Sprinting UMETA(DisplayName = "Sprinting"),
 	ECMS_Crouching UMETA(DisplayName = "Crouching"),
 	ECMS_Prone UMETA(DisplayName = "Prone"),

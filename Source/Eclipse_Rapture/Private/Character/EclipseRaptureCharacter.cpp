@@ -45,6 +45,9 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     ProneEyeOffset = FVector(0.f);
     ProneEntranceSpeed = 2.f;
     ProneEyeHeightZ = -50.f;
+
+    //fov
+    AimFOV = DefaultFOV * AimFOVMultiplier;
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -58,15 +61,37 @@ void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    //Determine the target FOV based on the current movement state
-    float TargetFOV = (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) ? SprintFOV : DefaultFOV;
+    HandleFOV(DeltaTime);
+    HandleCrouch(DeltaTime);
 
-    //Lerp the FOV between current and target FOV
-    FirstPersonCamera->FieldOfView = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, 5.0f); // 5.0f is the interpolation speed
-
+}
+void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
+{
     //Handle crouching interpolation
     float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
     CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
+}
+void AEclipseRaptureCharacter::HandleFOV(float DeltaTime)
+{
+    //Determine the target FOV based on the current movement state
+    /*float TargetFOV = (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) ? SprintFOV : DefaultFOV;*/
+
+    float TargetFOV = DefaultFOV;
+    if (CurrentMovementState == ECharacterMovementState::ECMS_Aiming)
+    {
+        TargetFOV = AimFOV;
+    }
+	else if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting)
+	{
+		TargetFOV = SprintFOV;
+	}
+    else
+    {
+        TargetFOV = DefaultFOV;
+    }
+
+    //Lerp the FOV between current and target FOV
+    FirstPersonCamera->FieldOfView = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, 5.0f); // 5.0f is the interpolation speed
 }
 #pragma region Setup Input
 void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -102,6 +127,10 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Shoot
         EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartShooting);
         EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopShooting);
+
+        //Aim
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
+        EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
     }
 }
 #pragma endregion
@@ -126,7 +155,6 @@ void AEclipseRaptureCharacter::StartShooting()
         // Semi-auto fires once per click
         if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_SemiAuto)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Weapon in semi-auto mode"));
             CurrentWeapon->Execute_Fire(CurrentWeapon);  // Fire once
             CurrentWeapon->SetCanFire(false);  // Prevent further shooting until timer expires
             GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::ShootTimerExpired, FireRate, false);
@@ -134,24 +162,38 @@ void AEclipseRaptureCharacter::StartShooting()
         // Automatic continues firing until the button is released
         else if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Weapon in automatic mode"));
-            CurrentWeapon->Execute_Fire(CurrentWeapon);  // Fire once
-            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false);  // Continuously shoot
+            // Fire once
+            CurrentWeapon->Execute_Fire(CurrentWeapon); 
+            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false); 
         }
     }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Cannot fire! Either `CurrentWeapon` is null or weapon is on cooldown."));
-    }
+    
 }
 
 void AEclipseRaptureCharacter::StopShooting()
 {
     if (CurrentWeapon && CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Stopping automatic firing"));
-        GetWorldTimerManager().ClearTimer(ShootTimer);  // Stop continuous firing for automatic weapons
+        //Clear timer (handling fire rate)
+        GetWorldTimerManager().ClearTimer(ShootTimer);
     }
+}
+
+void AEclipseRaptureCharacter::StartAiming()
+{
+    if (CurrentWeapon)
+    {
+        CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
+        GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
+        IsAiming = true;
+    }
+}
+
+void AEclipseRaptureCharacter::StopAiming()
+{
+    CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
+    IsAiming = false;
 }
 
 void AEclipseRaptureCharacter::ShootTimerExpired()
@@ -159,7 +201,6 @@ void AEclipseRaptureCharacter::ShootTimerExpired()
     if (CurrentWeapon)
     {
         CurrentWeapon->SetCanFire(true);  // Allow firing again
-        UE_LOG(LogTemp, Warning, TEXT("Shoot timer expired! Weapon can fire again."));
     }
     GetWorldTimerManager().ClearTimer(ShootTimer);  // Clear the timer
 }
