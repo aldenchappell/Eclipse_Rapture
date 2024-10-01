@@ -23,27 +23,27 @@ void AWeaponBase::BeginPlay()
 /// </summary>
 void AWeaponBase::Fire_Implementation()
 {
-    if (bCanFire && CurrentClipAmmo > 0)
-    {
-        // Decrease the ammo in the current clip
-        CurrentClipAmmo--;
+   // if (bCanFire && CurrentClipAmmo > 0)
+   // {
+   //     // Decrease the ammo in the current clip
+   //     CurrentClipAmmo--;
 
-        UE_LOG(LogTemp, Warning, TEXT("Shot fired. Ammo left in clip: %d"), CurrentClipAmmo);
+   //     UE_LOG(LogTemp, Warning, TEXT("Shot fired. Ammo left in clip: %d"), CurrentClipAmmo);
 
-        if (FireAnimation)
-        {
-			WeaponMesh->PlayAnimation(FireAnimation, false);
-        }
+   //     if (FireAnimation)
+   //     {
+			//WeaponMesh->PlayAnimation(FireAnimation, false);
+   //     }
 
-        // Check if the clip is empty
-        if (CurrentClipAmmo <= 0)
-        {
-            bCanFire = false;
+   //     // Check if the clip is empty
+   //     if (CurrentClipAmmo <= 0)
+   //     {
+   //         bCanFire = false;
 
-            if (OutOfAmmoSound)
-            {
-                UGameplayStatics::PlaySoundAtLocation(this, OutOfAmmoSound, GetActorLocation());
-            }
-        }
-    }
+   //         if (OutOfAmmoSound)
+   //         {
+   //             UGameplayStatics::PlaySoundAtLocation(this, OutOfAmmoSound, GetActorLocation());
+   //         }
+   //     }
+   // }
 }

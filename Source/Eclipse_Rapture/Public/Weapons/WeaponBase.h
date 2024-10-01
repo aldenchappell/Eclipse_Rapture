@@ -35,6 +35,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Ammo")
+	bool bCanFire = true;
 #pragma region WeaponStats
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
 	float Damage;
@@ -47,7 +49,7 @@ protected:
 #pragma endregion
 
 #pragma region Ammo
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Ammo")
 	int32 CurrentAmmo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
@@ -56,7 +58,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
 	int32 ClipSize;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Ammo")
 	int32 CurrentClipAmmo;
 #pragma endregion
 
@@ -117,9 +119,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 
-	bool bCanFire = true;
-
-	TArray<TObjectPtr<AActor>> IgnoreActors;
+	
 
 public: //Getters and Setters
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
