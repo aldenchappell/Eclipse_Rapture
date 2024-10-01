@@ -131,6 +131,11 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Aim
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
         EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
+
+        //Swapping Weapons
+		//EnhancedInputComponent->BindAction(EquipUnarmedAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon);
+        //EnhancedInputComponent->BindAction(EquipPrimaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon);
+        //EnhancedInputComponent->BindAction(EquipSecondaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon);
     }
 }
 #pragma endregion
@@ -143,6 +148,7 @@ void AEclipseRaptureCharacter::Interact()
 		CurrentOverlappingItem = nullptr;
     }
 }
+#pragma region Shooting
 
 void AEclipseRaptureCharacter::StartShooting()
 {
@@ -196,6 +202,21 @@ void AEclipseRaptureCharacter::StopAiming()
     IsAiming = false;
 }
 
+//void AEclipseRaptureCharacter::SwapWeapon()
+//{
+//    //Make sure the player has a weapon...
+//	if (CurrentWeapon == nullptr) return;
+//    
+//    if (bHasPrimaryWeapon && CurrentWeapon)
+//    {
+//        switch (CurrentWeapon->GetWeaponName())
+//        {
+//        case EWeaponName::EWN_Unarmed:
+//            break;
+//        }
+//    }
+//}
+
 void AEclipseRaptureCharacter::ShootTimerExpired()
 {
     if (CurrentWeapon)
@@ -205,7 +226,7 @@ void AEclipseRaptureCharacter::ShootTimerExpired()
     GetWorldTimerManager().ClearTimer(ShootTimer);  // Clear the timer
 }
 
-
+#pragma endregion
 
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
