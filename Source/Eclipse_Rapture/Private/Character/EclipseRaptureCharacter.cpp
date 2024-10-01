@@ -413,7 +413,8 @@ void AEclipseRaptureCharacter::EndSprint()
 
 bool AEclipseRaptureCharacter::CanSprint()
 {
-    return CurrentMovementState == ECharacterMovementState::ECMS_Walking &&
+    return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
+        CurrentMovementState == ECharacterMovementState::ECMS_Idle &&
         GetVelocity().Size() > 0;  //Make sure player is moving
 }
 
