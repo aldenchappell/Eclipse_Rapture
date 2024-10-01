@@ -11,7 +11,7 @@
 
 //Forward Declarations
 class UAnimationAsset;
-
+class UAnimMontage;
 
 
 UCLASS()
@@ -103,6 +103,12 @@ protected:
 #pragma region Animation
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
 	TObjectPtr<UAnimSequence> FireAnimation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
+	TObjectPtr<UAnimMontage> AimFireMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
+	TObjectPtr<UAnimMontage> HipfireMontage;
 
 #pragma endregion
 

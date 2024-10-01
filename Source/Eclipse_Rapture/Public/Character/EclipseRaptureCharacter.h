@@ -16,6 +16,7 @@ class UInputAction;
 class UCameraComponent;
 class UWeaponBase;
 class AItem;
+class USkeletalMeshComponent;
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter
 {
@@ -154,6 +155,8 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = Aiming)
 	bool IsAiming;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
