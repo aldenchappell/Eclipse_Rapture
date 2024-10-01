@@ -127,6 +127,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> AimAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> EquipUnarmedAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> EquipPrimaryAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> EquipSecondaryAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
@@ -134,7 +143,7 @@ protected:
 	/* LOOK INPUT MOVED TO BLUEPRINT
 	//void Look(const FInputActionValue& Value);
 	*/
-
+#pragma region Input Functions
 	void Interact();
 	void StartProne();
 	void EndProne();
@@ -148,12 +157,20 @@ protected:
 	void StopShooting();
 	void StartAiming();
 	void StopAiming();
+	void SwapWeapon();
 
+#pragma endregion
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 
 	UPROPERTY(BlueprintReadWrite, Category = Aiming)
 	bool IsAiming;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
+	bool bHasPrimaryWeapon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
+	bool bHasSecondaryWeapon;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
 	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
