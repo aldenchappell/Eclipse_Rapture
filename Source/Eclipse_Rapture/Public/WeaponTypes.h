@@ -8,7 +8,6 @@ enum class EWeaponType : uint8
 	EWT_Secondary UMETA(DisplayName = "Secondary"),
 	EWT_Primary UMETA(DisplayName = "Primary")
 	//EWT_Shotgun UMETA(DisplayName = "Shotgun"),
-	//EWT_Sniper UMETA(DisplayName = "Sniper")
 };
 
 UENUM(BlueprintType)
@@ -21,14 +20,13 @@ enum class EWeaponFireMode : uint8
 UENUM(BlueprintType)
 enum class EWeaponName : uint8
 {
-	EWN_Unarmed UMETA(DisplayName = "Unarmed"),
-	EWN_Melee UMETA(DisplayName = "Melee"),
-	EWN_Pistol_A UMETA(DisplayName = "Pistol_A"),
-	EWN_Pistol_B UMETA(DisplayName = "Pistol_B"),
-	EWN_Rifle_A UMETA(DisplayName = "Rifle_A"),
-	EWN_Rifle_B UMETA(DisplayName = "Rifle_B")
+	EWN_Unarmed UMETA(DisplayName = "Unarmed"), //0
+	EWN_Melee UMETA(DisplayName = "Melee"), //1
+	EWN_Pistol_A UMETA(DisplayName = "Pistol_A"), //2
+	EWN_Pistol_B UMETA(DisplayName = "Pistol_B"), //3
+	EWN_Rifle_A UMETA(DisplayName = "Rifle_A"), //4
+	EWN_Rifle_B UMETA(DisplayName = "Rifle_B")//5
 	//EWN_Shotgun UMETA(DisplayName = "Shotgun"),
-	//EWN_Sniper UMETA(DisplayName = "Sniper")
 };
 
 UENUM(BlueprintType)
