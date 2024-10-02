@@ -157,9 +157,12 @@ protected:
 	void StopShooting();
 	void StartAiming();
 	void StopAiming();
-	void SwapWeapon();
+	//void SwapWeapon(EWeaponClass NewWeaponType);
 
 #pragma endregion
+
+
+
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 
@@ -171,6 +174,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
 	bool bHasSecondaryWeapon;
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
 	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
@@ -185,13 +189,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
 	float VerticalSensitivity = 0.6f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
-	TObjectPtr<class AWeaponBase> CurrentWeapon;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int CurrentWeaponIndex;
 private:
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
