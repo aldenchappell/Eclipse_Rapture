@@ -133,9 +133,8 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
 
         //Swapping Weapons
-		//EnhancedInputComponent->BindAction(EquipUnarmedAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon);
-        //EnhancedInputComponent->BindAction(EquipPrimaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon);
-        //EnhancedInputComponent->BindAction(EquipSecondaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon);
+        //EnhancedInputComponent->BindAction(EquipPrimaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon, EWeaponClass::EWC_Primary);
+        //EnhancedInputComponent->BindAction(EquipSecondaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon, EWeaponClass::EWC_Secondary);
     }
 }
 #pragma endregion
@@ -154,77 +153,110 @@ void AEclipseRaptureCharacter::StartShooting()
 {
     if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent shooting while sprinting
 
-    if (CurrentWeapon && !GetWorldTimerManager().IsTimerActive(ShootTimer) && CurrentWeapon->GetCanFire())
+    // Get the current weapon based on the CurrentWeaponClass
+    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
+    if (Weapon && !GetWorldTimerManager().IsTimerActive(ShootTimer) && Weapon->GetCanFire())
     {
-        float FireRate = CurrentWeapon->GetFireRate();
-    
+        float FireRate = Weapon->GetFireRate();
+
         // Semi-auto fires once per click
-        if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_SemiAuto)
+        if (Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_SemiAuto)
         {
-            CurrentWeapon->Execute_Fire(CurrentWeapon);  // Fire once
-            CurrentWeapon->SetCanFire(false);  // Prevent further shooting until timer expires
+            Weapon->Execute_Fire(Weapon);  // Fire once
+            Weapon->SetCanFire(false);  // Prevent further shooting until timer expires
             GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::ShootTimerExpired, FireRate, false);
         }
         // Automatic continues firing until the button is released
-        else if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
+        else if (Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
         {
-            // Fire once
-            CurrentWeapon->Execute_Fire(CurrentWeapon); 
-            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false); 
+            Weapon->Execute_Fire(Weapon);  // Fire once
+            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false);
         }
     }
-    
 }
+
+
 
 void AEclipseRaptureCharacter::StopShooting()
 {
-    if (CurrentWeapon && CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
+    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
+    if (Weapon && Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
     {
-        //Clear timer (handling fire rate)
+        // Clear the timer to stop continuous shooting
         GetWorldTimerManager().ClearTimer(ShootTimer);
     }
 }
 
+
+
 void AEclipseRaptureCharacter::StartAiming()
 {
-    if (CurrentWeapon)
+    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
+    if (Weapon)
     {
         CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         IsAiming = true;
+
+        UE_LOG(LogTemp, Warning, TEXT("Started aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
 }
+
+
 
 void AEclipseRaptureCharacter::StopAiming()
 {
-    CurrentMovementState = ECharacterMovementState::ECMS_Idle;
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-    IsAiming = false;
+    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
+    if (Weapon)
+    {
+        CurrentMovementState = ECharacterMovementState::ECMS_Walking;
+        GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
+        IsAiming = false;
+
+        UE_LOG(LogTemp, Warning, TEXT("Stopped aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
+    }
 }
 
-//void AEclipseRaptureCharacter::SwapWeapon()
+
+
+//void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
 //{
-//    //Make sure the player has a weapon...
-//	if (CurrentWeapon == nullptr) return;
-//    
-//    if (bHasPrimaryWeapon && CurrentWeapon)
+//    if (CurrentWeapons.Contains(NewWeaponClass))
 //    {
-//        switch (CurrentWeapon->GetWeaponName())
+//        // Update the current weapon class to the new one
+//        CurrentWeaponClass = NewWeaponClass;
+//
+//        // Equip the new weapon
+//        AWeaponBase* NewWeapon = *CurrentWeapons.Find(NewWeaponClass);
+//        if (NewWeapon)
 //        {
-//        case EWeaponName::EWN_Unarmed:
-//            break;
+//            // Handle logic for updating mesh, animations, etc.
+//            // Example: PlayerBodyMesh->SetSkeletalMesh(NewWeapon->GetSkeletalMesh());
 //        }
+//
+//        UE_LOG(LogTemp, Warning, TEXT("Swapped to weapon class: %s"), *UEnum::GetValueAsString(NewWeaponClass));
+//    }
+//    else
+//    {
+//        UE_LOG(LogTemp, Warning, TEXT("Weapon of class %s not found"), *UEnum::GetValueAsString(NewWeaponClass));
 //    }
 //}
 
+
+
 void AEclipseRaptureCharacter::ShootTimerExpired()
 {
-    if (CurrentWeapon)
+    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
+    if (Weapon)
     {
-        CurrentWeapon->SetCanFire(true);  // Allow firing again
+        Weapon->SetCanFire(true);  // Allow the weapon to fire again
+        UE_LOG(LogTemp, Warning, TEXT("Shoot timer expired! Weapon class can fire again: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
-    GetWorldTimerManager().ClearTimer(ShootTimer);  // Clear the timer
+
+    GetWorldTimerManager().ClearTimer(ShootTimer);
 }
+
+
 
 #pragma endregion
 
@@ -432,11 +464,13 @@ void AEclipseRaptureCharacter::EndSprint()
 }
 
 
+
+
 bool AEclipseRaptureCharacter::CanSprint()
 {
     //Make sure player is walking or idle and is moving
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
         CurrentMovementState == ECharacterMovementState::ECMS_Idle &&
-        GetVelocity().Size() > 0;  
+        GetVelocity().Size() > 0;
 }
 #pragma endregion

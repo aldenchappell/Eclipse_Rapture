@@ -22,7 +22,7 @@ class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
 public:
 	AWeaponBase();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
-	TSubclassOf<class AWeaponPickup> WeaponPickup;
+	TSubclassOf<class AWeaponPickup> PickupClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	FName SocketName;
