@@ -217,33 +217,6 @@ void AEclipseRaptureCharacter::StopAiming()
     }
 }
 
-
-
-//void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
-//{
-//    if (CurrentWeapons.Contains(NewWeaponClass))
-//    {
-//        // Update the current weapon class to the new one
-//        CurrentWeaponClass = NewWeaponClass;
-//
-//        // Equip the new weapon
-//        AWeaponBase* NewWeapon = *CurrentWeapons.Find(NewWeaponClass);
-//        if (NewWeapon)
-//        {
-//            // Handle logic for updating mesh, animations, etc.
-//            // Example: PlayerBodyMesh->SetSkeletalMesh(NewWeapon->GetSkeletalMesh());
-//        }
-//
-//        UE_LOG(LogTemp, Warning, TEXT("Swapped to weapon class: %s"), *UEnum::GetValueAsString(NewWeaponClass));
-//    }
-//    else
-//    {
-//        UE_LOG(LogTemp, Warning, TEXT("Weapon of class %s not found"), *UEnum::GetValueAsString(NewWeaponClass));
-//    }
-//}
-
-
-
 void AEclipseRaptureCharacter::ShootTimerExpired()
 {
     AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
@@ -357,8 +330,6 @@ void AEclipseRaptureCharacter::Jump()
     Super::Jump();
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
-
-
 
 
 
