@@ -47,6 +47,10 @@
 		{
 			"Name": "HDRIBackdrop",
 			"Enabled": true
+		},
+		{
+			"Name": "Volumetrics",
+			"Enabled": true
 		}
 	]
 }
