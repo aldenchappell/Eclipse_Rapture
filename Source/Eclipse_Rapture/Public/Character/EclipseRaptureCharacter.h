@@ -213,6 +213,8 @@ private:
 	UFUNCTION()
 	bool CanSprint();
 
+	bool bCanMove = true;
+
 	float SprintFOVMultiplier = 1.2f;
 	float AimFOVMultiplier = .6f;
 
@@ -254,5 +256,8 @@ public:	//Getters and Setters
 
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
+
+	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
+	FORCEINLINE bool GetCanMove() const { return bCanMove; }
 };
 
