@@ -251,6 +251,11 @@ void AEclipseRaptureCharacter::OnStartCrouch(float HalfHeightAdjust, float Scale
     if (FirstPersonCamera)
     {
         FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+
+        // Attach the camera to the head socket when beginning to crouch
+		//FirstPersonCamera->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
+        // 
+		DrawDebugSphere(GetWorld(), FirstPersonCamera->GetComponentLocation(), 10.f, 12, FColor::Red, false, 1.f);
     }
     
 }
@@ -262,10 +267,16 @@ void AEclipseRaptureCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledH
     float StartBaseEyeHeight = BaseEyeHeight;
     Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
     CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight - HalfHeightAdjust;
+    
 
     if (FirstPersonCamera)
     {
         FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+
+
+        // Attach the camera to the spine05 socket when beginning to crouch
+        DrawDebugSphere(GetWorld(), FirstPersonCamera->GetComponentLocation(), 10.f, 12, FColor::Red, false, 1.f);
+        //FirstPersonCamera->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("spine_05"));
     }
     
 }
@@ -312,6 +323,7 @@ void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& Out
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
+    if (!bCanMove) return;
     FVector2D MovementVector = Value.Get<FVector2D>();
 
     if (Controller != nullptr)
@@ -327,6 +339,8 @@ void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 
 void AEclipseRaptureCharacter::Jump()
 {
+    if (!bCanMove) return;
+
     Super::Jump();
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
