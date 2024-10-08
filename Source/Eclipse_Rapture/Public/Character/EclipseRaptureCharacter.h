@@ -32,10 +32,6 @@ public:
 
 	
 #pragma endregion
-	void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
-	void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
-	void CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult) override;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	FVector CrouchEyeOffset;
 
@@ -150,9 +146,6 @@ protected:
 	void ToggleProne();
 	void StartSprint();
 	void EndSprint();
-	void StartCrouch();
-	void EndCrouch();
-	void ToggleCrouch();
 	void StartShooting();
 	void StopShooting();
 	void StartAiming();
@@ -160,9 +153,6 @@ protected:
 	//void SwapWeapon(EWeaponClass NewWeaponType);
 
 #pragma endregion
-
-
-
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 
@@ -181,6 +171,15 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
+	FVector OriginalCameraPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
+	FVector CameraInitialOffset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
+	float CrouchCameraHeight = -40.f; // Adjust this value based on how low you want the camera when crouched
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
@@ -203,8 +202,17 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int CurrentWeaponIndex;
-private:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
+	bool bCanUncrouch;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
+	bool bIsCrouching;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+private:
+	
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;

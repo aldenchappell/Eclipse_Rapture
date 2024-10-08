@@ -48,6 +48,8 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
+
+	
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -55,14 +57,22 @@ void AEclipseRaptureCharacter::BeginPlay()
     Super::BeginPlay();
 
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
+
+    // Calculate the initial offset from the spine bone
+  //  FVector SpineBonePosition = PlayerBodyMesh->GetSocketLocation(FName("spine_05"));
+   // CameraInitialOffset = FirstPersonCamera->GetComponentLocation() - SpineBonePosition;
+
+    // Log the initial offset for debugging
+ //   UE_LOG(LogTemp, Warning, TEXT("Camera Initial Offset: %s"), *CameraInitialOffset.ToString());
 }
+
 
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
     HandleFOV(DeltaTime);
-    HandleCrouch(DeltaTime);
+    //HandleCrouch(DeltaTime);
 
 }
 void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
@@ -81,7 +91,7 @@ void AEclipseRaptureCharacter::HandleFOV(float DeltaTime)
     {
         TargetFOV = AimFOV;
     }
-	else if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting)
+	else if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting && GetVelocity().Size() > 0)
 	{
 		TargetFOV = SprintFOV;
 	}
@@ -104,15 +114,9 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Movement
         EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
 
-		//Looking **MOVED TO BLUEPRINT**
-        //EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Look);
-
         //Jumping
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
-
-        //Crouching (Toggled)
-        EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleCrouch);
 
         //Sprinting
         EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
@@ -131,10 +135,6 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Aim
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
         EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
-
-        //Swapping Weapons
-        //EnhancedInputComponent->BindAction(EquipPrimaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon, EWeaponClass::EWC_Primary);
-        //EnhancedInputComponent->BindAction(EquipSecondaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::SwapWeapon, EWeaponClass::EWC_Secondary);
     }
 }
 #pragma endregion
@@ -240,55 +240,7 @@ void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase>
 
 #pragma region Movement
 
-void AEclipseRaptureCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
-{
-    if (HalfHeightAdjust == 0.f) return;
 
-    float StartBaseEyeHeight = BaseEyeHeight;
-    Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-    CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight + HalfHeightAdjust;
-
-    if (FirstPersonCamera)
-    {
-        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
-
-        // Attach the camera to the head socket when beginning to crouch
-		//FirstPersonCamera->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("head"));
-        // 
-		DrawDebugSphere(GetWorld(), FirstPersonCamera->GetComponentLocation(), 10.f, 12, FColor::Red, false, 1.f);
-    }
-    
-}
-
-void AEclipseRaptureCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
-{
-    if (HalfHeightAdjust == 0.f) return;
-
-    float StartBaseEyeHeight = BaseEyeHeight;
-    Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-    CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight - HalfHeightAdjust;
-    
-
-    if (FirstPersonCamera)
-    {
-        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
-
-
-        // Attach the camera to the spine05 socket when beginning to crouch
-        DrawDebugSphere(GetWorld(), FirstPersonCamera->GetComponentLocation(), 10.f, 12, FColor::Red, false, 1.f);
-        //FirstPersonCamera->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("spine_05"));
-    }
-    
-}
-
-void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)
-{
-    if (FirstPersonCamera)
-    {
-        FirstPersonCamera->GetCameraView(DeltaTime, OutResult);
-        OutResult.Location += CrouchEyeOffset;
-    }
-}
 #pragma region Deprecated Look Input
 /* LOOK INPUT MOVED TO BLUEPRINT
 * //void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
@@ -344,49 +296,6 @@ void AEclipseRaptureCharacter::Jump()
     Super::Jump();
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
-
-
-
-void AEclipseRaptureCharacter::StartCrouch()
-{
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent crouching while sprinting
-
-    Crouch();
-    GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeedCrouched;
-    CurrentMovementState = ECharacterMovementState::ECMS_Crouching;
-}
-
-void AEclipseRaptureCharacter::EndCrouch()
-{
-    UnCrouch();
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-
-    if (GetVelocity().Size() > 0)
-    {
-        CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-    }
-    else
-    {
-        CurrentMovementState = ECharacterMovementState::ECMS_Idle;
-    }
-}
-
-void AEclipseRaptureCharacter::ToggleCrouch()
-{
-    //Check if the player is already crouching
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Crouching)
-    {
-        EndCrouch();
-    }
-    else
-    {
-        StartCrouch();
-    }
-}
-
-
-
-
 
 void AEclipseRaptureCharacter::StartProne()
 {
@@ -455,7 +364,8 @@ bool AEclipseRaptureCharacter::CanSprint()
 {
     //Make sure player is walking or idle and is moving
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
-        CurrentMovementState == ECharacterMovementState::ECMS_Idle &&
+        CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
+		CurrentMovementState == ECharacterMovementState::ECMS_Crouching &&
         GetVelocity().Size() > 0;
 }
 #pragma endregion
