@@ -123,7 +123,7 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
 
         //Proning (Toggled)
-        EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
+        //EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
 
         //Interact
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
@@ -297,50 +297,50 @@ void AEclipseRaptureCharacter::Jump()
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
 
-void AEclipseRaptureCharacter::StartProne()
-{
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting || CurrentMovementState == ECharacterMovementState::ECMS_Crouching) return;
-
-    //Enter prone state
-    GetCharacterMovement()->MaxWalkSpeed = ProneMovementSpeed;
-    CurrentMovementState = ECharacterMovementState::ECMS_Prone;
-
-    //Transition to prone eye offset
-    ProneEyeOffset.Z = ProneEyeHeightZ; //this value dictates the Z position of the camera when entering the prone position
-
-    if(FirstPersonCamera)
-    {
-        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, ProneEyeOffset.Z), false);
-    }
-}
-
-void AEclipseRaptureCharacter::EndProne()
-{
-    //Exit prone state and return to walking speed and state
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-    CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-
-    //Transition to default eye offset
-    ProneEyeOffset.Z = 0.f;
-
-	if (FirstPersonCamera)
-	{
-		FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
-	}
-}
-
-
-void AEclipseRaptureCharacter::ToggleProne()
-{
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Prone)
-    {
-        EndProne();
-    }
-    else
-    {
-        StartProne();
-    }
-}
+//void AEclipseRaptureCharacter::StartProne()
+//{
+//    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting || CurrentMovementState == ECharacterMovementState::ECMS_Crouching) return;
+//
+//    //Enter prone state
+//    GetCharacterMovement()->MaxWalkSpeed = ProneMovementSpeed;
+//    CurrentMovementState = ECharacterMovementState::ECMS_Prone;
+//
+//    //Transition to prone eye offset
+//    ProneEyeOffset.Z = ProneEyeHeightZ; //this value dictates the Z position of the camera when entering the prone position
+//
+//    if(FirstPersonCamera)
+//    {
+//        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, ProneEyeOffset.Z), false);
+//    }
+//}
+//
+//void AEclipseRaptureCharacter::EndProne()
+//{
+//    //Exit prone state and return to walking speed and state
+//    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
+//    CurrentMovementState = ECharacterMovementState::ECMS_Walking;
+//
+//    //Transition to default eye offset
+//    ProneEyeOffset.Z = 0.f;
+//
+//	if (FirstPersonCamera)
+//	{
+//		FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
+//	}
+//}
+//
+//
+//void AEclipseRaptureCharacter::ToggleProne()
+//{
+//    if (CurrentMovementState == ECharacterMovementState::ECMS_Prone)
+//    {
+//        EndProne();
+//    }
+//    else
+//    {
+//        StartProne();
+//    }
+//}
 
 
 void AEclipseRaptureCharacter::StartSprint()
@@ -366,6 +366,7 @@ bool AEclipseRaptureCharacter::CanSprint()
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
         CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
 		CurrentMovementState == ECharacterMovementState::ECMS_Crouching &&
-        GetVelocity().Size() > 0;
+		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
+		!bIsCrouching && GetVelocity().Size() > 0;
 }
 #pragma endregion

@@ -32,12 +32,26 @@ public:
 
 	
 #pragma endregion
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
+	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	FVector CrouchEyeOffset;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	float CrouchEntranceSpeed;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool bCanCrouch;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool bIsCrouching;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool ToggleCrouching = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	float CameraCrouchOffset = -40.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	FVector ProneEyeOffset;
@@ -203,14 +217,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int CurrentWeaponIndex;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
-	bool bCanUncrouch;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
-	bool bIsCrouching;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
-	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 private:
 	
 
