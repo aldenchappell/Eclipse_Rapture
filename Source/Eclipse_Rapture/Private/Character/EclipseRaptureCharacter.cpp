@@ -365,8 +365,8 @@ bool AEclipseRaptureCharacter::CanSprint()
     //Make sure player is walking or idle and is moving
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
         CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
-		CurrentMovementState == ECharacterMovementState::ECMS_Crouching &&
+		CurrentMovementState != ECharacterMovementState::ECMS_Crouching &&
 		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
-		!bIsCrouching && GetVelocity().Size() > 0;
+		!bIsCrouching && !bIsProning && GetVelocity().Size() > 0;
 }
 #pragma endregion

@@ -62,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	float ProneEyeHeightZ;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool bIsProning;
+
 
 	virtual void Jump() override;
 	
