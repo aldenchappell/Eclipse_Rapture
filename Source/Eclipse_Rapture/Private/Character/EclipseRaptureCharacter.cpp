@@ -366,6 +366,7 @@ bool AEclipseRaptureCharacter::CanSprint()
     return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
         CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
 		CurrentMovementState == ECharacterMovementState::ECMS_Crouching &&
-        GetVelocity().Size() > 0;
+		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
+		!bIsCrouching && GetVelocity().Size() > 0;
 }
 #pragma endregion
