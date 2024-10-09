@@ -251,8 +251,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Shooting | Shooting Properties")
 	FTimerHandle ShootTimer;
 
-	UFUNCTION()
-	void ShootTimerExpired();
+	//UFUNCTION()
+	//void ShootTimerExpired();
 	
 public:	//Getters and Setters
 	UFUNCTION(Blueprintcallable)
