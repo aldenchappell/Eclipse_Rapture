@@ -2,7 +2,6 @@
 
 #pragma once
 
-
 #include "Interfaces/Fire.h"
 #include "WeaponTypes.h"
 #include "CoreMinimal.h"
@@ -48,7 +47,13 @@ protected:
 	float Range;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
-	float FireRate;
+	float FireRate = 0.2f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
+	float BurstDelay = .5f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
+	int32 ShotsPerBurst = 3;
 #pragma endregion
 
 #pragma region Ammo
@@ -131,12 +136,27 @@ private:
 	
 
 public: //Getters and Setters
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponFireMode GetWeaponFireMode() const { return WeaponFireMode; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponName GetWeaponName() const { return WeaponName; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponClass GetWeaponClass() const { return WeaponClass; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetFireRate() const { return FireRate; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool GetCanFire() const { return bCanFire; }
+
+	UFUNCTION(BlueprintCallable)
     FORCEINLINE void SetCanFire(bool NewCanFire) { bCanFire = NewCanFire; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentClipAmmo() const { return CurrentClipAmmo; }
 };
