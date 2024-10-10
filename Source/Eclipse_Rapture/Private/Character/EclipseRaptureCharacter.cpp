@@ -49,7 +49,8 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
-	
+    //Add footstep actor component
+	//FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -57,13 +58,6 @@ void AEclipseRaptureCharacter::BeginPlay()
     Super::BeginPlay();
 
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-
-    // Calculate the initial offset from the spine bone
-  //  FVector SpineBonePosition = PlayerBodyMesh->GetSocketLocation(FName("spine_05"));
-   // CameraInitialOffset = FirstPersonCamera->GetComponentLocation() - SpineBonePosition;
-
-    // Log the initial offset for debugging
- //   UE_LOG(LogTemp, Warning, TEXT("Camera Initial Offset: %s"), *CameraInitialOffset.ToString());
 }
 
 

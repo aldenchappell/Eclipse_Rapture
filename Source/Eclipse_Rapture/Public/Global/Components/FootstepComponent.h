@@ -2,21 +2,24 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CoreMinimal.h"
 #include "FootstepComponent.generated.h"
 
 class USoundBase;
+class UPhysicalMaterial;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UFootstepComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	
+public:
+
 	UFootstepComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -73,6 +76,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Footsteps | Footstep Properties")
 	float FootstepTraceDistance = 50.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Footsteps | Footstep Properties")
+	TObjectPtr<UPhysicalMaterial> CurrentSurfaceType;
+
 private:
 	UFUNCTION()
 	void ResetFootstepTimer();
@@ -80,8 +87,13 @@ private:
 	UFUNCTION()
 	FVector CalcFootstepLocation(AActor* Character);
 
-	bool bShouldPlaySound = false;;
+	UFUNCTION()
+	EPhysicalSurface GetSurfaceType(FHitResult HitInfo);
+
+	bool bShouldPlaySound = false;
+
+
 public:	//Getters and Setters
 
-	
+
 };

@@ -17,6 +17,7 @@ class UCameraComponent;
 class UWeaponBase;
 class AItem;
 class USkeletalMeshComponent;
+
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter
 {
@@ -158,16 +159,11 @@ protected:
 	*/
 #pragma region Input Functions
 	void Interact();
-	void StartProne();
-	void EndProne();
-	void ToggleProne();
 	void StartSprint();
 	void EndSprint();
-	void StartShooting();
-	void StopShooting();
 	void StartAiming();
 	void StopAiming();
-	//void SwapWeapon(EWeaponClass NewWeaponType);
+
 
 #pragma endregion
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
@@ -220,6 +216,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int CurrentWeaponIndex;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
+	TObjectPtr<class UFootstepComponent> FootstepComponent;
 private:
 	
 
