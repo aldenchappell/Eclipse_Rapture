@@ -11,7 +11,7 @@
 #include "CharacterTypes.generated.h"
 #include "Items/Item.h"
 #include "Weapons/WeaponBase.h"
-
+#include "Global/Components/FootstepComponent.h"
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -49,7 +49,9 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
-	
+    //Add footstep actor component
+	FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
+	FootstepComponent->SetupAttachment(GetRootComponent());
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -57,13 +59,6 @@ void AEclipseRaptureCharacter::BeginPlay()
     Super::BeginPlay();
 
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-
-    // Calculate the initial offset from the spine bone
-  //  FVector SpineBonePosition = PlayerBodyMesh->GetSocketLocation(FName("spine_05"));
-   // CameraInitialOffset = FirstPersonCamera->GetComponentLocation() - SpineBonePosition;
-
-    // Log the initial offset for debugging
- //   UE_LOG(LogTemp, Warning, TEXT("Camera Initial Offset: %s"), *CameraInitialOffset.ToString());
 }
 
 
@@ -72,8 +67,16 @@ void AEclipseRaptureCharacter::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     HandleFOV(DeltaTime);
-    //HandleCrouch(DeltaTime);
+    HandleFootsteps();
 
+}
+void AEclipseRaptureCharacter::HandleFootsteps()
+{
+    if (FootstepComponent)
+    {
+        FootstepComponent->DetermineFootstepOffset(CurrentMovementState);
+        FootstepComponent->FootstepTrace(this);
+    }
 }
 void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
 {
@@ -147,97 +150,6 @@ void AEclipseRaptureCharacter::Interact()
 		CurrentOverlappingItem = nullptr;
     }
 }
-#pragma region Shooting
-
-//void AEclipseRaptureCharacter::StartShooting()
-//{
-//    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent shooting while sprinting
-//
-//    // Get the current weapon based on the CurrentWeaponClass
-//    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
-//    if (Weapon && !GetWorldTimerManager().IsTimerActive(ShootTimer) && Weapon->GetCanFire())
-//    {
-//        float FireRate = Weapon->GetFireRate();
-//
-//        // Semi-auto fires once per click
-//        if (Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_SemiAuto)
-//        {
-//            Weapon->Execute_Fire(Weapon);  // Fire once
-//            Weapon->SetCanFire(false);  // Prevent further shooting until timer expires
-//            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::ShootTimerExpired, FireRate, false);
-//        }
-//        else if (Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_BurstFire)
-//        {
-//
-//        }
-//        // Automatic continues firing until the button is released
-//        else if (Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
-//        {
-//            Weapon->Execute_Fire(Weapon);  // Fire once
-//            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false);
-//        }
-//    }
-//}
-
-//void AEclipseRaptureCharacter::StartShooting()
-//{
-//    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent shooting while sprinting
-//
-//    AWeaponBase* EquippedWeapon = CurrentWeapons.FindRef(CurrentWeaponClass);
-//    if (EquippedWeapon)
-//    {
-//		EWeaponFireMode FireMode = EquippedWeapon->GetWeaponFireMode();
-//        switch (FireMode)
-//        {
-//        case EWeaponFireMode::EWFM_SemiAuto:
-//            if (EquippedWeapon->GetCanFire())
-//            {
-//				EquippedWeapon->SetCanFire(false);
-//                EquippedWeapon->Execute_Fire(EquippedWeapon);
-//				GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::ShootTimerExpired, EquippedWeapon->GetFireRate(), false);
-//            }
-//            break;
-//        case EWeaponFireMode::EWFM_BurstFire:
-//            if (EquippedWeapon->GetCanFire())
-//            {
-//
-//            }
-//            break;
-//		case EWeaponFireMode::EWFM_Automatic:
-//            if (EquippedWeapon->GetCanFire())
-//            {
-//
-//            }
-//            break;
-//		default: break;
-//        }
-//    }
-//}
-//
-//
-//
-//void AEclipseRaptureCharacter::StopShooting()
-//{
-//    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
-//    if (Weapon && Weapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
-//    {
-//        // Clear the timer to stop continuous shooting
-//        GetWorldTimerManager().ClearTimer(ShootTimer);
-//    }
-//}
-//
-//void AEclipseRaptureCharacter::ShootTimerExpired()
-//{
-//    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
-//    if (Weapon)
-//    {
-//        Weapon->SetCanFire(true);  // Allow the weapon to fire again
-//        UE_LOG(LogTemp, Warning, TEXT("Shoot timer expired! Weapon class can fire again: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
-//    }
-//
-//    GetWorldTimerManager().ClearTimer(ShootTimer);
-//}
-
 
 void AEclipseRaptureCharacter::StartAiming()
 {

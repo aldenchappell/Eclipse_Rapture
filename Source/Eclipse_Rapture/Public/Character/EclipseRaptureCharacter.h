@@ -17,6 +17,7 @@ class UCameraComponent;
 class UWeaponBase;
 class AItem;
 class USkeletalMeshComponent;
+
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter
 {
@@ -26,6 +27,7 @@ public:
 #pragma region Setup
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
+	void HandleFootsteps();
 	void HandleCrouch(float DeltaTime);
 	void HandleFOV(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -158,16 +160,11 @@ protected:
 	*/
 #pragma region Input Functions
 	void Interact();
-	void StartProne();
-	void EndProne();
-	void ToggleProne();
 	void StartSprint();
 	void EndSprint();
-	void StartShooting();
-	void StopShooting();
 	void StartAiming();
 	void StopAiming();
-	//void SwapWeapon(EWeaponClass NewWeaponType);
+
 
 #pragma endregion
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
@@ -220,6 +217,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int CurrentWeaponIndex;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
+	TObjectPtr<class UFootstepComponent> FootstepComponent;
 private:
 	
 
@@ -255,6 +254,11 @@ private:
 	//void ShootTimerExpired();
 	
 public:	//Getters and Setters
+
+	UFUNCTION(BlueprintCallable, Category = "Character | Movement")
+	ECharacterMovementState GetCurrentMovementState() const { return CurrentMovementState; }
+
+
 	UFUNCTION(Blueprintcallable)
 	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	

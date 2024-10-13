@@ -2,21 +2,29 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CoreMinimal.h"
 #include "FootstepComponent.generated.h"
 
 class USoundBase;
+class UPhysicalMaterial;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UFootstepComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	
+public:
+
 	UFootstepComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Footsteps | Footstep Functions")
+	void FootstepTrace(AActor* Character);
+
+	UFUNCTION()
+	float DetermineFootstepOffset(ECharacterMovementState MovementState);
 protected:
 	virtual void BeginPlay() override;
 
@@ -63,7 +71,7 @@ protected:
 	void PlayFootstepSound(AActor* Character, TArray<USoundBase*> FootstepSounds);
 
 	UFUNCTION(BlueprintCallable, Category = "Footsteps | Footstep Functions")
-	void FootstepTrace(AActor* Character);
+	void PlayFootstepSoundBySurfaceType(AActor* Character, EPhysicalSurface SurfaceType);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Footsteps | Footstep Properties")
 	FVector FootstepLocation;
@@ -73,6 +81,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Footsteps | Footstep Properties")
 	float FootstepTraceDistance = 50.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Footsteps | Footstep Properties")
+	TObjectPtr<UPhysicalMaterial> CurrentSurfaceType;
+
 private:
 	UFUNCTION()
 	void ResetFootstepTimer();
@@ -80,8 +92,17 @@ private:
 	UFUNCTION()
 	FVector CalcFootstepLocation(AActor* Character);
 
-	bool bShouldPlaySound = false;;
-public:	//Getters and Setters
+	UFUNCTION()
+	EPhysicalSurface GetSurfaceType(FHitResult HitInfo);
 
 	
+
+	bool bShouldPlaySound = false;
+
+	UPROPERTY()
+	TObjectPtr<AActor> CachedCharacter;
+
+public:	//Getters and Setters
+
+
 };
