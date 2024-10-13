@@ -20,6 +20,11 @@ public:
 	UFootstepComponent();
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Footsteps | Footstep Functions")
+	void FootstepTrace(AActor* Character);
+
+	UFUNCTION()
+	float DetermineFootstepOffset(ECharacterMovementState MovementState);
 protected:
 	virtual void BeginPlay() override;
 
@@ -66,7 +71,7 @@ protected:
 	void PlayFootstepSound(AActor* Character, TArray<USoundBase*> FootstepSounds);
 
 	UFUNCTION(BlueprintCallable, Category = "Footsteps | Footstep Functions")
-	void FootstepTrace(AActor* Character);
+	void PlayFootstepSoundBySurfaceType(AActor* Character, EPhysicalSurface SurfaceType);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Footsteps | Footstep Properties")
 	FVector FootstepLocation;
@@ -90,8 +95,12 @@ private:
 	UFUNCTION()
 	EPhysicalSurface GetSurfaceType(FHitResult HitInfo);
 
+	
+
 	bool bShouldPlaySound = false;
 
+	UPROPERTY()
+	TObjectPtr<AActor> CachedCharacter;
 
 public:	//Getters and Setters
 

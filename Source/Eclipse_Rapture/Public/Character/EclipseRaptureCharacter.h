@@ -27,6 +27,7 @@ public:
 #pragma region Setup
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
+	void HandleFootsteps();
 	void HandleCrouch(float DeltaTime);
 	void HandleFOV(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -253,6 +254,11 @@ private:
 	//void ShootTimerExpired();
 	
 public:	//Getters and Setters
+
+	UFUNCTION(BlueprintCallable, Category = "Character | Movement")
+	ECharacterMovementState GetCurrentMovementState() const { return CurrentMovementState; }
+
+
 	UFUNCTION(Blueprintcallable)
 	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	
