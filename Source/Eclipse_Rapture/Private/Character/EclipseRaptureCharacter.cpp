@@ -50,7 +50,8 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
     //Add footstep actor component
-	//FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
+	FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
+	FootstepComponent->SetupAttachment(GetRootComponent());
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
