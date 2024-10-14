@@ -160,13 +160,26 @@ protected:
 	*/
 #pragma region Input Functions
 	void Interact();
-	void StartSprint();
-	void EndSprint();
+	
 	void StartAiming();
 	void StopAiming();
 
+	//Sprinting
+	void StartSprint();
+	void EndSprint();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Movement")
+	float CurrentStamina;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement")
+	float MaxStamina = 15.f;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Character | Movement")
+	FTimerHandle SprintTimer;
 #pragma endregion
+
+
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 
@@ -225,8 +238,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;
 	
-
-	UFUNCTION()
+	UFUNCTION(Blueprintcallable, Category = "Character | Movement", meta = (AllowPrivateAccess = "true"))
 	bool CanSprint();
 
 	bool bCanMove = true;
@@ -258,7 +270,6 @@ public:	//Getters and Setters
 	UFUNCTION(BlueprintCallable, Category = "Character | Movement")
 	ECharacterMovementState GetCurrentMovementState() const { return CurrentMovementState; }
 
-
 	UFUNCTION(Blueprintcallable)
 	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	
@@ -279,6 +290,6 @@ public:	//Getters and Setters
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
 
 	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
-	FORCEINLINE bool GetCanMove() const { return bCanMove; }
+	bool GetCanMove() const { return bCanMove; }
 };
 

@@ -120,8 +120,8 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
 
         //Sprinting
-        EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
-        EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
+        //EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
+        //EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
 
         //Proning (Toggled)
         //EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
@@ -256,13 +256,12 @@ void AEclipseRaptureCharacter::EndSprint()
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed; 
 }
 
-
-
-
 bool AEclipseRaptureCharacter::CanSprint()
 {
-    //Make sure player is walking or idle and is moving
-    return CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
+
+    return 
+        CurrentStamina <= 0 && 
+        CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
         CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
 		CurrentMovementState != ECharacterMovementState::ECMS_Crouching &&
 		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
