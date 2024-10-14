@@ -4,6 +4,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Character/EclipseRaptureCharacter.h"
 
+#define FootstepChannel ECollisionChannel::ECC_GameTraceChannel2
+
 UFootstepComponent::UFootstepComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -11,8 +13,8 @@ UFootstepComponent::UFootstepComponent()
 	FootstepDelay = .6f;
 	FootstepVolumeMultiplier = 1.f;
 	FootstepPitchMultiplier = 1.f;
-	FootstepZOffset = 0.f;
-	FootstepTraceDistance = 50.f;
+	FootstepZOffset = 50.f;
+	FootstepTraceDistance = 100.f;
 	bShouldPlaySound = false;
 }
 
@@ -37,25 +39,48 @@ void UFootstepComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UFootstepComponent::PlayFootstepSound(AActor* Character, TArray<USoundBase*> FootstepSounds)
 {
-	if (FootstepSounds.Num() > 0)
-	{
-		int32 RandomSoundIndex = FMath::RandRange(0, FootstepSounds.Num() - 1);
-		USoundBase* RandomFootstepSound = FootstepSounds[RandomSoundIndex];
+    if (FootstepSounds.Num() > 0)
+    {
+        int32 RandomSoundIndex = FMath::RandRange(0, FootstepSounds.Num() - 1);
+        USoundBase* RandomFootstepSound = FootstepSounds[RandomSoundIndex];
 
+        if (bShouldPlaySound && RandomFootstepSound)
+        {
+            // Debug: Playing the footstep sound
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("Playing footstep sound"));
+            }
 
-		if (bShouldPlaySound && RandomFootstepSound)
-		{
-			UGameplayStatics::PlaySoundAtLocation(
-				GetWorld(),
-				RandomFootstepSound,
-				CalcFootstepLocation(Character),
-				FootstepVolumeMultiplier,
-				FootstepPitchMultiplier);
+            UGameplayStatics::PlaySoundAtLocation(
+                GetWorld(),
+                RandomFootstepSound,
+                CalcFootstepLocation(Character),
+                FootstepVolumeMultiplier,
+                FootstepPitchMultiplier);
 
-			ResetFootstepTimer();
-		}
-	}
+            ResetFootstepTimer();
+        }
+        else
+        {
+            // Debug: bShouldPlaySound is false or no valid sound
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("Sound not played: either bShouldPlaySound is false or no valid sound found"));
+            }
+        }
+    }
+    else
+    {
+        // Debug: No footstep sounds available
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("No footstep sounds available"));
+        }
+    }
 }
+
+
 
 void UFootstepComponent::FootstepTrace(AActor* Character)
 {
@@ -65,27 +90,52 @@ void UFootstepComponent::FootstepTrace(AActor* Character)
         FVector TraceStart = Character->GetActorLocation();
         FVector TraceEnd = TraceStart - FVector(0.f, 0.f, FootstepTraceDistance); // Tracing downwards
 
+        // Debug: Display trace start and end locations
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, FString::Printf(TEXT("Tracing from: %s to: %s"), *TraceStart.ToString(), *TraceEnd.ToString()));
+        }
+
+        // Draw the debug line for the trace
+        DrawDebugLine(
+            GetWorld(),
+            TraceStart,
+            TraceEnd,
+            FColor::Blue,    // Line color (you can change this to whatever color you prefer)
+            false,           // Persistent (false means the line will disappear after a short time)
+            1.0f,            // Lifetime (1 second in this case)
+            0,               // Depth priority (0 is fine for most cases)
+            2.0f             // Line thickness
+        );
+
         if (GetWorld()->LineTraceSingleByChannel(
             HitInfo,
             TraceStart,
             TraceEnd,
-            ECollisionChannel::ECC_Visibility))
+            FootstepChannel))
         {
             // Check if the hit has a valid physical material
-            if (HitInfo.PhysMaterial.IsValid())
+            if (HitInfo.PhysMaterial->SurfaceType)
             {
-                // Enable bool
+                // Enable sound to play
                 bShouldPlaySound = true;
 
-                // Set surface type
+                // Set surface type and footstep location
                 CurrentSurfaceType = HitInfo.PhysMaterial.Get();
-
-                // Set footstep location
                 FootstepLocation = CalcFootstepLocation(Character);
 
-                // Call the new function to play the sound based on surface type
+                // Debug: Show the hit location, actor name, and surface type
+                if (GEngine)
+                {
+                    FString ActorName = HitInfo.GetActor() ? HitInfo.GetActor()->GetName() : "No Actor";
+                    FString SurfaceTypeName = UEnum::GetValueAsString(TEXT("EPhysicalSurface"), GetSurfaceType(HitInfo));
+                    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, FString::Printf(TEXT("Hit Actor: %s, Hit Location: %s, Surface Type: %s"), *ActorName, *HitInfo.Location.ToString(), *SurfaceTypeName));
+                }
+
+                // Play sound based on surface type
                 PlayFootstepSoundBySurfaceType(Character, GetSurfaceType(HitInfo));
 
+                // Start/reset the footstep timer
                 if (GetWorld())
                 {
                     GetWorld()->GetTimerManager().SetTimer(FootstepTimerHandle, this, &UFootstepComponent::ResetFootstepTimer, FootstepDelay, false);
@@ -93,34 +143,43 @@ void UFootstepComponent::FootstepTrace(AActor* Character)
             }
             else
             {
-                // Invalid physical material; set the surface type to nullptr
+                // Debug: No valid physical material
+                if (GEngine)
+                {
+                    GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("No valid physical material detected!"));
+                }
+
                 bShouldPlaySound = false;
                 CurrentSurfaceType = nullptr;
             }
-            // Debug message
-            if (GEngine)
-            {
-                FString SurfaceTypeName = UEnum::GetValueAsString(TEXT("EPhysicalSurface"), GetSurfaceType(HitInfo));
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Surface Type: %s"), *SurfaceTypeName));
-            }
-		}
+        }
         else
         {
-            // No hit; set the surface type to nullptr
+            // Debug: No hit detected
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("No hit detected!"));
+            }
+
             bShouldPlaySound = false;
             CurrentSurfaceType = nullptr;
         }
     }
     else
     {
+        // Debug: Character reference is null
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("Character reference is null!"));
+        }
+
         bShouldPlaySound = false;
         CurrentSurfaceType = nullptr;
     }
-
-    
 }
 
-// New function to handle playing the sound based on the surface type
+
+
 void UFootstepComponent::PlayFootstepSoundBySurfaceType(AActor* Character, EPhysicalSurface SurfaceType)
 {
     switch (SurfaceType)

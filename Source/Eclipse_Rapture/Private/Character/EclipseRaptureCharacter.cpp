@@ -50,8 +50,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
     //Add footstep actor component
-	FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
-	FootstepComponent->SetupAttachment(GetRootComponent());
+	//FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -67,17 +66,16 @@ void AEclipseRaptureCharacter::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     HandleFOV(DeltaTime);
-    HandleFootsteps();
-
+    //HandleFootsteps();
 }
-void AEclipseRaptureCharacter::HandleFootsteps()
-{
-    if (FootstepComponent)
-    {
-        FootstepComponent->DetermineFootstepOffset(CurrentMovementState);
-        FootstepComponent->FootstepTrace(this);
-    }
-}
+//void AEclipseRaptureCharacter::HandleFootsteps()
+//{
+//    if (FootstepComponent && CurrentMovementState != ECharacterMovementState::ECMS_Idle)
+//    {
+//        FootstepComponent->DetermineFootstepOffset(CurrentMovementState);
+//        FootstepComponent->FootstepTrace(this);
+//    }
+//}
 void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
 {
     //Handle crouching interpolation
@@ -178,12 +176,6 @@ void AEclipseRaptureCharacter::StopAiming()
         UE_LOG(LogTemp, Warning, TEXT("Stopped aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
 }
-
-
-
-
-
-#pragma endregion
 
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
