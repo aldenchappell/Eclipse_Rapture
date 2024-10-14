@@ -27,7 +27,7 @@ public:
 #pragma region Setup
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
-	void HandleFootsteps();
+	//void HandleFootsteps();
 	void HandleCrouch(float DeltaTime);
 	void HandleFOV(float DeltaTime);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
