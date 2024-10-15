@@ -65,7 +65,7 @@ void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    HandleFOV(DeltaTime);
+    //HandleFOV(DeltaTime);
     //HandleFootsteps();
 }
 //void AEclipseRaptureCharacter::HandleFootsteps()
@@ -82,28 +82,30 @@ void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
     float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
     CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
 }
-void AEclipseRaptureCharacter::HandleFOV(float DeltaTime)
-{
-    //Determine the target FOV based on the current movement state
-    /*float TargetFOV = (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) ? SprintFOV : DefaultFOV;*/
 
-    float TargetFOV = DefaultFOV;
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Aiming)
-    {
-        TargetFOV = AimFOV;
-    }
-	else if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting && GetVelocity().Size() > 0)
-	{
-		TargetFOV = SprintFOV;
-	}
-    else
-    {
-        TargetFOV = DefaultFOV;
-    }
+//void AEclipseRaptureCharacter::HandleFOV(float DeltaTime)
+//{
+//    //Determine the target FOV based on the current movement state
+//    /*float TargetFOV = (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) ? SprintFOV : DefaultFOV;*/
+//
+//    float TargetFOV = DefaultFOV;
+//    if (CurrentMovementState == ECharacterMovementState::ECMS_Aiming)
+//    {
+//        TargetFOV = AimFOV;
+//    }
+//	else if (CanSprint() && CurrentMovementState == ECharacterMovementState::ECMS_Sprinting && GetVelocity().Size() > 0)
+//	{
+//		TargetFOV = SprintFOV;
+//	}
+//    else
+//    {
+//        TargetFOV = DefaultFOV;
+//    }
+//
+//    //Lerp the FOV between current and target FOV
+//    FirstPersonCamera->FieldOfView = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, 5.0f); // 5.0f is the interpolation speed
+//}
 
-    //Lerp the FOV between current and target FOV
-    FirstPersonCamera->FieldOfView = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, 5.0f); // 5.0f is the interpolation speed
-}
 #pragma region Setup Input
 void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -119,19 +121,8 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
         EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
 
-        //Sprinting
-        //EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
-        //EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
-
-        //Proning (Toggled)
-        //EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
-
         //Interact
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
-
-        //Shoot
-        //EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartShooting);
-        //EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopShooting);
 
         //Aim
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
@@ -241,30 +232,14 @@ void AEclipseRaptureCharacter::Jump()
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
 
-
-void AEclipseRaptureCharacter::StartSprint()
-{
-    if (!CanSprint()) return;
-
-    CurrentMovementState = ECharacterMovementState::ECMS_Sprinting;
-    GetCharacterMovement()->MaxWalkSpeed = StoredSprintSpeed;
-}
-
-void AEclipseRaptureCharacter::EndSprint()
-{
-    CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed; 
-}
-
 bool AEclipseRaptureCharacter::CanSprint()
 {
-
     return 
-        CurrentStamina <= 0 && 
+        CurrentStamina > 0 && GetVelocity().Size() > 0 &&
         CurrentMovementState == ECharacterMovementState::ECMS_Walking ||
         CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
 		CurrentMovementState != ECharacterMovementState::ECMS_Crouching &&
 		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
-		!bIsCrouching && !bIsProning && GetVelocity().Size() > 0;
+		!bIsCrouching && !bIsProning;
 }
 #pragma endregion

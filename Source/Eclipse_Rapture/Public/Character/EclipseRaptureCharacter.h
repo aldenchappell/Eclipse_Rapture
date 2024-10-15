@@ -29,7 +29,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	//void HandleFootsteps();
 	void HandleCrouch(float DeltaTime);
-	void HandleFOV(float DeltaTime);
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	
@@ -160,26 +160,33 @@ protected:
 	*/
 #pragma region Input Functions
 	void Interact();
-	
 	void StartAiming();
 	void StopAiming();
 
-	//Sprinting
-	void StartSprint();
-	void EndSprint();
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")
+	void HandleFOV(float DeltaTime);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Movement")
-	float CurrentStamina;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement")
-	float MaxStamina = 15.f;
-
-
-	UPROPERTY(BlueprintReadWrite, Category = "Character | Movement")
-	FTimerHandle SprintTimer;
+	
 #pragma endregion
 
+#pragma region Sprinting
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Movement | Sprinting")
+	float CurrentStamina;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement | Sprinting")
+	float MaxStamina = 15.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement | Sprinting")
+	float StaminaIncreaseRate = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement | Sprinting")
+	float StaminaDecreaseRate = 5.f;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Character | Movement | Sprinting")
+	FTimerHandle SprintTimer;
+
+#pragma endregion
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 
