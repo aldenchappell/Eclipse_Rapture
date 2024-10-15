@@ -64,47 +64,14 @@ void AEclipseRaptureCharacter::BeginPlay()
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    //HandleFOV(DeltaTime);
-    //HandleFootsteps();
 }
-//void AEclipseRaptureCharacter::HandleFootsteps()
-//{
-//    if (FootstepComponent && CurrentMovementState != ECharacterMovementState::ECMS_Idle)
-//    {
-//        FootstepComponent->DetermineFootstepOffset(CurrentMovementState);
-//        FootstepComponent->FootstepTrace(this);
-//    }
-//}
+
 void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
 {
     //Handle crouching interpolation
     float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
     CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
 }
-
-//void AEclipseRaptureCharacter::HandleFOV(float DeltaTime)
-//{
-//    //Determine the target FOV based on the current movement state
-//    /*float TargetFOV = (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) ? SprintFOV : DefaultFOV;*/
-//
-//    float TargetFOV = DefaultFOV;
-//    if (CurrentMovementState == ECharacterMovementState::ECMS_Aiming)
-//    {
-//        TargetFOV = AimFOV;
-//    }
-//	else if (CanSprint() && CurrentMovementState == ECharacterMovementState::ECMS_Sprinting && GetVelocity().Size() > 0)
-//	{
-//		TargetFOV = SprintFOV;
-//	}
-//    else
-//    {
-//        TargetFOV = DefaultFOV;
-//    }
-//
-//    //Lerp the FOV between current and target FOV
-//    FirstPersonCamera->FieldOfView = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, 5.0f); // 5.0f is the interpolation speed
-//}
 
 #pragma region Setup Input
 void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -127,6 +94,9 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Aim
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
         EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
+
+        //Melee
+		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Melee);
     }
 }
 #pragma endregion
@@ -166,6 +136,38 @@ void AEclipseRaptureCharacter::StopAiming()
 
         UE_LOG(LogTemp, Warning, TEXT("Stopped aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
+}
+
+
+/// <summary>
+/// Melee attack function, gets a random section of the melee montage and plays it
+/// </summary>
+void AEclipseRaptureCharacter::Melee()
+{
+	UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
+	if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
+	{
+		AnimInstance->Montage_Play(MeleeMontage);
+
+		const int32 RandomMeleeSection = FMath::RandRange(0, 1);
+        FName SectionName = FName();
+
+        switch (RandomMeleeSection)
+        {
+		case 0:
+			SectionName = FName("Melee_1");
+			break;
+		case 1:
+			SectionName = FName("Melee_2");
+            break;
+		default: 
+            UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to play melee montage."));
+            SectionName = FName("Melee_1");
+			break;
+        }
+		AnimInstance->Montage_JumpToSection(SectionName, MeleeMontage);
+        CurrentMovementState = ECharacterMovementState::ECMS_Melee;
+	}
 }
 
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)

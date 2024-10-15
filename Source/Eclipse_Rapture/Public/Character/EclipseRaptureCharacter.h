@@ -76,7 +76,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+
 #pragma region Movement Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredWalkSpeed;
@@ -131,13 +133,11 @@ protected:
 #pragma endregion
 	void Move(const FInputActionValue& Value);
 
-	/* LOOK INPUT MOVED TO BLUEPRINT
-	//void Look(const FInputActionValue& Value);
-	*/
 #pragma region Input Functions
 	void Interact();
 	void StartAiming();
 	void StopAiming();
+	void Melee();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")
 	void HandleFOV(float DeltaTime);
@@ -163,9 +163,8 @@ protected:
 	FTimerHandle SprintTimer;
 
 #pragma endregion
-	UPROPERTY(BlueprintReadWrite, Category = Leaning)
-	bool bResetLeaning;
 
+#pragma region Weapon Properties
 	UPROPERTY(BlueprintReadWrite, Category = Aiming)
 	bool IsAiming;
 
@@ -175,9 +174,23 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
 	bool bHasSecondaryWeapon;
 
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
-	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	int CurrentWeaponIndex;
+#pragma endregion
+
+#pragma region Camera Properties
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
@@ -198,20 +211,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
 	float VerticalSensitivity = 0.6f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+	UPROPERTY(BlueprintReadWrite, Category = Leaning)
+	bool bResetLeaning;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
+#pragma endregion
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
+	
+#pragma region Animation
+	TObjectPtr<UAnimMontage> MeleeMontage;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	int CurrentWeaponIndex;
+#pragma endregion
+	
+
+	
+	
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
 	TObjectPtr<class UFootstepComponent> FootstepComponent;
