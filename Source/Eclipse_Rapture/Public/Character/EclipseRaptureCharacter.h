@@ -116,41 +116,17 @@ protected:
 	TObjectPtr<UInputAction> MovementAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> LookAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> InteractAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> CrouchAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ProneAction;
-
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> SprintAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> LeanAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ShootAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> AimAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> EquipUnarmedAction;
+	TObjectPtr<UInputAction> MeleeAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> EquipPrimaryAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> EquipSecondaryAction;
 	
 #pragma endregion
 	void Move(const FInputActionValue& Value);
