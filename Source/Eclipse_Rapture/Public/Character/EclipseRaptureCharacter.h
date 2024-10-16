@@ -32,8 +32,20 @@ public:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Jump() override;
 	
-#pragma endregion
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
+	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+protected:
+	virtual void BeginPlay() override;
+#pragma region Movement Values
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 
@@ -67,19 +79,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	bool bIsProning;
 
-
-	virtual void Jump() override;
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon")
-	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
-
-
-protected:
-	virtual void BeginPlay() override;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
-	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+#pragma endregion
 
 #pragma region Movement Properties
+	void Move(const FInputActionValue& Value);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredWalkSpeed;
 
@@ -107,6 +111,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
 	float AimFOV;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
+	TObjectPtr<class UFootstepComponent> FootstepComponent;
+
 #pragma endregion
 	
 #pragma region Input Actions
@@ -131,7 +138,6 @@ protected:
 
 	
 #pragma endregion
-	void Move(const FInputActionValue& Value);
 
 #pragma region Input Functions
 	void Interact();
@@ -188,6 +194,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int CurrentWeaponIndex;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	TObjectPtr<USkeletalMeshComponent> MeleeWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	bool bCanMelee = true;
 #pragma endregion
 
 #pragma region Camera Properties
@@ -216,18 +228,13 @@ protected:
 
 #pragma endregion
 	
-	
 #pragma region Animation
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Animation")
 	TObjectPtr<UAnimMontage> MeleeMontage;
 
 #pragma endregion
 	
-
 	
-	
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
-	TObjectPtr<class UFootstepComponent> FootstepComponent;
 private:
 	
 
@@ -287,5 +294,10 @@ public:	//Getters and Setters
 
 	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
 	bool GetCanMove() const { return bCanMove; }
-};
 
+	UFUNCTION(Blueprintcallable)
+	USkeletalMeshComponent* GetMeleeWeaponMesh() const { return MeleeWeapon; }
+
+	UFUNCTION(Blueprintcallable)
+	bool SetCanMelee(bool CanMelee) { return bCanMelee = CanMelee; }
+};
