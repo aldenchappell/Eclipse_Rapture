@@ -2,12 +2,12 @@
 
 #pragma once
 
-
 #include "InputActionValue.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterTypes.h"
 #include "WeaponTypes.h"
+#include "Interfaces/CharacterData.h"
 #include "EclipseRaptureCharacter.generated.h"
 
 //Forward Declarations
@@ -19,7 +19,7 @@ class AItem;
 class USkeletalMeshComponent;
 
 UCLASS()
-class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter
+class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter, public ICharacterData
 {
 	GENERATED_BODY()
 
