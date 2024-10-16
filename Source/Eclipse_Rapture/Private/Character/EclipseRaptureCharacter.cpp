@@ -49,8 +49,8 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
-    //Add footstep actor component
-	//FootstepComponent = CreateDefaultSubobject<UFootstepComponent>(TEXT("FootstepComponent"));
+	MeleeWeapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Melee Weapon"));
+	MeleeWeapon->SetupAttachment(GetMesh());
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -96,7 +96,7 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
 
         //Melee
-		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Melee);
+		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Melee);
     }
 }
 #pragma endregion
@@ -144,9 +144,12 @@ void AEclipseRaptureCharacter::StopAiming()
 /// </summary>
 void AEclipseRaptureCharacter::Melee()
 {
-	UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
+    if (!bCanMelee) return;
+
+    UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
 	if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
 	{
+        UE_LOG(LogTemp, Warning, TEXT("Starting melee attack."));
 		AnimInstance->Montage_Play(MeleeMontage);
 
 		const int32 RandomMeleeSection = FMath::RandRange(0, 1);
@@ -168,6 +171,10 @@ void AEclipseRaptureCharacter::Melee()
 		AnimInstance->Montage_JumpToSection(SectionName, MeleeMontage);
         CurrentMovementState = ECharacterMovementState::ECMS_Melee;
 	}
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to start melee attack."));
+    }
 }
 
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
