@@ -11,7 +11,7 @@
 //Forward Declarations
 class UAnimationAsset;
 class UAnimMontage;
-
+class UBoxComponent;
 
 UCLASS()
 class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
@@ -28,6 +28,9 @@ public:
 
 	virtual void Fire_Implementation() override;
 
+	UPROPERTY(BlueprintReadWrite)
+	TArray<AActor*> IgnoreActors;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -39,6 +42,22 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	int32 WeaponIndex;
+
+#pragma region Melee
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Melee")
+	TObjectPtr<UBoxComponent> MeleeBoxTraceStart;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Melee")
+	TObjectPtr<UBoxComponent> MeleeBoxTraceEnd;
+
+	UFUNCTION()
+	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+					  bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bShouldDoBoxOverlapCheck = false;
+#pragma endregion
 #pragma region WeaponStats
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
 	float Damage;
@@ -133,7 +152,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 
-	
+	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	TObjectPtr<UBoxComponent> WeaponBox;
 
 public: //Getters and Setters
 	UFUNCTION(BlueprintCallable)
@@ -159,4 +179,13 @@ public: //Getters and Setters
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE float GetCurrentClipAmmo() const { return CurrentClipAmmo; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE UBoxComponent* GetWeaponBox() const { return WeaponBox; }
+
+	UPROPERTY()
+	TSubclassOf<AWeaponBase> MeleeWeaponClass{ this->GetClass() };
 };

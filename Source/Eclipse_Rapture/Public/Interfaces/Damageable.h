@@ -23,5 +23,5 @@ class ECLIPSE_RAPTURE_API IDamageable
 	
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Damage")
-	void TakeDamage(float DamageAmount);
+	void TakeDamage(float DamageAmount, FVector HitLocation);
 };

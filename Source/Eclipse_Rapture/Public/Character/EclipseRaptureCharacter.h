@@ -29,11 +29,23 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	//void HandleFootsteps();
 	void HandleCrouch(float DeltaTime);
-	void HandleFOV(float DeltaTime);
+	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void Jump() override;
 	
-#pragma endregion
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
+	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+protected:
+	virtual void BeginPlay() override;
+#pragma region Movement Values
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
 	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
 
@@ -67,17 +79,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	bool bIsProning;
 
+#pragma endregion
 
-	virtual void Jump() override;
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon")
-	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
-
-
-protected:
-	virtual void BeginPlay() override;
-	
 #pragma region Movement Properties
+	void Move(const FInputActionValue& Value);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredWalkSpeed;
 
@@ -105,6 +111,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
 	float AimFOV;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
+	TObjectPtr<class UFootstepComponent> FootstepComponent;
+
 #pragma endregion
 	
 #pragma region Input Actions
@@ -116,60 +125,52 @@ protected:
 	TObjectPtr<UInputAction> MovementAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> LookAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> InteractAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> CrouchAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ProneAction;
-
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> SprintAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> LeanAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ShootAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> AimAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> EquipUnarmedAction;
+	TObjectPtr<UInputAction> MeleeAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> EquipPrimaryAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> EquipSecondaryAction;
 	
 #pragma endregion
-	void Move(const FInputActionValue& Value);
 
-	/* LOOK INPUT MOVED TO BLUEPRINT
-	//void Look(const FInputActionValue& Value);
-	*/
 #pragma region Input Functions
 	void Interact();
-	void StartSprint();
-	void EndSprint();
 	void StartAiming();
 	void StopAiming();
+	void Melee();
 
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")
+	void HandleFOV(float DeltaTime);
+
+	
+#pragma endregion
+
+#pragma region Sprinting
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Movement | Sprinting")
+	float CurrentStamina;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement | Sprinting")
+	float MaxStamina = 15.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement | Sprinting")
+	float StaminaIncreaseRate = 5.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Movement | Sprinting")
+	float StaminaDecreaseRate = 5.f;
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "Character | Movement | Sprinting")
+	FTimerHandle SprintTimer;
 
 #pragma endregion
-	UPROPERTY(BlueprintReadWrite, Category = Leaning)
-	bool bResetLeaning;
 
+#pragma region Weapon Properties
 	UPROPERTY(BlueprintReadWrite, Category = Aiming)
 	bool IsAiming;
 
@@ -179,9 +180,29 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
 	bool bHasSecondaryWeapon;
 
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
-	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	int CurrentWeaponIndex;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	TObjectPtr<AWeaponBase> MeleeWeapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	bool bCanMelee = true;
+#pragma endregion
+
+#pragma region Camera Properties
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
 	TObjectPtr<UCameraComponent> FirstPersonCamera;
@@ -202,31 +223,25 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
 	float VerticalSensitivity = 0.6f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+	UPROPERTY(BlueprintReadWrite, Category = Leaning)
+	bool bResetLeaning;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
+#pragma endregion
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
+#pragma region Animation
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Animation")
+	TObjectPtr<UAnimMontage> MeleeMontage;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	int CurrentWeaponIndex;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
-	TObjectPtr<class UFootstepComponent> FootstepComponent;
+#pragma endregion
+	
+	
 private:
 	
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;
 	
-
-	UFUNCTION()
+	UFUNCTION(Blueprintcallable, Category = "Character | Movement", meta = (AllowPrivateAccess = "true"))
 	bool CanSprint();
 
 	bool bCanMove = true;
@@ -258,7 +273,6 @@ public:	//Getters and Setters
 	UFUNCTION(BlueprintCallable, Category = "Character | Movement")
 	ECharacterMovementState GetCurrentMovementState() const { return CurrentMovementState; }
 
-
 	UFUNCTION(Blueprintcallable)
 	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
 	
@@ -279,6 +293,11 @@ public:	//Getters and Setters
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
 
 	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
-	FORCEINLINE bool GetCanMove() const { return bCanMove; }
-};
+	bool GetCanMove() const { return bCanMove; }
 
+	UFUNCTION(Blueprintcallable)
+	AWeaponBase* GetMeleeWeapon() const { return MeleeWeapon; }
+
+	UFUNCTION(Blueprintcallable)
+	bool SetCanMelee(bool CanMelee) { return bCanMelee = CanMelee; }
+};
