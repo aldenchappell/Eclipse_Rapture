@@ -6,6 +6,8 @@
 #include "Interfaces/Damageable.h"
 
 
+#include "DrawDebugHelpers.h" //for debug drawing functions
+
 AWeaponBase::AWeaponBase()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -30,66 +32,76 @@ void AWeaponBase::BeginPlay()
     Super::BeginPlay();
 
     CurrentAmmo = MaxAmmo;
-    CurrentClipAmmo = ClipSize;  // Initialize with full clip
+    CurrentClipAmmo = ClipSize;
 
-    if (WeaponClass == EWeaponClass::EWC_Melee)
+    //should only be true on melee weapons. false by default
+    if (bShouldDoBoxOverlapCheck)
     {
-		WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnBoxOverlap);
+        WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnBoxOverlap);
     }
 }
 
 //For melee weapon collision
 void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+    //debug to see what is getting hit
+    if (GEngine)
+    {
+		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Black, FString("Hit: ") + OtherActor->GetName(), false);
+    }
+
+    //start and end points for the box trace
     const FVector TraceStart = MeleeBoxTraceStart->GetComponentLocation();
     const FVector TraceEnd = MeleeBoxTraceEnd->GetComponentLocation();
-    
-	
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(this);
 
-    //ensure that this weapon is added to ignore actors list
+    TArray<AActor*> ActorsToIgnore;
+    ActorsToIgnore.Add(this);
+
+    //ensure that this weapon is added to the ignore actors list
     for (AActor* Actor : ActorsToIgnore)
     {
-		IgnoreActors.AddUnique(Actor);
+        IgnoreActors.AddUnique(Actor);
     }
 
     FHitResult HitInfo;
+	FVector BoxHalfSize = WeaponBox->GetScaledBoxExtent(); //WeaponBox half size
 
-    UKismetSystemLibrary::BoxTraceSingle(
+	//box trace to see if we hit anything
+    bool GotHit = UKismetSystemLibrary::BoxTraceSingle(
         GetWorld(),
         TraceStart,
         TraceEnd,
-        FVector(5.f, 5.f, 5.f),
+        BoxHalfSize,
         MeleeBoxTraceStart->GetComponentRotation(),
         ETraceTypeQuery::TraceTypeQuery1,
         false,
         ActorsToIgnore,
-        EDrawDebugTrace::ForDuration,
+        EDrawDebugTrace::Persistent,
         HitInfo,
         true
     );
 
-    UGameplayStatics::ApplyDamage(
-		OtherActor,
-        Damage,
-        GetInstigator()->GetController(),
-        this,
-        UDamageType::StaticClass()
-    );
-
-    if (HitInfo.GetActor())
+    //If we hit something, apply damage
+    if (GotHit && HitInfo.GetActor())
     {
+        UGameplayStatics::ApplyDamage(
+            OtherActor,
+            Damage,
+            GetInstigator()->GetController(),
+            this,
+            UDamageType::StaticClass()
+        );
+
         IDamageable* DamageableActor = Cast<IDamageable>(HitInfo.GetActor());
 
         if (DamageableActor)
         {
             DamageableActor->Execute_TakeDamage(HitInfo.GetActor(), Damage, HitInfo.ImpactPoint);
         }
-		IgnoreActors.AddUnique(HitInfo.GetActor());
+        IgnoreActors.AddUnique(HitInfo.GetActor());
     }
-
 }
+
 
 /// <summary>
 /// Implements the fire function for the weapon(Line trace("raycast") is handled in blueprint.

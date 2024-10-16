@@ -196,7 +196,7 @@ protected:
 	int CurrentWeaponIndex;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	TObjectPtr<USkeletalMeshComponent> MeleeWeapon;
+	TObjectPtr<AWeaponBase> MeleeWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	bool bCanMelee = true;
@@ -296,7 +296,7 @@ public:	//Getters and Setters
 	bool GetCanMove() const { return bCanMove; }
 
 	UFUNCTION(Blueprintcallable)
-	USkeletalMeshComponent* GetMeleeWeaponMesh() const { return MeleeWeapon; }
+	AWeaponBase* GetMeleeWeapon() const { return MeleeWeapon; }
 
 	UFUNCTION(Blueprintcallable)
 	bool SetCanMelee(bool CanMelee) { return bCanMelee = CanMelee; }
