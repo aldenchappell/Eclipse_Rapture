@@ -49,8 +49,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
-	MeleeWeapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Melee Weapon"));
-	MeleeWeapon->SetupAttachment(GetMesh());
+	MeleeWeapon->SetRootComponent(GetRootComponent());
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -119,7 +118,7 @@ void AEclipseRaptureCharacter::StartAiming()
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         IsAiming = true;
 
-        UE_LOG(LogTemp, Warning, TEXT("Started aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
+        //UE_LOG(LogTemp, Warning, TEXT("Started aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
 }
 
@@ -181,10 +180,6 @@ void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase>
 {
 }
 
-
-#pragma region Movement
-
-
 #pragma region Deprecated Look Input
 /* LOOK INPUT MOVED TO BLUEPRINT
 * //void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
@@ -192,7 +187,7 @@ void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase>
 //    FVector2D LookAxisVector = Value.Get<FVector2D>();
 //
 //    if (Controller != nullptr)
-//    {  
+//    {
 //        float SetVertSens = GetVerticalSensitivity() / 2.5f;
 //        // add yaw and pitch input to controller
 //        AddControllerYawInput(LookAxisVector.X);
@@ -208,7 +203,7 @@ void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase>
 //        //TODO: Come back to this to make it so the player's head turns with input
 //        InputYaw = LookAxisVector.X * .25f;
 //        InputYaw = FMath::Clamp(InputYaw, -15.f, 15.f);
-//        
+//
 //
 //		InputPitch += LookAxisVector.Y;
 //		InputPitch = FMath::Clamp(InputPitch, -10.f, 18.f);
@@ -216,6 +211,11 @@ void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase>
 //}
 */
 #pragma endregion
+
+#pragma region Movement
+
+
+
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
@@ -228,8 +228,6 @@ void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
         // add movement 
         AddMovementInput(GetActorForwardVector(), MovementVector.Y);
         AddMovementInput(GetActorRightVector(), MovementVector.X);
-
-        
     }
 }
 
