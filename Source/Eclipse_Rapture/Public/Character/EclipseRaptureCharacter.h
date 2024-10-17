@@ -233,7 +233,19 @@ protected:
 	TObjectPtr<UAnimMontage> MeleeMontage;
 
 #pragma endregion
+
+#pragma region Weapon Sway
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Sway")
+	float SideMove;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Sway")
+	float MouseXSway;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Sway")
+	float MouseYSway;
+
+#pragma endregion
 	
 private:
 	

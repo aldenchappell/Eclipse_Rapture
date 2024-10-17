@@ -8,6 +8,7 @@
 
 #include "DrawDebugHelpers.h" //for debug drawing functions
 
+#define TraceChannel ETraceTypeQuery_
 AWeaponBase::AWeaponBase()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -81,6 +82,9 @@ void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
         true
     );
 
+	//UE_LOG(LogTemp, Warning, TEXT("Box X size: $d"), *BoxHalfSize.X.ToString());
+    //UE_LOG(LogTemp, Warning, TEXT("Box Y size: $d"), *BoxHalfSize.Y.ToString());
+    //UE_LOG(LogTemp, Warning, TEXT("Box Z size: $d"), *BoxHalfSize.Z.ToString());
     //If we hit something, apply damage
     if (GotHit && HitInfo.GetActor())
     {
