@@ -12,6 +12,7 @@
 class UAnimationAsset;
 class UAnimMontage;
 class UBoxComponent;
+class UParticleSystem;
 
 UCLASS()
 class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
@@ -30,6 +31,25 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> IgnoreActors;
+
+#pragma region Recoil Properties(to be used in BP_PlayerMain)
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
+	float RecoilMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
+	float SideRecoilMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
+	float KickbackRecoilMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
+	float KicksideRecoilMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
+	float KickupRecoilMultiplier = 1.f;
+
+#pragma endregion
 
 protected:
 	virtual void BeginPlay() override;
@@ -58,6 +78,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	bool bShouldDoBoxOverlapCheck = false;
 #pragma endregion
+
 #pragma region WeaponStats
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
 	float Damage;
@@ -139,6 +160,13 @@ protected:
 
 #pragma endregion
 
+#pragma region FX
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | FX")
+	TObjectPtr<UParticleSystem> MuzzleFlashFX;
+
+#pragma endregion
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponType WeaponType = EWeaponType::EWT_Unarmed;
@@ -188,4 +216,7 @@ public: //Getters and Setters
 
 	UPROPERTY()
 	TSubclassOf<AWeaponBase> MeleeWeaponClass{ this->GetClass() };
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE bool GetHasAmmo() const { return CurrentClipAmmo > 0; }
 };

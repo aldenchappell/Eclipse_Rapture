@@ -20,5 +20,9 @@ class ECLIPSE_RAPTURE_API ICharacterData
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inverse Kinematics")
 	FTransform GetLHIK() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inverse Kinematics")
+	void GetHandSwayData(float& SideMove, float& MouseX, float& MouseY) const;
 };
