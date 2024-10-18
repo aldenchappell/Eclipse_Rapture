@@ -11,7 +11,7 @@
 #include "CharacterTypes.generated.h"
 #include "Items/Item.h"
 #include "Weapons/WeaponBase.h"
-#include "Global/Components/FootstepComponent.h"
+#include "UI/AmmoCounterWComponent.h"
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -237,6 +237,35 @@ void AEclipseRaptureCharacter::Jump()
 
     Super::Jump();
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
+}
+
+void AEclipseRaptureCharacter::SetAmmo()
+{
+    if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
+    {
+        CurrentWeaponAmmo--;
+        switch (CurrentWeaponName)
+        {
+        case EWeaponName::EWN_Pistol_A:
+            SecondaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Pistol_B:
+            SecondaryAmmo = CurrentWeaponAmmo;
+            break;
+		case EWeaponName::EWN_Rifle_A:
+			PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Rifle_B:
+			PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+        default:
+            if (GEngine)
+            {
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
+            }
+            break;
+        }
+    }
 }
 
 bool AEclipseRaptureCharacter::CanSprint()

@@ -41,6 +41,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+
+	//For ui mostly
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	int32 CurrentWeaponAmmo;
+
 protected:
 	virtual void BeginPlay() override;
 #pragma region Movement Values
@@ -175,11 +180,12 @@ protected:
 
 #pragma endregion
 
-#pragma region Weapon Properties
+#pragma region UI
 
-	//For ui mostly
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
-	int32 CurrentWeaponAmmo;
+
+#pragma endregion
+
+#pragma region Weapon Properties
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
 	int32 PrimaryAmmo;
@@ -263,6 +269,8 @@ protected:
 
 #pragma endregion
 	
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
+	void SetAmmo();
 private:
 	
 
