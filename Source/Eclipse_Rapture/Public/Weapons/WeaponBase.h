@@ -51,6 +51,15 @@ public:
 
 #pragma endregion
 
+#pragma region Reloading
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Ammo")
+	void Reload(AWeaponBase* WeaponToReload);
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
+	float ReloadTime = 2.f;
+
+#pragma endregion
 protected:
 	virtual void BeginPlay() override;
 
@@ -104,10 +113,10 @@ protected:
 	int32 MaxAmmo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
-	int32 ClipSize;
+	int32 MaxMagazineSize;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Ammo")
-	int32 CurrentClipAmmo;
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Ammo")
+	int32 CurrentClipAmmo;*/
 #pragma endregion
 
 #pragma region Sounds
@@ -158,6 +167,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> HipfireMontage;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
+	TObjectPtr<UAnimMontage> ReloadMontage;
 #pragma endregion
 
 #pragma region FX
@@ -206,7 +217,7 @@ public: //Getters and Setters
     FORCEINLINE void SetCanFire(bool NewCanFire) { bCanFire = NewCanFire; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float GetCurrentClipAmmo() const { return CurrentClipAmmo; }
+	FORCEINLINE int GetCurrentClipAmmo() const { return CurrentAmmo; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
@@ -218,5 +229,8 @@ public: //Getters and Setters
 	TSubclassOf<AWeaponBase> MeleeWeaponClass{ this->GetClass() };
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE bool GetHasAmmo() const { return CurrentClipAmmo > 0; }
+	FORCEINLINE bool GetHasAmmo() const { return CurrentAmmo > 0; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE void SetMaxAmmoOnWeapon() { CurrentAmmo = MaxAmmo; }
 };

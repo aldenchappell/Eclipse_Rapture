@@ -33,6 +33,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Jump() override;
+
+#pragma endregion
 	
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
@@ -136,6 +138,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> MeleeAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> ReloadAction;
+
 	
 #pragma endregion
 
@@ -171,6 +176,17 @@ protected:
 #pragma endregion
 
 #pragma region Weapon Properties
+
+	//For ui mostly
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	int32 CurrentWeaponAmmo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	int32 PrimaryAmmo;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	int32 SecondaryAmmo;
+
 	UPROPERTY(BlueprintReadWrite, Category = Aiming)
 	bool IsAiming;
 
