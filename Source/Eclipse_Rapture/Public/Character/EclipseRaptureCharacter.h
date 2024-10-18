@@ -270,7 +270,7 @@ protected:
 #pragma endregion
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
-	void SetAmmo();
+	void OnWeaponUpdateSetAmmo();
 private:
 	
 

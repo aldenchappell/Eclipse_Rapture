@@ -239,7 +239,7 @@ void AEclipseRaptureCharacter::Jump()
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
 
-void AEclipseRaptureCharacter::SetAmmo()
+void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 {
     if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
     {

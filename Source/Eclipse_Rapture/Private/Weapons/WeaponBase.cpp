@@ -46,8 +46,14 @@ void AWeaponBase::Reload(AWeaponBase* WeaponToReload, float InventoryAmmo)
 {
     if (WeaponToReload->WeaponClass == EWeaponClass::EWC_Melee) return;
 
+	CurrentAmmo = MaxMagazineSize;
 
-	if (InventoryAmmo > 0)
+    if (GEngine)
+    {
+		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Black, FString("Ammo after reloading"), false);
+    }
+    //TODO: Uncomment this once inventory is setup.
+	/*if (InventoryAmmo > 0)
 	{
 		if (InventoryAmmo >= MaxMagazineSize)
 		{
@@ -60,7 +66,7 @@ void AWeaponBase::Reload(AWeaponBase* WeaponToReload, float InventoryAmmo)
 			InventoryAmmo = 0;
 		}
         SetCanFire(true);
-	}
+	}*/
 }
 
 
