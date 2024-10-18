@@ -33,7 +33,7 @@ void AWeaponBase::BeginPlay()
 {
     Super::BeginPlay();
 
-    CurrentAmmo = MaxAmmo;
+    CurrentAmmo = MaxMagazineSize;
 
     //should only be true on melee weapons. false by default
     if (bShouldDoBoxOverlapCheck)
@@ -42,26 +42,25 @@ void AWeaponBase::BeginPlay()
     }
 }
 
-void AWeaponBase::Reload(AWeaponBase* WeaponToReload)
+void AWeaponBase::Reload(AWeaponBase* WeaponToReload, float InventoryAmmo)
 {
     if (WeaponToReload->WeaponClass == EWeaponClass::EWC_Melee) return;
 
-    if (WeaponToReload->CurrentAmmo > 0 && WeaponToReload->CurrentAmmo < WeaponToReload->MaxMagazineSize)
-    {
-        int32 AmmoNeeded = WeaponToReload->MaxMagazineSize - WeaponToReload->CurrentAmmo;
 
-        if (WeaponToReload->CurrentAmmo >= AmmoNeeded)
-        {
-            WeaponToReload->CurrentAmmo -= AmmoNeeded;
-            WeaponToReload->CurrentAmmo = WeaponToReload->MaxMagazineSize;
-        }
-        else
-        {
-            WeaponToReload->CurrentAmmo += WeaponToReload->CurrentAmmo;
-        }
-
-        bCanFire = true;
-    }
+	if (InventoryAmmo > 0)
+	{
+		if (InventoryAmmo >= MaxMagazineSize)
+		{
+			CurrentAmmo = MaxMagazineSize;
+			InventoryAmmo -= MaxMagazineSize;
+		}
+		else
+		{
+			CurrentAmmo = InventoryAmmo;
+			InventoryAmmo = 0;
+		}
+        SetCanFire(true);
+	}
 }
 
 

@@ -54,7 +54,7 @@ public:
 #pragma region Reloading
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Ammo")
-	void Reload(AWeaponBase* WeaponToReload);
+	void Reload(AWeaponBase* WeaponToReload, float InventoryAmmo);
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
 	float ReloadTime = 2.f;
@@ -110,7 +110,7 @@ protected:
 	int32 CurrentAmmo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
-	int32 MaxAmmo;
+	int32 MaxHoldableAmmo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
 	int32 MaxMagazineSize;
@@ -140,12 +140,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sound")
 	TObjectPtr<USoundBase> MuzzleSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sound")
-	TObjectPtr<USoundBase> ReloadFinishedSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sound")
-	TObjectPtr<USoundBase> ReloadStartSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sound")
 	TObjectPtr<USoundBase> OutOfAmmoSound;
@@ -232,5 +226,5 @@ public: //Getters and Setters
 	FORCEINLINE bool GetHasAmmo() const { return CurrentAmmo > 0; }
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE void SetMaxAmmoOnWeapon() { CurrentAmmo = MaxAmmo; }
+	FORCEINLINE void SetMaxAmmoOnWeapon() { CurrentAmmo = MaxHoldableAmmo; }
 };
