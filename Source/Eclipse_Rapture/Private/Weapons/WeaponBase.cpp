@@ -28,12 +28,12 @@ AWeaponBase::AWeaponBase()
     MeleeBoxTraceEnd->SetupAttachment(GetRootComponent());   
 }
 
+
 void AWeaponBase::BeginPlay()
 {
     Super::BeginPlay();
 
     CurrentAmmo = MaxAmmo;
-    CurrentClipAmmo = ClipSize;
 
     //should only be true on melee weapons. false by default
     if (bShouldDoBoxOverlapCheck)
@@ -41,6 +41,29 @@ void AWeaponBase::BeginPlay()
         WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnBoxOverlap);
     }
 }
+
+void AWeaponBase::Reload(AWeaponBase* WeaponToReload)
+{
+    if (WeaponToReload->WeaponClass == EWeaponClass::EWC_Melee) return;
+
+    if (WeaponToReload->CurrentAmmo > 0 && WeaponToReload->CurrentAmmo < WeaponToReload->MaxMagazineSize)
+    {
+        int32 AmmoNeeded = WeaponToReload->MaxMagazineSize - WeaponToReload->CurrentAmmo;
+
+        if (WeaponToReload->CurrentAmmo >= AmmoNeeded)
+        {
+            WeaponToReload->CurrentAmmo -= AmmoNeeded;
+            WeaponToReload->CurrentAmmo = WeaponToReload->MaxMagazineSize;
+        }
+        else
+        {
+            WeaponToReload->CurrentAmmo += WeaponToReload->CurrentAmmo;
+        }
+
+        bCanFire = true;
+    }
+}
+
 
 //For melee weapon collision
 void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
