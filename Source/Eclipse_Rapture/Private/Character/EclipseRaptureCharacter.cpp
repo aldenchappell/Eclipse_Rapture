@@ -136,9 +136,10 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
     AWeaponBase* NewWeapon = GetCurrentWeaponByClass(NewWeaponClass);
     if (NewWeapon)
     {
-        // Detach and hide the current weapon (if any)
+        // Safely detach the current weapon (if any)
         if (CurrentWeapon)
         {
+            UE_LOG(LogTemp, Warning, TEXT("Detaching current weapon: %s"), *CurrentWeapon->GetName());
             CurrentWeapon->SetActorHiddenInGame(true);
             CurrentWeapon->SetActorEnableCollision(false);
             CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
@@ -148,7 +149,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         EquipWeapon(NewWeapon);
         CurrentWeaponClass = NewWeaponClass;
 
-        // Update the ammo UI or other logic
+        // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
     }
     else
@@ -156,8 +157,6 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         UE_LOG(LogTemp, Error, TEXT("Weapon class %d not found in inventory!"), static_cast<int32>(NewWeaponClass));
     }
 }
-
-
 
 
 void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
@@ -168,16 +167,27 @@ void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
         return;
     }
 
-    // Attach the weapon to the player's mesh at the specified socket
-    Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, Weapon->SocketName);
-    UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *Weapon->SocketName.ToString());
+    // Ensure the weapon is attached to the correct socket on the player's mesh
+    FName SocketName = Weapon->SocketName;
+    if (PlayerBodyMesh->DoesSocketExist(SocketName))
+    {
+        Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+        UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
+    }
 
     // Ensure the weapon is visible and collision is enabled
     Weapon->SetActorHiddenInGame(false);
     Weapon->SetActorEnableCollision(true);
+    Weapon->GetWeaponMesh()->SetVisibility(true, true);  // Force visibility
 
-    CurrentWeapon = Weapon;  // Store the reference to the equipped weapon
+    // Store the reference to the currently equipped weapon
+    CurrentWeapon = Weapon;
 }
+
 
 
 
@@ -213,29 +223,51 @@ void AEclipseRaptureCharacter::EquipUnarmed()
 {
     UE_LOG(LogTemp, Warning, TEXT("Equipping Unarmed."));
 
-    // Safely detach the current weapon (if it exists)
-    if (CurrentWeapon)
+    // If there is a current weapon, detach and hide it
+    //if (CurrentWeapon)
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("Detaching current weapon: %s"), *CurrentWeapon->GetName());
+
+    //    // Hide the weapon's mesh immediately and disable collision
+    //    CurrentWeapon->SetActorHiddenInGame(true);
+    //    CurrentWeapon->SetActorEnableCollision(false);
+    //    CurrentWeapon->GetWeaponMesh()->SetVisibility(false, true);  // Force visibility change
+
+    //    // Detach the weapon from the player's mesh
+    //    CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+    //    // Clear the current weapon reference
+    //    CurrentWeapon = nullptr;
+    //}
+
+	if (CurrentWeapons.FindRef(EWeaponClass::EWC_Primary))
+	{
+		USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary)->GetWeaponMesh();
+        if (WeaponMesh)
+        {
+            WeaponMesh->SetVisibility(false);
+        }
+		//CurrentWeapons.Remove(EWeaponClass::EWC_Secondary);
+	}
+    else if (CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary))
     {
-        UE_LOG(LogTemp, Warning, TEXT("Detaching current weapon: %s"), *CurrentWeapon->GetName());
-
-        // Hide the weapon and disable its collision
-        CurrentWeapon->SetActorHiddenInGame(true);
-        CurrentWeapon->SetActorEnableCollision(false);
-
-        // Detach it from the player mesh
-        CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-        // Clear the current weapon reference
-        CurrentWeapon = nullptr;
+        USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary)->GetWeaponMesh();
+        if (WeaponMesh)
+        {
+            WeaponMesh->SetVisibility(false);
+        }
+        //CurrentWeapons.Remove(EWeaponClass::EWC_Secondary);
     }
 
-    // Update the state to unarmed
+    // Update the character's state to unarmed
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
     CurrentWeaponType = EWeaponType::EWT_Unarmed;
     CurrentWeaponName = EWeaponName::EWN_Unarmed;
 
     UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
 }
+
+
 
 
 
@@ -275,7 +307,7 @@ void AEclipseRaptureCharacter::StartAiming()
     {
         CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
-        IsAiming = true;
+        bIsAiming = true;
 
         //UE_LOG(LogTemp, Warning, TEXT("Started aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
@@ -290,7 +322,7 @@ void AEclipseRaptureCharacter::StopAiming()
     {
         CurrentMovementState = ECharacterMovementState::ECMS_Walking;
         GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-        IsAiming = false;
+        bIsAiming = false;
 
         UE_LOG(LogTemp, Warning, TEXT("Stopped aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }

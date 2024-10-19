@@ -201,8 +201,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 SecondaryAmmo;
 
-	UPROPERTY(BlueprintReadWrite, Category = Aiming)
-	bool IsAiming;
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon | Weapon Logic")
+	bool bIsAiming;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon | Weapon Logic")
+	bool bIsReloading;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Logic")
 	bool bHasPrimaryWeapon;
@@ -359,4 +362,10 @@ public:	//Getters and Setters
 
 	UFUNCTION(Blueprintcallable)
 	bool SetCanMelee(bool CanMelee) { return bCanMelee = CanMelee; }
+
+	UFUNCTION(Blueprintcallable)
+	bool GetIsReloading() const { return bIsReloading; }
+
+	UFUNCTION(Blueprintcallable)
+	void SetIsReloading(bool Reloading) { bIsReloading = Reloading; }
 };
