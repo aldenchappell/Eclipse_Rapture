@@ -96,6 +96,11 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
         //Melee
 		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Melee);
+
+        //Swapping Weapons
+        EnhancedInputComponent->BindAction(UnarmedAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::EquipUnarmed);
+        EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::EquipPrimaryWeapon);
+        EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::EquipSecondaryWeapon);
     }
 }
 #pragma endregion
@@ -108,6 +113,160 @@ void AEclipseRaptureCharacter::Interact()
 		CurrentOverlappingItem = nullptr;
     }
 }
+
+void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Attempting to swap to weapon class: %d"), static_cast<int32>(NewWeaponClass));
+
+    // If the new weapon is already equipped, exit early
+    if (CurrentWeaponClass == NewWeaponClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Weapon class %d is already equipped."), static_cast<int32>(NewWeaponClass));
+        return;
+    }
+
+    // Handle switching to unarmed
+    if (NewWeaponClass == EWeaponClass::EWC_Unarmed)
+    {
+        EquipUnarmed();
+        return;
+    }
+
+    // Check if the new weapon exists in the inventory
+    AWeaponBase* NewWeapon = GetCurrentWeaponByClass(NewWeaponClass);
+    if (NewWeapon)
+    {
+        // Detach and hide the current weapon (if any)
+        if (CurrentWeapon)
+        {
+            CurrentWeapon->SetActorHiddenInGame(true);
+            CurrentWeapon->SetActorEnableCollision(false);
+            CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+        }
+
+        // Equip the new weapon
+        EquipWeapon(NewWeapon);
+        CurrentWeaponClass = NewWeaponClass;
+
+        // Update the ammo UI or other logic
+        OnWeaponUpdateSetAmmo();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Weapon class %d not found in inventory!"), static_cast<int32>(NewWeaponClass));
+    }
+}
+
+
+
+
+void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
+{
+    if (!Weapon)
+    {
+        UE_LOG(LogTemp, Error, TEXT("EquipWeapon called with a null weapon!"));
+        return;
+    }
+
+    // Attach the weapon to the player's mesh at the specified socket
+    Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, Weapon->SocketName);
+    UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *Weapon->SocketName.ToString());
+
+    // Ensure the weapon is visible and collision is enabled
+    Weapon->SetActorHiddenInGame(false);
+    Weapon->SetActorEnableCollision(true);
+
+    CurrentWeapon = Weapon;  // Store the reference to the equipped weapon
+}
+
+
+
+
+void AEclipseRaptureCharacter::DetachCurrentWeapon()
+{
+    if (CurrentWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Detaching weapon: %s"), *CurrentWeapon->GetName());
+
+        // Detach the weapon and show it in the world
+        //CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+        CurrentWeapon->SetActorHiddenInGame(false);
+        CurrentWeapon->SetActorEnableCollision(true);
+
+
+        CurrentWeapon = nullptr;  // Clear the current weapon reference
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No weapon to detach."));
+    }
+}
+
+
+AWeaponBase* AEclipseRaptureCharacter::GetCurrentWeaponByClass(EWeaponClass WeaponClass)
+{
+    // Retrieve the weapon instance from the CurrentWeapons map
+    return CurrentWeapons.Contains(WeaponClass) ? CurrentWeapons[WeaponClass] : nullptr;
+}
+
+void AEclipseRaptureCharacter::EquipUnarmed()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Equipping Unarmed."));
+
+    // Safely detach the current weapon (if it exists)
+    if (CurrentWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Detaching current weapon: %s"), *CurrentWeapon->GetName());
+
+        // Hide the weapon and disable its collision
+        CurrentWeapon->SetActorHiddenInGame(true);
+        CurrentWeapon->SetActorEnableCollision(false);
+
+        // Detach it from the player mesh
+        CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+        // Clear the current weapon reference
+        CurrentWeapon = nullptr;
+    }
+
+    // Update the state to unarmed
+    CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
+    CurrentWeaponType = EWeaponType::EWT_Unarmed;
+    CurrentWeaponName = EWeaponName::EWN_Unarmed;
+
+    UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
+}
+
+
+
+void AEclipseRaptureCharacter::EquipPrimaryWeapon()
+{
+    SwapWeapon(EWeaponClass::EWC_Primary);
+    CurrentWeaponAmmo = PrimaryAmmo;
+
+    CurrentWeaponClass = EWeaponClass::EWC_Primary;
+    CurrentWeaponType = EWeaponType::EWT_Primary;
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->GetWeaponMesh()->SetVisibility(true);
+		CurrentWeaponName = CurrentWeapon->GetWeaponName();
+	}
+}
+
+void AEclipseRaptureCharacter::EquipSecondaryWeapon()
+{
+    SwapWeapon(EWeaponClass::EWC_Secondary);
+    CurrentWeaponAmmo = SecondaryAmmo;
+
+    CurrentWeaponClass = EWeaponClass::EWC_Secondary;
+    CurrentWeaponType = EWeaponType::EWT_Secondary;
+    if (CurrentWeapon)
+    {
+        CurrentWeapon->GetWeaponMesh()->SetVisibility(true);
+        CurrentWeaponName = CurrentWeapon->GetWeaponName();
+    }
+}
+
 
 void AEclipseRaptureCharacter::StartAiming()
 {
@@ -243,7 +402,6 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 {
     if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
     {
-        CurrentWeaponAmmo--;
         switch (CurrentWeaponName)
         {
         case EWeaponName::EWN_Pistol_A:

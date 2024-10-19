@@ -43,7 +43,7 @@ public:
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 
 	//For ui mostly
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 CurrentWeaponAmmo;
 
 protected:
@@ -146,6 +146,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> ReloadAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> UnarmedAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> PrimaryAction;
+
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction> SecondaryAction;
 	
 #pragma endregion
 
@@ -187,40 +195,40 @@ protected:
 
 #pragma region Weapon Properties
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 PrimaryAmmo;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 SecondaryAmmo;
 
 	UPROPERTY(BlueprintReadWrite, Category = Aiming)
 	bool IsAiming;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Logic")
 	bool bHasPrimaryWeapon;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Logic")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Logic")
 	bool bHasSecondaryWeapon;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int CurrentWeaponIndex;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<AWeaponBase> MeleeWeapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	bool bCanMelee = true;
 #pragma endregion
 
@@ -298,11 +306,26 @@ private:
 	bool bEnableSensitivityChanges = false;
 	
 	//Shooting Properties
-	UPROPERTY(VisibleAnywhere, Category = "Shooting | Shooting Properties")
+	UPROPERTY(VisibleAnywhere, Category = "Weapon | Shooting | Shooting Properties")
 	FTimerHandle ShootTimer;
 
-	//UFUNCTION()
-	//void ShootTimerExpired();
+	void SwapWeapon(EWeaponClass NewWeaponClass);
+
+	// Helper to equip a weapon to the player
+	void EquipWeapon(AWeaponBase* Weapon);
+
+	// Helper to detach the current weapon
+	void DetachCurrentWeapon();
+
+	// Helper to get the current weapon instance by class
+	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
+
+	// Store reference to the currently equipped weapon (if any)
+	TObjectPtr<AWeaponBase> CurrentWeapon;
+
+	FORCEINLINE void EquipUnarmed();
+	FORCEINLINE void EquipPrimaryWeapon();
+	FORCEINLINE void EquipSecondaryWeapon();
 	
 public:	//Getters and Setters
 

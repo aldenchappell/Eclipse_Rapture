@@ -227,4 +227,7 @@ public: //Getters and Setters
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE void SetMaxAmmoOnWeapon() { CurrentAmmo = MaxHoldableAmmo; }
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE int GetMaxMagazineSize() { return MaxMagazineSize; }
 };
