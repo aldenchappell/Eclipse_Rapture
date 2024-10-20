@@ -133,7 +133,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
     }
 
     // Check if the new weapon exists in the inventory
-    AWeaponBase* NewWeapon = GetCurrentWeaponByClass(NewWeaponClass);
+    AWeaponBase* NewWeapon = CurrentWeapons.FindRef(NewWeaponClass);
     if (NewWeapon)
     {
         // Safely detach the current weapon (if any)
@@ -151,6 +151,12 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
 
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
+        
+		UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
+        if (AnimInstance && CurrentWeapon->EquipMontage)
+        {
+            AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
+        }
     }
     else
     {
@@ -188,31 +194,6 @@ void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
     CurrentWeapon = Weapon;
 }
 
-
-
-
-
-void AEclipseRaptureCharacter::DetachCurrentWeapon()
-{
-    if (CurrentWeapon)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Detaching weapon: %s"), *CurrentWeapon->GetName());
-
-        // Detach the weapon and show it in the world
-        //CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-        CurrentWeapon->SetActorHiddenInGame(false);
-        CurrentWeapon->SetActorEnableCollision(true);
-
-
-        CurrentWeapon = nullptr;  // Clear the current weapon reference
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No weapon to detach."));
-    }
-}
-
-
 AWeaponBase* AEclipseRaptureCharacter::GetCurrentWeaponByClass(EWeaponClass WeaponClass)
 {
     // Retrieve the weapon instance from the CurrentWeapons map
@@ -223,23 +204,6 @@ void AEclipseRaptureCharacter::EquipUnarmed()
 {
     UE_LOG(LogTemp, Warning, TEXT("Equipping Unarmed."));
 
-    // If there is a current weapon, detach and hide it
-    //if (CurrentWeapon)
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("Detaching current weapon: %s"), *CurrentWeapon->GetName());
-
-    //    // Hide the weapon's mesh immediately and disable collision
-    //    CurrentWeapon->SetActorHiddenInGame(true);
-    //    CurrentWeapon->SetActorEnableCollision(false);
-    //    CurrentWeapon->GetWeaponMesh()->SetVisibility(false, true);  // Force visibility change
-
-    //    // Detach the weapon from the player's mesh
-    //    CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-    //    // Clear the current weapon reference
-    //    CurrentWeapon = nullptr;
-    //}
-
 	if (CurrentWeapons.FindRef(EWeaponClass::EWC_Primary))
 	{
 		USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary)->GetWeaponMesh();
@@ -247,19 +211,18 @@ void AEclipseRaptureCharacter::EquipUnarmed()
         {
             WeaponMesh->SetVisibility(false);
         }
-		//CurrentWeapons.Remove(EWeaponClass::EWC_Secondary);
 	}
-    else if (CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary))
+
+    if (CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary))
     {
         USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary)->GetWeaponMesh();
         if (WeaponMesh)
         {
             WeaponMesh->SetVisibility(false);
         }
-        //CurrentWeapons.Remove(EWeaponClass::EWC_Secondary);
     }
 
-    // Update the character's state to unarmed
+	
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
     CurrentWeaponType = EWeaponType::EWT_Unarmed;
     CurrentWeaponName = EWeaponName::EWN_Unarmed;
@@ -267,37 +230,82 @@ void AEclipseRaptureCharacter::EquipUnarmed()
     UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
 }
 
-
-
-
-
 void AEclipseRaptureCharacter::EquipPrimaryWeapon()
 {
+    // Check if the primary weapon exists in the inventory
+    AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
+    if (!PrimaryWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No primary weapon found! Cannot swap to primary."));
+        return;  // Exit early if no primary weapon is found
+    }
+
+    // Check if the currently equipped weapon is already the primary weapon
+    if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Primary)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Primary weapon already equipped!"));
+        return;
+    }
+
+    // Swap to the primary weapon
     SwapWeapon(EWeaponClass::EWC_Primary);
     CurrentWeaponAmmo = PrimaryAmmo;
 
+    // Hide the secondary weapon if equipped
+    AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
+    if (SecondaryWeapon)
+    {
+        SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
+    }
+
+    // Set the primary weapon to visible
+    PrimaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Primary;
     CurrentWeaponType = EWeaponType::EWT_Primary;
-    if (CurrentWeapon)
-    {
-        CurrentWeapon->GetWeaponMesh()->SetVisibility(true);
-		CurrentWeaponName = CurrentWeapon->GetWeaponName();
-	}
+    CurrentWeaponName = PrimaryWeapon->GetWeaponName();
+
+    UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
 }
+
 
 void AEclipseRaptureCharacter::EquipSecondaryWeapon()
 {
+    // Check if the secondary weapon exists in the inventory
+    AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
+    if (!SecondaryWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No secondary weapon found! Cannot swap to secondary."));
+        return;  // Exit early if no secondary weapon is found
+    }
+
+    // Check if the currently equipped weapon is already the secondary weapon
+    if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Secondary)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Secondary weapon already equipped!"));
+        return;
+    }
+
+    // Swap to the secondary weapon
     SwapWeapon(EWeaponClass::EWC_Secondary);
     CurrentWeaponAmmo = SecondaryAmmo;
 
+    // Hide the primary weapon if equipped
+    AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
+    if (PrimaryWeapon)
+    {
+        PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
+    }
+
+    // Set the secondary weapon to visible
+    SecondaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Secondary;
     CurrentWeaponType = EWeaponType::EWT_Secondary;
-    if (CurrentWeapon)
-    {
-        CurrentWeapon->GetWeaponMesh()->SetVisibility(true);
-        CurrentWeaponName = CurrentWeapon->GetWeaponName();
-    }
+    CurrentWeaponName = SecondaryWeapon->GetWeaponName();
+
+    UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
 }
+
+
 
 
 void AEclipseRaptureCharacter::StartAiming()

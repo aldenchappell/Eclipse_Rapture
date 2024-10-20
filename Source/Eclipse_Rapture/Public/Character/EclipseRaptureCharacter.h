@@ -311,25 +311,27 @@ private:
 	//Shooting Properties
 	UPROPERTY(VisibleAnywhere, Category = "Weapon | Shooting | Shooting Properties")
 	FTimerHandle ShootTimer;
-
+#pragma region Swapping Weapons
+	UFUNCTION()
 	void SwapWeapon(EWeaponClass NewWeaponClass);
 
-	// Helper to equip a weapon to the player
+	UFUNCTION()
 	void EquipWeapon(AWeaponBase* Weapon);
 
-	// Helper to detach the current weapon
-	void DetachCurrentWeapon();
-
-	// Helper to get the current weapon instance by class
+	UFUNCTION()
 	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
 
-	// Store reference to the currently equipped weapon (if any)
+	//for weapon swapping
+	UPROPERTY()
 	TObjectPtr<AWeaponBase> CurrentWeapon;
+
 
 	FORCEINLINE void EquipUnarmed();
 	FORCEINLINE void EquipPrimaryWeapon();
 	FORCEINLINE void EquipSecondaryWeapon();
 	
+#pragma endregion
+
 public:	//Getters and Setters
 
 	UFUNCTION(BlueprintCallable, Category = "Character | Movement")

@@ -32,6 +32,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> IgnoreActors;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
+	TObjectPtr<UAnimMontage> EquipMontage;
+
 #pragma region Recoil Properties(to be used in BP_PlayerMain)
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
@@ -163,6 +166,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> ReloadMontage;
+
+	
 #pragma endregion
 
 #pragma region FX
