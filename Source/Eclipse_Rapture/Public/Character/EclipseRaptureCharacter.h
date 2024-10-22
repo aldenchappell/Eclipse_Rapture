@@ -190,6 +190,19 @@ protected:
 
 #pragma region UI
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI | UI Properties")
+	TObjectPtr<class UImage> CrosshairTextureImage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI | UI Properties")
+	TObjectPtr<class UTexture2D> CrosshairTexture2D;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
+	TObjectPtr<class UUserWidget> PlayerMainUI;
+
+	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
+	void SetCrosshairTexture(UTexture2D* Texture);
+
+
 
 #pragma endregion
 
