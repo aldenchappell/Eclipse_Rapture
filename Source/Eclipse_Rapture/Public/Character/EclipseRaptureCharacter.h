@@ -213,8 +213,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Logic")
 	bool bHasSecondaryWeapon;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Logic")
+	float WeaponSwapCooldown = 2.5f;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<AWeaponBase> CurrentWeaponBase;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
@@ -328,7 +334,17 @@ private:
 
 	FORCEINLINE void EquipUnarmed();
 	FORCEINLINE void EquipPrimaryWeapon();
+	void SetSwapTimer();
 	FORCEINLINE void EquipSecondaryWeapon();
+
+	// Timer handle to manage swap cooldown
+	FTimerHandle WeaponSwapTimerHandle;
+
+	// Flag to track if swapping is allowed
+	bool bCanSwapWeapon = true;
+
+	// Helper function to reset the swap ability
+	void ResetSwap();
 	
 #pragma endregion
 

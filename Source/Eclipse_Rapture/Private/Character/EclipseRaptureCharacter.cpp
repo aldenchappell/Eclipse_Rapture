@@ -222,6 +222,7 @@ void AEclipseRaptureCharacter::EquipUnarmed()
         }
     }
 
+    SetSwapTimer();
 	
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
     CurrentWeaponType = EWeaponType::EWT_Unarmed;
@@ -232,80 +233,103 @@ void AEclipseRaptureCharacter::EquipUnarmed()
 
 void AEclipseRaptureCharacter::EquipPrimaryWeapon()
 {
-    // Check if the primary weapon exists in the inventory
+    if (!bCanSwapWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
+        return;
+    }
+
     AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
     if (!PrimaryWeapon)
     {
         UE_LOG(LogTemp, Warning, TEXT("No primary weapon found! Cannot swap to primary."));
-        return;  // Exit early if no primary weapon is found
+        return;
     }
 
-    // Check if the currently equipped weapon is already the primary weapon
     if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Primary)
     {
         UE_LOG(LogTemp, Warning, TEXT("Primary weapon already equipped!"));
         return;
     }
 
-    // Swap to the primary weapon
+    // Start the cooldown timer
+    SetSwapTimer();
+
     SwapWeapon(EWeaponClass::EWC_Primary);
     CurrentWeaponAmmo = PrimaryAmmo;
 
-    // Hide the secondary weapon if equipped
     AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
     if (SecondaryWeapon)
     {
         SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
-    // Set the primary weapon to visible
     PrimaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Primary;
     CurrentWeaponType = EWeaponType::EWT_Primary;
     CurrentWeaponName = PrimaryWeapon->GetWeaponName();
 
+    CurrentWeaponBase = PrimaryWeapon;
+    
     UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
 }
+
+void AEclipseRaptureCharacter::SetSwapTimer()
+{
+    bCanSwapWeapon = false;
+    GetWorld()->GetTimerManager().SetTimer(WeaponSwapTimerHandle, this, &AEclipseRaptureCharacter::ResetSwap, WeaponSwapCooldown, false);
+}
+
 
 
 void AEclipseRaptureCharacter::EquipSecondaryWeapon()
 {
-    // Check if the secondary weapon exists in the inventory
+    if (!bCanSwapWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
+        return;
+    }
+
     AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
     if (!SecondaryWeapon)
     {
         UE_LOG(LogTemp, Warning, TEXT("No secondary weapon found! Cannot swap to secondary."));
-        return;  // Exit early if no secondary weapon is found
+        return;
     }
 
-    // Check if the currently equipped weapon is already the secondary weapon
     if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Secondary)
     {
         UE_LOG(LogTemp, Warning, TEXT("Secondary weapon already equipped!"));
         return;
     }
 
-    // Swap to the secondary weapon
+    SetSwapTimer();
+
     SwapWeapon(EWeaponClass::EWC_Secondary);
     CurrentWeaponAmmo = SecondaryAmmo;
 
-    // Hide the primary weapon if equipped
     AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
     if (PrimaryWeapon)
     {
         PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
-    // Set the secondary weapon to visible
     SecondaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Secondary;
     CurrentWeaponType = EWeaponType::EWT_Secondary;
     CurrentWeaponName = SecondaryWeapon->GetWeaponName();
 
+    CurrentWeaponBase = SecondaryWeapon;
+
     UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
 }
 
 
+void AEclipseRaptureCharacter::ResetSwap()
+{
+    bCanSwapWeapon = true;
+    UE_LOG(LogTemp, Warning, TEXT("Weapon swap ready."));
+}
 
 
 void AEclipseRaptureCharacter::StartAiming()
