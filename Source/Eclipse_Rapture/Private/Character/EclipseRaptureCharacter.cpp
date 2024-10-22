@@ -400,6 +400,14 @@ void AEclipseRaptureCharacter::Melee()
     }
 }
 
+void AEclipseRaptureCharacter::SetCrosshairTexture(UTexture2D* Texture)
+{
+    if (CrosshairTexture2D)
+    {
+        CrosshairTexture2D = Texture;
+    }
+}
+
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
 }
