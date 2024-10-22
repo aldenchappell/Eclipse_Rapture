@@ -239,46 +239,42 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
         return;
     }
 
+    // Find the primary weapon in the inventory
     AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
     if (!PrimaryWeapon)
     {
-        UE_LOG(LogTemp, Warning, TEXT("No primary weapon found! Cannot swap to primary."));
+        UE_LOG(LogTemp, Warning, TEXT("No primary weapon found!"));
         return;
     }
 
-    if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Primary)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Primary weapon already equipped!"));
-        return;
-    }
+    // Remove redundant check for already equipped primary weapon
+    SetSwapTimer();  // Start the cooldown timer
 
-    // Start the cooldown timer
-    SetSwapTimer();
-
+    // Proceed with swapping to the primary weapon
     SwapWeapon(EWeaponClass::EWC_Primary);
     CurrentWeaponAmmo = PrimaryAmmo;
 
+    // Hide the secondary weapon if equipped
     AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
     if (SecondaryWeapon)
     {
         SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
+    // Ensure the primary weapon is visible
     PrimaryWeapon->GetWeaponMesh()->SetVisibility(true);
+
+    // Update the weapon state
     CurrentWeaponClass = EWeaponClass::EWC_Primary;
     CurrentWeaponType = EWeaponType::EWT_Primary;
     CurrentWeaponName = PrimaryWeapon->GetWeaponName();
-
     CurrentWeaponBase = PrimaryWeapon;
-    
+
     UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
 }
 
-void AEclipseRaptureCharacter::SetSwapTimer()
-{
-    bCanSwapWeapon = false;
-    GetWorld()->GetTimerManager().SetTimer(WeaponSwapTimerHandle, this, &AEclipseRaptureCharacter::ResetSwap, WeaponSwapCooldown, false);
-}
+
+
 
 
 
@@ -331,6 +327,11 @@ void AEclipseRaptureCharacter::ResetSwap()
     UE_LOG(LogTemp, Warning, TEXT("Weapon swap ready."));
 }
 
+void AEclipseRaptureCharacter::SetSwapTimer()
+{
+    bCanSwapWeapon = false;
+    GetWorld()->GetTimerManager().SetTimer(WeaponSwapTimerHandle, this, &AEclipseRaptureCharacter::ResetSwap, WeaponSwapCooldown, false);
+}
 
 void AEclipseRaptureCharacter::StartAiming()
 {
