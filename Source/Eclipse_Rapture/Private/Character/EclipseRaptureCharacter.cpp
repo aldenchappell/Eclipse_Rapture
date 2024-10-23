@@ -12,6 +12,9 @@
 #include "Items/Item.h"
 #include "Weapons/WeaponBase.h"
 #include "UI/AmmoCounterWComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "UI/WidgetEclipseRaptureCharacter.h"
+#include "Components/Image.h" 
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -113,6 +116,8 @@ void AEclipseRaptureCharacter::Interact()
 		CurrentOverlappingItem = nullptr;
     }
 }
+
+#pragma region Combat
 
 void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
 {
@@ -341,9 +346,12 @@ void AEclipseRaptureCharacter::StartAiming()
         CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         bIsAiming = true;
-
-        //UE_LOG(LogTemp, Warning, TEXT("Started aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
     }
+
+	if (BasePlayerUI->CrosshairImage)
+	{
+		BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 
@@ -356,8 +364,11 @@ void AEclipseRaptureCharacter::StopAiming()
         CurrentMovementState = ECharacterMovementState::ECMS_Walking;
         GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
         bIsAiming = false;
+    }
 
-        UE_LOG(LogTemp, Warning, TEXT("Stopped aiming with weapon class: %s"), *UEnum::GetValueAsString(CurrentWeaponClass));
+    if (BasePlayerUI->CrosshairImage)
+    {
+        BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
     }
 }
 
@@ -400,6 +411,9 @@ void AEclipseRaptureCharacter::Melee()
     }
 }
 
+#pragma endregion
+
+#pragma region UI
 void AEclipseRaptureCharacter::SetCrosshairTexture(UTexture2D* Texture)
 {
     if (CrosshairTexture2D)
@@ -408,9 +422,7 @@ void AEclipseRaptureCharacter::SetCrosshairTexture(UTexture2D* Texture)
     }
 }
 
-void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
-{
-}
+#pragma endregion
 
 #pragma region Deprecated Look Input
 /* LOOK INPUT MOVED TO BLUEPRINT
@@ -447,8 +459,6 @@ void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase>
 #pragma region Movement
 
 
-
-
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
     if (!bCanMove) return;
@@ -470,6 +480,12 @@ void AEclipseRaptureCharacter::Jump()
     Super::Jump();
     CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
 }
+
+void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
+{
+}
+
+
 
 void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 {
@@ -497,6 +513,56 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
             break;
         }
     }
+}
+
+void AEclipseRaptureCharacter::Mantle()
+{
+    if (CurrentMovementState != ECharacterMovementState::ECMS_Jumping && CheckMantleAbility())
+    {
+        if (PlayerMainUI)
+        {
+            //hide the ui that tells the player they can mantle
+            //PlayerMainUI->ShowMantlePrompt(false);
+        }
+    }
+}
+
+bool AEclipseRaptureCharacter::CheckMantleAbility()
+{
+    //start the trace from the center of the actor + 100 on the Z to check above the hips (ideally at chest level)
+	FVector TraceStart = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 50.f);
+    FVector TraceEnd = TraceStart + GetActorForwardVector() * MantleTraceDistance;
+
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+    FHitResult HitInfo;
+
+    if (UKismetSystemLibrary::LineTraceSingle(
+        GetWorld(),
+        TraceStart,
+        TraceEnd,
+		ETraceTypeQuery::TraceTypeQuery1,
+        false,
+        ActorsToIgnore,
+        EDrawDebugTrace::Persistent,
+        HitInfo,
+        true))
+    {
+        if (HitInfo.bBlockingHit) //returns true if object is hit
+        {
+			UE_LOG(LogTemp, Warning, TEXT("Mantle check hit object: %s"), *HitInfo.GetActor()->GetName());
+            //show in ui that the player can mantle
+            //PlayerMainUI->ShowMantlePrompt(true);
+			return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return false;
 }
 
 bool AEclipseRaptureCharacter::CanSprint()
