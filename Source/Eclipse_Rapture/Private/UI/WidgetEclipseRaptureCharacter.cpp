@@ -3,3 +3,7 @@
 
 #include "UI/WidgetEclipseRaptureCharacter.h"
 
+void UWidgetEclipseRaptureCharacter::NativeConstruct()
+{
+
+}

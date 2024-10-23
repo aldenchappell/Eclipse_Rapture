@@ -118,8 +118,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
 	float AimFOV;
 
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadonly, Category = "Character | Footsteps")
-	TObjectPtr<class UFootstepComponent> FootstepComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
+	float MantleTraceDistance = 100.f;
 
 #pragma endregion
 	
@@ -198,6 +198,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
 	TObjectPtr<class UUserWidget> PlayerMainUI;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
+	TObjectPtr<class UWidgetEclipseRaptureCharacter> BasePlayerUI;
 
 	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
 	void SetCrosshairTexture(UTexture2D* Texture);
@@ -301,8 +304,15 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
 	void OnWeaponUpdateSetAmmo();
+
 private:
-	
+
+
+	UFUNCTION()
+	void Mantle();
+
+	UFUNCTION()
+	bool CheckMantleAbility();
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;
