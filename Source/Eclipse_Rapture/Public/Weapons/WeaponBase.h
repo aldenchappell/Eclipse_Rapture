@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> EquipMontage;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnEquip();
+
 #pragma region Recoil Properties(to be used in BP_PlayerMain)
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
@@ -176,6 +179,9 @@ protected:
 	TObjectPtr<UParticleSystem> MuzzleFlashFX;
 
 #pragma endregion
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	FTransform WeaponADSOffset;
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
