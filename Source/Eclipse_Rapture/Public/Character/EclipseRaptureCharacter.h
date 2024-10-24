@@ -18,6 +18,7 @@ class UWeaponBase;
 class AItem;
 class USkeletalMeshComponent;
 
+
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter, public ICharacterData
 {
@@ -31,8 +32,6 @@ public:
 	void HandleCrouch(float DeltaTime);
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual void Jump() override;
 
 #pragma endregion
 	
@@ -85,6 +84,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	bool bIsProning;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Mantle")
+	bool bCanMantle;
 
 #pragma endregion
 
@@ -301,18 +303,30 @@ protected:
 	float MouseYSway;
 
 #pragma endregion
+
+#pragma region Mantling
+
+	UFUNCTION(BlueprintCallable, Category = "Movement | Mantle")
+	void DoMantleTrace(float TraceLength, float TraceZOffset, float FallHeightAdjust, FVector& MantlePos1, FVector& MantlePos2);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Movement | Mantle")
+	void Mantle();
+
+	UPROPERTY(BlueprintReadWrite, Category = "Movement | Mantle")
+	FVector MantlePositionOne;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Movement | Mantle")
+	FVector MantlePositionTwo;
+
+
+
+
+#pragma endregion
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
 	void OnWeaponUpdateSetAmmo();
 
 private:
-
-
-	UFUNCTION()
-	void Mantle();
-
-	UFUNCTION()
-	bool CheckMantleAbility();
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class AItem> CurrentOverlappingItem;
@@ -371,7 +385,9 @@ private:
 	
 #pragma endregion
 
-public:	//Getters and Setters
+#pragma region Getters And Setters
+
+public:	
 
 	UFUNCTION(BlueprintCallable, Category = "Character | Movement")
 	ECharacterMovementState GetCurrentMovementState() const { return CurrentMovementState; }
@@ -398,6 +414,9 @@ public:	//Getters and Setters
 	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
 	bool GetCanMove() const { return bCanMove; }
 
+	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
+	bool SetCanMove(bool NewCanMove) { return bCanMove = NewCanMove; }
+
 	UFUNCTION(Blueprintcallable)
 	AWeaponBase* GetMeleeWeapon() const { return MeleeWeapon; }
 
@@ -409,4 +428,6 @@ public:	//Getters and Setters
 
 	UFUNCTION(Blueprintcallable)
 	void SetIsReloading(bool Reloading) { bIsReloading = Reloading; }
+
+#pragma endregion
 };
