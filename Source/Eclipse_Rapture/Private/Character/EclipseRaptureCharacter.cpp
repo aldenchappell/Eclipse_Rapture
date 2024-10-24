@@ -86,10 +86,6 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Movement
         EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
 
-        //Jumping
-        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
-        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
-
         //Interact
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
 
@@ -346,15 +342,13 @@ void AEclipseRaptureCharacter::StartAiming()
         CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         bIsAiming = true;
+
+        if (BasePlayerUI->CrosshairImage)
+        {
+            BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
+        }
     }
-
-	if (BasePlayerUI->CrosshairImage)
-	{
-		BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
-	}
 }
-
-
 
 void AEclipseRaptureCharacter::StopAiming()
 {
@@ -364,11 +358,11 @@ void AEclipseRaptureCharacter::StopAiming()
         CurrentMovementState = ECharacterMovementState::ECMS_Walking;
         GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
         bIsAiming = false;
-    }
 
-    if (BasePlayerUI->CrosshairImage)
-    {
-        BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
+        if (BasePlayerUI->CrosshairImage)
+        {
+            BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
+        }
     }
 }
 
@@ -408,6 +402,34 @@ void AEclipseRaptureCharacter::Melee()
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to start melee attack."));
+    }
+}
+
+void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
+{
+    if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
+    {
+        switch (CurrentWeaponName)
+        {
+        case EWeaponName::EWN_Pistol_A:
+            SecondaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Pistol_B:
+            SecondaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Rifle_A:
+            PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Rifle_B:
+            PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+        default:
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
+            }
+            break;
+        }
     }
 }
 
@@ -461,7 +483,8 @@ void AEclipseRaptureCharacter::SetCrosshairTexture(UTexture2D* Texture)
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
-    if (!bCanMove) return;
+    if (!GetCanMove()) return;
+
     FVector2D MovementVector = Value.Get<FVector2D>();
 
     if (Controller != nullptr)
@@ -473,96 +496,87 @@ void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
     }
 }
 
-void AEclipseRaptureCharacter::Jump()
-{
-    if (!bCanMove) return;
-
-    Super::Jump();
-    CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
-}
-
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
 }
 
-
-
-void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
+void AEclipseRaptureCharacter::DoMantleTrace(
+    float TraceLength, float TraceZOffset, float FallHeightAdjust,
+    FVector& MantlePos1, FVector& MantlePos2)
 {
-    if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
-    {
-        switch (CurrentWeaponName)
-        {
-        case EWeaponName::EWN_Pistol_A:
-            SecondaryAmmo = CurrentWeaponAmmo;
-            break;
-        case EWeaponName::EWN_Pistol_B:
-            SecondaryAmmo = CurrentWeaponAmmo;
-            break;
-		case EWeaponName::EWN_Rifle_A:
-			PrimaryAmmo = CurrentWeaponAmmo;
-            break;
-        case EWeaponName::EWN_Rifle_B:
-			PrimaryAmmo = CurrentWeaponAmmo;
-            break;
-        default:
-            if (GEngine)
-            {
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
-            }
-            break;
-        }
-    }
-}
+    bCanMantle = false;
+    //start the trace around eye level(ish)
+    FVector TraceStart = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 50.f);
+    FVector TraceEnd = TraceStart + GetActorForwardVector() * TraceLength;
 
-void AEclipseRaptureCharacter::Mantle()
-{
-    if (CurrentMovementState != ECharacterMovementState::ECMS_Jumping && CheckMantleAbility())
-    {
-        if (PlayerMainUI)
-        {
-            //hide the ui that tells the player they can mantle
-            //PlayerMainUI->ShowMantlePrompt(false);
-        }
-    }
-}
+    TArray<AActor*> ActorsToIgnore;
+    ActorsToIgnore.Add(this);
 
-bool AEclipseRaptureCharacter::CheckMantleAbility()
-{
-    //start the trace from the center of the actor + 100 on the Z to check above the hips (ideally at chest level)
-	FVector TraceStart = FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 50.f);
-    FVector TraceEnd = TraceStart + GetActorForwardVector() * MantleTraceDistance;
+    FHitResult InitialHitInfo, SecondaryHitInfo, TertiaryHitInfo, QuaternaryHitInfo;
 
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(this);
-
-    FHitResult HitInfo;
-
+    // Line Trace to detect object in front of player
     if (UKismetSystemLibrary::LineTraceSingle(
-        GetWorld(),
-        TraceStart,
-        TraceEnd,
-		ETraceTypeQuery::TraceTypeQuery1,
-        false,
-        ActorsToIgnore,
-        EDrawDebugTrace::Persistent,
-        HitInfo,
-        true))
+        GetWorld(), TraceStart, TraceEnd, ETraceTypeQuery::TraceTypeQuery1,
+        false, ActorsToIgnore, EDrawDebugTrace::None, InitialHitInfo, true, FLinearColor::Black))
     {
-        if (HitInfo.bBlockingHit) //returns true if object is hit
+        // Adjust Z offset based on whether player is falling
+        bool IsFalling = GetCharacterMovement()->IsFalling();
+        FVector SphereTraceEnd = InitialHitInfo.Location;
+        SphereTraceEnd.Z += IsFalling ? FallHeightAdjust : TraceZOffset;
+
+        //Sphere Trace to determine mantle height
+        if (UKismetSystemLibrary::SphereTraceSingle(
+            GetWorld(), InitialHitInfo.Location, SphereTraceEnd, 10.f,
+            ETraceTypeQuery::TraceTypeQuery1, false, ActorsToIgnore,
+            EDrawDebugTrace::ForDuration, SecondaryHitInfo, true, FLinearColor::Gray))
         {
-			UE_LOG(LogTemp, Warning, TEXT("Mantle check hit object: %s"), *HitInfo.GetActor()->GetName());
-            //show in ui that the player can mantle
-            //PlayerMainUI->ShowMantlePrompt(true);
-			return true;
-        }
-        else
-        {
-            return false;
+            //Calculate mantle positions
+            MantlePos1 = SecondaryHitInfo.ImpactPoint + GetActorForwardVector() * -50.f;
+            MantlePos2 = SecondaryHitInfo.ImpactPoint + GetActorForwardVector() * 120.f;
+            bCanMantle = true;
+
+            //Perform Tertiary Sphere Trace to check for clear space
+            FVector TertiaryTraceLocation = MantlePos2 + FVector(0.f, 0.f, 20.f);
+            if (UKismetSystemLibrary::SphereTraceSingle(
+                GetWorld(), TertiaryTraceLocation, TertiaryTraceLocation, 10.f,
+                ETraceTypeQuery::TraceTypeQuery1, false, ActorsToIgnore,
+                EDrawDebugTrace::ForDuration, TertiaryHitInfo, true))
+            {
+                bCanMantle = false;
+
+                // Validate Mantle Positions
+                if ((MantlePos1 == FVector::ZeroVector) || (MantlePos2 == FVector::ZeroVector))
+                {
+                    bCanMantle = false;
+                }
+                else
+                {
+                    // Adjust MantlePos2 based on Tertiary Trace
+                    MantlePos2 = TertiaryHitInfo.ImpactPoint + GetActorForwardVector() * 50.f;
+
+                    // Perform Final Quad Sphere Trace
+                    FVector QuadTraceStart = MantlePos1;
+                    FVector QuadTraceEnd = MantlePos2 + FVector(0.f, 0.f, 100.f);
+
+                    if (UKismetSystemLibrary::SphereTraceSingle(
+                        GetWorld(), QuadTraceStart, QuadTraceEnd, 20.f,
+                        ETraceTypeQuery::TraceTypeQuery1, false, ActorsToIgnore,
+                        EDrawDebugTrace::ForDuration, QuaternaryHitInfo, true))
+                    {
+                        bCanMantle = false;
+                    }
+                }
+            }
+            else
+            {
+                MantlePos2 = TertiaryHitInfo.ImpactPoint + GetActorForwardVector() * 50.f;
+            }
         }
     }
-
-    return false;
+    else
+    {
+        bCanMantle = false;
+    }
 }
 
 bool AEclipseRaptureCharacter::CanSprint()
@@ -573,6 +587,8 @@ bool AEclipseRaptureCharacter::CanSprint()
         CurrentMovementState == ECharacterMovementState::ECMS_Idle ||
 		CurrentMovementState != ECharacterMovementState::ECMS_Crouching &&
 		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
+        CurrentMovementState != ECharacterMovementState::ECMS_Jumping &&
+        CurrentMovementState != ECharacterMovementState::ECMS_Mantling &&
 		!bIsCrouching && !bIsProning;
 }
 #pragma endregion
