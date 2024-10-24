@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 CurrentWeaponAmmo;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	FTransform PlayerADSOffset;
+
 protected:
 	virtual void BeginPlay() override;
 #pragma region Movement Values
@@ -88,6 +91,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Mantle")
 	bool bCanMantle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	FTransform DefaultTorsoTransform;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
+	FTransform CalculateADSTransform();
+
+	
 #pragma endregion
 
 #pragma region Movement Properties
@@ -161,9 +171,13 @@ protected:
 
 #pragma region Input Functions
 	void Interact();
-	void StartAiming();
-	void StopAiming();
 	void Melee();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
+	void StartAiming();
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
+	void StopAiming();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")
 	void HandleFOV(float DeltaTime);

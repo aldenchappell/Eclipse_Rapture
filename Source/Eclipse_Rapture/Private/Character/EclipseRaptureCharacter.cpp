@@ -90,8 +90,8 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
 
         //Aim
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
-        EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
+		/*EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
+        EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);*/
 
         //Melee
 		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Melee);
@@ -149,6 +149,9 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         // Equip the new weapon
         EquipWeapon(NewWeapon);
         CurrentWeaponClass = NewWeaponClass;
+
+        //Call OnEquip on weapon
+        NewWeapon->OnEquip();
 
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
@@ -240,7 +243,7 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
         return;
     }
 
-    // Find the primary weapon in the inventory
+	//Check for primary weapon in player weapon inventory
     AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
     if (!PrimaryWeapon)
     {
@@ -248,24 +251,22 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
         return;
     }
 
-    // Remove redundant check for already equipped primary weapon
-    SetSwapTimer();  // Start the cooldown timer
+    SetSwapTimer();
 
-    // Proceed with swapping to the primary weapon
     SwapWeapon(EWeaponClass::EWC_Primary);
     CurrentWeaponAmmo = PrimaryAmmo;
 
-    // Hide the secondary weapon if equipped
+    //Hide the secondary weapon if equipped
     AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
     if (SecondaryWeapon)
     {
         SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
-    // Ensure the primary weapon is visible
+    
     PrimaryWeapon->GetWeaponMesh()->SetVisibility(true);
 
-    // Update the weapon state
+    //Update weapon states
     CurrentWeaponClass = EWeaponClass::EWC_Primary;
     CurrentWeaponType = EWeaponType::EWT_Primary;
     CurrentWeaponName = PrimaryWeapon->GetWeaponName();
@@ -273,11 +274,6 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
 
     UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
 }
-
-
-
-
-
 
 void AEclipseRaptureCharacter::EquipSecondaryWeapon()
 {
@@ -343,7 +339,7 @@ void AEclipseRaptureCharacter::StartAiming()
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         bIsAiming = true;
 
-        if (BasePlayerUI->CrosshairImage)
+        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
         {
             BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
         }
@@ -359,7 +355,7 @@ void AEclipseRaptureCharacter::StopAiming()
         GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
         bIsAiming = false;
 
-        if (BasePlayerUI->CrosshairImage)
+        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
         {
             BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
         }
@@ -480,6 +476,11 @@ void AEclipseRaptureCharacter::SetCrosshairTexture(UTexture2D* Texture)
 
 #pragma region Movement
 
+
+FTransform AEclipseRaptureCharacter::CalculateADSTransform()
+{
+    return FTransform();
+}
 
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
