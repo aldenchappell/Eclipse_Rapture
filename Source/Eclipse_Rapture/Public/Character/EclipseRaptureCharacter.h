@@ -46,7 +46,7 @@ public:
 	int32 CurrentWeaponAmmo;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
-	FTransform PlayerADSOffset;
+	FVector PlayerADSOffset;
 
 protected:
 	virtual void BeginPlay() override;
@@ -92,6 +92,9 @@ protected:
 	bool bCanMantle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	float ADSSpeed = .35f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Aiming")
 	FTransform DefaultTorsoTransform;
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
@@ -297,6 +300,9 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = Leaning)
 	bool bResetLeaning;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera | Camera Properties")
+	FTransform InitialCameraTransform;
+
 #pragma endregion
 	
 #pragma region Animation
@@ -339,6 +345,7 @@ protected:
 	
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
 	void OnWeaponUpdateSetAmmo();
+
 
 private:
 

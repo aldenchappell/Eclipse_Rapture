@@ -15,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "UI/WidgetEclipseRaptureCharacter.h"
 #include "Components/Image.h" 
+#include "Kismet/KismetMathLibrary.h"
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -60,7 +61,14 @@ void AEclipseRaptureCharacter::BeginPlay()
     Super::BeginPlay();
 
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
+
+    if (FirstPersonCamera)
+    {
+        // Store the initial relative transform of the camera
+        InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
+    }
 }
+
 
 
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
@@ -332,33 +340,21 @@ void AEclipseRaptureCharacter::SetSwapTimer()
 
 void AEclipseRaptureCharacter::StartAiming()
 {
-    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
-    if (Weapon)
+    if (CurrentWeapon && FirstPersonCamera)
     {
         CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         bIsAiming = true;
-
-        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
-        {
-            BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
-        }
     }
 }
 
 void AEclipseRaptureCharacter::StopAiming()
 {
-    AWeaponBase* Weapon = CurrentWeapons.FindRef(CurrentWeaponClass);
-    if (Weapon)
+    if (CurrentWeapon && FirstPersonCamera)
     {
         CurrentMovementState = ECharacterMovementState::ECMS_Walking;
         GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
         bIsAiming = false;
-
-        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
-        {
-            BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
-        }
     }
 }
 
@@ -590,6 +586,6 @@ bool AEclipseRaptureCharacter::CanSprint()
 		CurrentMovementState != ECharacterMovementState::ECMS_Prone &&
         CurrentMovementState != ECharacterMovementState::ECMS_Jumping &&
         CurrentMovementState != ECharacterMovementState::ECMS_Mantling &&
-		!bIsCrouching && !bIsProning;
+		!bIsCrouching && !bIsProning && !bIsAiming;
 }
 #pragma endregion

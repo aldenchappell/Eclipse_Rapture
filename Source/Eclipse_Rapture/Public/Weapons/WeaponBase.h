@@ -180,8 +180,8 @@ protected:
 
 #pragma endregion
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
-	FTransform WeaponADSOffset;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	FVector WeaponADSOffset;
 
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
