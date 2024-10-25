@@ -345,6 +345,11 @@ void AEclipseRaptureCharacter::StartAiming()
         CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
         GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
         bIsAiming = true;
+
+        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
+        {
+			BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
+        }
     }
 }
 
@@ -355,6 +360,11 @@ void AEclipseRaptureCharacter::StopAiming()
         CurrentMovementState = ECharacterMovementState::ECMS_Walking;
         GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
         bIsAiming = false;
+
+        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
+        {
+            BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
+        }
     }
 }
 
