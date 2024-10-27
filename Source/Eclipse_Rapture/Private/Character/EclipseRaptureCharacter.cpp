@@ -54,6 +54,8 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     AimFOV = DefaultFOV * AimFOVMultiplier;
 
 	MeleeWeapon->SetRootComponent(GetRootComponent());
+
+    bIsAiming = false;
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -74,14 +76,11 @@ void AEclipseRaptureCharacter::BeginPlay()
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    HandleHeadbob();
 }
 
-void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
-{
-    //Handle crouching interpolation
-    float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
-    CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
-}
+
 
 #pragma region Setup Input
 void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -338,36 +337,6 @@ void AEclipseRaptureCharacter::SetSwapTimer()
     GetWorld()->GetTimerManager().SetTimer(WeaponSwapTimerHandle, this, &AEclipseRaptureCharacter::ResetSwap, WeaponSwapCooldown, false);
 }
 
-void AEclipseRaptureCharacter::StartAiming()
-{
-    if (CurrentWeapon && FirstPersonCamera)
-    {
-        CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
-        GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
-        bIsAiming = true;
-
-        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
-        {
-			BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
-        }
-    }
-}
-
-void AEclipseRaptureCharacter::StopAiming()
-{
-    if (CurrentWeapon && FirstPersonCamera)
-    {
-        CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-        GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-        bIsAiming = false;
-
-        if (BasePlayerUI && BasePlayerUI->CrosshairImage)
-        {
-            BasePlayerUI->CrosshairImage->SetVisibility(ESlateVisibility::Visible);
-        }
-    }
-}
-
 
 /// <summary>
 /// Melee attack function, gets a random section of the melee montage and plays it
@@ -503,6 +472,13 @@ void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
     }
 }
 
+void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
+{
+    //Handle crouching interpolation
+    float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
+    CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
+}
+
 void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
 {
 }
@@ -583,6 +559,44 @@ void AEclipseRaptureCharacter::DoMantleTrace(
     else
     {
         bCanMantle = false;
+    }
+}
+
+void AEclipseRaptureCharacter::HandleHeadbob()
+{
+    //headbob shakesources are invalid
+	if (!IdleShake || !WalkShake || !SprintShake) return;
+
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    if (PlayerController)
+    {
+        switch (CurrentMovementState)
+        {
+        case ECharacterMovementState::ECMS_Idle:
+            PlayerController->ClientStartCameraShake(
+            IdleShake,
+                1.f,
+                ECameraShakePlaySpace::CameraLocal);
+            break;
+        case ECharacterMovementState::ECMS_Walking:
+            PlayerController->ClientStartCameraShake(
+                WalkShake,
+                1.f,
+                ECameraShakePlaySpace::CameraLocal);
+            break;
+        case ECharacterMovementState::ECMS_Sprinting:
+            PlayerController->ClientStartCameraShake(
+                SprintShake,
+                1.f,
+                ECameraShakePlaySpace::CameraLocal);
+            break;
+        default:
+            PlayerController->ClientStartCameraShake(
+                IdleShake,
+                1.f,
+                ECameraShakePlaySpace::CameraLocal);
+            break;
+        }
     }
 }
 
