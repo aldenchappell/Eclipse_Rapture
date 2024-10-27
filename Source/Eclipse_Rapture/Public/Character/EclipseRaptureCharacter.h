@@ -17,7 +17,7 @@ class UCameraComponent;
 class UWeaponBase;
 class AItem;
 class USkeletalMeshComponent;
-
+class UCameraShakeBase;
 
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter, public ICharacterData
@@ -176,12 +176,6 @@ protected:
 	void Interact();
 	void Melee();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
-	void StartAiming();
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
-	void StopAiming();
-
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")
 	void HandleFOV(float DeltaTime);
 
@@ -274,6 +268,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	bool bCanMelee = true;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
+	void OnWeaponUpdateSetAmmo();
 #pragma endregion
 
 #pragma region Camera Properties
@@ -343,9 +340,21 @@ protected:
 
 #pragma endregion
 	
-	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Logic")
-	void OnWeaponUpdateSetAmmo();
+#pragma region Headbobbing
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Movement | Headbobbing")
+	TSubclassOf<UCameraShakeBase> IdleShake;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Movement | Headbobbing")
+	TSubclassOf<UCameraShakeBase> WalkShake;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Movement | Headbobbing")
+	TSubclassOf<UCameraShakeBase> SprintShake;
+
+	UFUNCTION()
+	void HandleHeadbob();
+
+#pragma endregion
 
 private:
 
