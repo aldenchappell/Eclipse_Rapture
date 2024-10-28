@@ -22,24 +22,15 @@ public:
 	AItem();
 
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
-protected:
-	virtual void Tick(float DeltaTime) override;
-	virtual void BeginPlay() override;
-	
-	UFUNCTION()
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(Transient)
+	class UWorld* World;
 
 	UFUNCTION()
-	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	virtual void Use(class AEclipseRaptureCharacter* Character) PURE_VIRTUAL(AItem, );
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UStaticMeshComponent> ItemMesh;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<USkeletalMeshComponent> ItemSkeleton;
-
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	TObjectPtr<USphereComponent> SphereCollision;
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUse(class AEclipseRaptureCharacter* Character);
 
 	//Text for using item(Equip, Consume, etc)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
@@ -64,14 +55,31 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;
 
+protected:
+	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
+	
+	UFUNCTION()
+	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<UStaticMeshComponent> ItemMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<USkeletalMeshComponent> ItemSkeleton;
+
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	TObjectPtr<USphereComponent> SphereCollision;
+
+	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Pickup;
 
-	UFUNCTION()
-	virtual void Use(class AEclipseRaptureCharacter* Character) PURE_VIRTUAL(AItem, );
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnUse(class AEclipseRaptureCharacter* Character);
+	
 
 private:
 	

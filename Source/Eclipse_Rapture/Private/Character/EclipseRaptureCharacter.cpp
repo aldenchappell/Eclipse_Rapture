@@ -16,6 +16,8 @@
 #include "UI/WidgetEclipseRaptureCharacter.h"
 #include "Components/Image.h" 
 #include "Kismet/KismetMathLibrary.h"
+#include "Global/Components/HealthComponent.h"
+#include "Character/InventoryComponent.h"
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -56,6 +58,14 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 	MeleeWeapon->SetRootComponent(GetRootComponent());
 
     bIsAiming = false;
+
+	//setup health component
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+	HealthComponent->SetCurrentHealth(HealthComponent->MaxHealth);
+
+    //setup inventory component
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
+	InventoryComponent->Capacity = 20;
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -604,4 +614,17 @@ bool AEclipseRaptureCharacter::CanSprint()
         CurrentMovementState != ECharacterMovementState::ECMS_Mantling &&
 		!bIsCrouching && !bIsProning && !bIsAiming;
 }
+#pragma endregion
+
+#pragma region Inventory
+
+void AEclipseRaptureCharacter::UseItem(AItem* ItemToUse)
+{
+    if (ItemToUse)
+    {
+		ItemToUse->Use(this); //c++ version
+        ItemToUse->OnUse(this); //blueprint version
+    }
+}
+
 #pragma endregion
