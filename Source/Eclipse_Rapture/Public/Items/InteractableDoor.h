@@ -24,6 +24,8 @@ protected:
 
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Interactable Door")
+	TObjectPtr<USkeletalMeshComponent> DoorMesh;
 
 	UFUNCTION()
 	void HandleDoorInteraction(bool Opened);
@@ -39,6 +41,14 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Interactable Door")
 	FRotator OriginalRotation;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interactable Door")
+	TObjectPtr<UAnimMontage> OpenDoorMontage;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interactable Door")
+	TObjectPtr<UAnimMontage> CloseDoorMontage;
+
 private:
 
+	UAnimInstance* AnimInstance;
 };

@@ -11,7 +11,7 @@
 
 
 class USphereComponent;
-
+class USkeletalMeshComponent;
 UCLASS()
 class ECLIPSE_RAPTURE_API AItem : public AActor, public IInteractInterface
 {
@@ -34,6 +34,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<USkeletalMeshComponent> ItemSkeleton;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereCollision;
