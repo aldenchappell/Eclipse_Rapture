@@ -13,13 +13,11 @@ class ECLIPSE_RAPTURE_API UHealthComponent : public UActorComponent, public IDam
 	GENERATED_BODY()
 
 public:
-	// Constructor
 	UHealthComponent();
 
-	// Function to override the TakeDamage event from IDamageable
 	virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
 
-	// Health management functions
+#pragma region Health
 	UFUNCTION(BlueprintCallable, Category = Health)
 	float GetCurrentHealth() const;
 
@@ -29,18 +27,37 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Health)
 	void Heal(float HealAmount);
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = Health)
 	float MaxHealth = 100;
+
+#pragma endregion
+
+#pragma region Satiety
+	UFUNCTION(BlueprintCallable, Category = Food)
+	void HealSatiety(float SatietyAmount);
+
+	UFUNCTION(BlueprintCallable, Category = Food, meta = (ClampMin = 0.0))
+	float GetCurrentSatiety() const;
+
+	UFUNCTION(BlueprintCallable, Category = Food)
+	void SetCurrentSatiety(float Satiety);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = Health)
+	float MaxSatiety = 100;
+
+#pragma endregion
+
+protected:
+	virtual void BeginPlay() override;
+
 public:
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	// Current health value
 	UPROPERTY(VisibleAnywhere, Category = Health, meta = (AllowPrivateAccess = true))
-	float CurrentHealth;  // Default value
+	float CurrentHealth;
+
+	UPROPERTY(VisibleAnywhere, Category = Food, meta = (AllowPrivateAccess = true))
+	float CurrentSatiety;
 };

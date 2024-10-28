@@ -2,15 +2,13 @@
 
 
 #include "Character/InventoryComponent.h"
+#include "Items/Item.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	Capacity = 20;
 
-	// ...
 }
 
 
@@ -19,16 +17,42 @@ void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	for (auto& Item : DefaultItems)
+	{
+		AddItem(Item);
+		OnInventoryUpdated.Broadcast();
+	}
 }
 
-
-// Called every frame
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+bool UInventoryComponent::AddItem(AItem* ItemToAdd)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (Items.Num() >= Capacity || !ItemToAdd)
+	{
+		return false;
+	}
 
-	// ...
+	ItemToAdd->OwningInventory = this;
+	ItemToAdd->World = GetWorld();
+	Items.Add(ItemToAdd);
+
+	//ui update
+	OnInventoryUpdated.Broadcast();
+
+	return true;
 }
+
+bool UInventoryComponent::RemoveItem(AItem* ItemToRemove)
+{
+	if (ItemToRemove)
+	{
+		ItemToRemove->OwningInventory = nullptr;	
+		ItemToRemove->World = nullptr;
+		Items.RemoveSingle(ItemToRemove);
+
+		OnInventoryUpdated.Broadcast();
+		return true;
+	}
+	return false;
+}
+
 

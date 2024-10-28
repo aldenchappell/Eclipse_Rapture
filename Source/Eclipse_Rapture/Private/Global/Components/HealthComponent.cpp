@@ -51,12 +51,34 @@ void UHealthComponent::SetCurrentHealth(float Health)
 // Heal the character
 void UHealthComponent::Heal(float HealAmount)
 {
-	if (CurrentHealth < 100.0f)  // Assuming max health is 100
+	if (CurrentHealth < MaxHealth)  // Assuming max health is 100
 	{
 		CurrentHealth += HealAmount;
-		if (CurrentHealth > 100.0f)
+		if (CurrentHealth > MaxHealth)
 		{
-			CurrentHealth = 100.0f;  // Clamp to max health
+			CurrentHealth = MaxHealth;  // Clamp to max health
 		}
 	}
+}
+
+void UHealthComponent::HealSatiety(float SatietyAmount)
+{
+	if (CurrentSatiety < MaxSatiety)
+	{
+		CurrentSatiety += SatietyAmount;
+		if (CurrentSatiety > MaxSatiety)
+		{
+			CurrentSatiety = MaxSatiety;
+		}
+	}
+}
+
+float UHealthComponent::GetCurrentSatiety() const
+{
+	return CurrentSatiety;
+}
+
+void UHealthComponent::SetCurrentSatiety(float Satiety)
+{
+	CurrentSatiety = Satiety;
 }

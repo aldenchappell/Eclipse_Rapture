@@ -24,6 +24,8 @@ class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter, public I
 {
 	GENERATED_BODY()
 
+	
+
 public:
 #pragma region Setup
 	AEclipseRaptureCharacter();
@@ -35,6 +37,8 @@ public:
 
 #pragma endregion
 	
+	
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
@@ -47,6 +51,20 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
 	FVector PlayerADSOffset;
+
+	UFUNCTION(Blueprintcallable, Category = "Inventory | Items")
+	void UseItem(AItem* ItemToUse);
+
+#pragma region Components
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Components | Health Component")
+	TObjectPtr<class UHealthComponent> HealthComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory | Components")
+	TObjectPtr<class UInventoryComponent> InventoryComponent;
+
+#pragma endregion
+	
 
 protected:
 	virtual void BeginPlay() override;
@@ -355,6 +373,8 @@ protected:
 
 #pragma endregion
 
+
+
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
@@ -458,5 +478,7 @@ public:
 	UFUNCTION(Blueprintcallable)
 	void SetIsReloading(bool Reloading) { bIsReloading = Reloading; }
 
+	UFUNCTION(Blueprintcallable)
+	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 #pragma endregion
 };

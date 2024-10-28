@@ -24,6 +24,10 @@ AItem::AItem()
 
 	ItemSkeleton = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeleton"));
 	ItemSkeleton->SetupAttachment(ItemMesh);
+
+	ItemWeight = 1.f;
+	ItemDisplayName = FText::FromString("Item");
+	UseActionText = FText::FromString("Use");
 }
 
 void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
