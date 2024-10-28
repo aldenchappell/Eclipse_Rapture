@@ -66,7 +66,6 @@ void AEclipseRaptureCharacter::BeginPlay()
 
     if (FirstPersonCamera)
     {
-        // Store the initial relative transform of the camera
         InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
     }
 }
@@ -96,10 +95,6 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Interact
         EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
 
-        //Aim
-		/*EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
-        EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);*/
-
         //Melee
 		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Melee);
 
@@ -117,6 +112,8 @@ void AEclipseRaptureCharacter::Interact()
         // Call the Execute_Interact function for the interface
         IInteractInterface::Execute_Interact(CurrentOverlappingItem, this);
 		CurrentOverlappingItem = nullptr;
+
+        UE_LOG(LogTemp, Warning, TEXT("Interacting with item."));
     }
 }
 
@@ -451,12 +448,6 @@ void AEclipseRaptureCharacter::SetCrosshairTexture(UTexture2D* Texture)
 
 #pragma region Movement
 
-
-FTransform AEclipseRaptureCharacter::CalculateADSTransform()
-{
-    return FTransform();
-}
-
 void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
 {
     if (!GetCanMove()) return;
@@ -514,8 +505,8 @@ void AEclipseRaptureCharacter::DoMantleTrace(
             EDrawDebugTrace::ForDuration, SecondaryHitInfo, true, FLinearColor::Gray))
         {
             //Calculate mantle positions
-            MantlePos1 = SecondaryHitInfo.ImpactPoint + GetActorForwardVector() * -50.f;
-            MantlePos2 = SecondaryHitInfo.ImpactPoint + GetActorForwardVector() * 120.f;
+            MantlePos1 = SecondaryHitInfo.ImpactPoint + GetActorForwardVector() * -50.f; //-50
+            MantlePos2 = SecondaryHitInfo.ImpactPoint + GetActorForwardVector() * 120.f; //120
             bCanMantle = true;
 
             //Perform Tertiary Sphere Trace to check for clear space
@@ -535,11 +526,11 @@ void AEclipseRaptureCharacter::DoMantleTrace(
                 else
                 {
                     // Adjust MantlePos2 based on Tertiary Trace
-                    MantlePos2 = TertiaryHitInfo.ImpactPoint + GetActorForwardVector() * 50.f;
+                    MantlePos2 = TertiaryHitInfo.ImpactPoint + GetActorForwardVector() * 25.f; //50
 
                     // Perform Final Quad Sphere Trace
                     FVector QuadTraceStart = MantlePos1;
-                    FVector QuadTraceEnd = MantlePos2 + FVector(0.f, 0.f, 100.f);
+                    FVector QuadTraceEnd = MantlePos2 + FVector(0.f, 0.f, 50.f); //100
 
                     if (UKismetSystemLibrary::SphereTraceSingle(
                         GetWorld(), QuadTraceStart, QuadTraceEnd, 20.f,
@@ -552,7 +543,7 @@ void AEclipseRaptureCharacter::DoMantleTrace(
             }
             else
             {
-                MantlePos2 = TertiaryHitInfo.ImpactPoint + GetActorForwardVector() * 50.f;
+                MantlePos2 = TertiaryHitInfo.ImpactPoint + GetActorForwardVector() * 25.f; //50
             }
         }
     }
@@ -565,37 +556,38 @@ void AEclipseRaptureCharacter::DoMantleTrace(
 void AEclipseRaptureCharacter::HandleHeadbob()
 {
     //headbob shakesources are invalid
-	if (!IdleShake || !WalkShake || !SprintShake) return;
+	if (!bCanMove || !IdleShake || !WalkShake || !SprintShake) return;
 
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+    APlayerController* PlayerController = nullptr;
+    if (PlayerController == nullptr)
+    {
+        PlayerController = Cast<APlayerController>(GetController());
+    }
+	
+	TSubclassOf<UCameraShakeBase> ShakeSource = nullptr;
     if (PlayerController)
     {
         switch (CurrentMovementState)
         {
         case ECharacterMovementState::ECMS_Idle:
-            PlayerController->ClientStartCameraShake(
-            IdleShake,
-                1.f,
-                ECameraShakePlaySpace::CameraLocal);
+            ShakeSource = IdleShake;
             break;
         case ECharacterMovementState::ECMS_Walking:
-            PlayerController->ClientStartCameraShake(
-                WalkShake,
-                1.f,
-                ECameraShakePlaySpace::CameraLocal);
+            ShakeSource = WalkShake;
             break;
         case ECharacterMovementState::ECMS_Sprinting:
-            PlayerController->ClientStartCameraShake(
-                SprintShake,
-                1.f,
-                ECameraShakePlaySpace::CameraLocal);
+            ShakeSource = SprintShake;
             break;
         default:
+            ShakeSource = IdleShake;
+            break;
+        }
+        if (bEnableHeadbobbing && ShakeSource)
+        {
             PlayerController->ClientStartCameraShake(
-                IdleShake,
+                ShakeSource,
                 1.f,
                 ECameraShakePlaySpace::CameraLocal);
-            break;
         }
     }
 }

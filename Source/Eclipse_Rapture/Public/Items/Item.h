@@ -26,14 +26,13 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	
-
 	UFUNCTION()
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
@@ -75,8 +74,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	bool bCanBeRepaired;
 
-private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Pickup;
+
+private:
+	
 
 
 public:	//Getters and Setters
