@@ -97,10 +97,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Aiming")
 	FTransform DefaultTorsoTransform;
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon | Aiming")
-	FTransform CalculateADSTransform();
-
-	
 #pragma endregion
 
 #pragma region Movement Properties
@@ -341,6 +337,9 @@ protected:
 #pragma endregion
 	
 #pragma region Headbobbing
+
+	UPROPERTY()
+	bool bEnableHeadbobbing = true;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Movement | Headbobbing")
 	TSubclassOf<UCameraShakeBase> IdleShake;
