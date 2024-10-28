@@ -21,6 +21,9 @@ AItem::AItem()
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SphereCollision->SetupAttachment(ItemMesh);
 	SphereCollision->SetSphereRadius(125.f);
+
+	ItemSkeleton = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeleton"));
+	ItemSkeleton->SetupAttachment(ItemMesh);
 }
 
 void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)

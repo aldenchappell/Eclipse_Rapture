@@ -10,9 +10,6 @@ AInteractableDoor::AInteractableDoor()
 	bIsOpen = false;
 
 	ItemMesh->SetSimulatePhysics(false);
-
-	ItemSkeleton = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeleton"));
-	ItemSkeleton->SetupAttachment(ItemMesh);
 }
 
 void AInteractableDoor::BeginPlay()
