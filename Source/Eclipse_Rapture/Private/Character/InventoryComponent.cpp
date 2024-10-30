@@ -1,58 +1,59 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Character/InventoryComponent.h"
 #include "Items/Item.h"
+#include "Engine/World.h"
 
-// Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
-	Capacity = 20;
-
+    Capacity = 20;
 }
 
-
-// Called when the game starts
 void UInventoryComponent::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	for (auto& Item : DefaultItems)
-	{
-		AddItem(Item);
-		OnInventoryUpdated.Broadcast();
-	}
+    //Spawn default items from their classes
+    for (auto& ItemClass : DefaultItems)
+    {
+        if (ItemClass)
+        {
+            // Spawn the item in the world
+            AItem* NewItem = GetWorld()->SpawnActor<AItem>(ItemClass);
+            if (NewItem)
+            {
+                AddItem(NewItem);
+            }
+        }
+    }
+
+    //UI update
+    OnInventoryUpdated.Broadcast();
 }
 
 bool UInventoryComponent::AddItem(AItem* ItemToAdd)
 {
-	if (Items.Num() >= Capacity || !ItemToAdd)
-	{
-		return false;
-	}
+    if (Items.Num() >= Capacity || !ItemToAdd)
+    {
+        return false;
+    }
 
-	ItemToAdd->OwningInventory = this;
-	ItemToAdd->World = GetWorld();
-	Items.Add(ItemToAdd);
+    ItemToAdd->OwningInventory = this;
+    Items.Add(ItemToAdd);
 
-	//ui update
-	OnInventoryUpdated.Broadcast();
+    //UI update
+    OnInventoryUpdated.Broadcast();
 
-	return true;
+    return true;
 }
 
 bool UInventoryComponent::RemoveItem(AItem* ItemToRemove)
 {
-	if (ItemToRemove)
-	{
-		ItemToRemove->OwningInventory = nullptr;	
-		ItemToRemove->World = nullptr;
-		Items.RemoveSingle(ItemToRemove);
+    if (ItemToRemove)
+    {
+        ItemToRemove->OwningInventory = nullptr;
+        Items.RemoveSingle(ItemToRemove);
 
-		OnInventoryUpdated.Broadcast();
-		return true;
-	}
-	return false;
+        OnInventoryUpdated.Broadcast();
+        return true;
+    }
+    return false;
 }
-
-

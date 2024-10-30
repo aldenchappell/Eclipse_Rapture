@@ -68,6 +68,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
 #pragma region Movement Values
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
@@ -373,7 +374,21 @@ protected:
 
 #pragma endregion
 
+#pragma region Clothing
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerHelmetMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerChestMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerPantsMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerShoesMesh;
+
+#pragma endregion
 
 private:
 

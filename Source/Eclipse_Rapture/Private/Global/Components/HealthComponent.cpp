@@ -1,84 +1,95 @@
-// HealthComponent.cpp
-
 #include "Global/Components/HealthComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Actor.h"
 
-// Constructor
 UHealthComponent::UHealthComponent()
 {
-	PrimaryComponentTick.bCanEverTick = true;
+    PrimaryComponentTick.bCanEverTick = false;
 }
 
-// Called every frame
-void UHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
-// Called when the game starts
 void UHealthComponent::BeginPlay()
 {
-	Super::BeginPlay();
-
-	SetCurrentHealth(MaxHealth);
+    SetCurrentHealth(MaxHealth);
+    SetCurrentSatiety(MaxSatiety);
+    SetCurrentThirst(MaxThirst);
 }
 
-// Implementation of the TakeDamage event
-void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
-{
-	if (CurrentHealth > 0)
-	{
-		CurrentHealth -= DamageAmount;
-		if (CurrentHealth <= 0)
-		{
-			CurrentHealth = 0;
-			// Handle death logic here (if needed)
-		}
-	}
-}
+// Health Functions
 
-// Get current health value
 float UHealthComponent::GetCurrentHealth() const
 {
-	return CurrentHealth;
+    return CurrentHealth;
 }
 
-// Set current health value
 void UHealthComponent::SetCurrentHealth(float Health)
 {
-	CurrentHealth = Health;
+    CurrentHealth = FMath::Clamp(Health, 0.0f, MaxHealth);
+    float HealthPercent = CurrentHealth / MaxHealth;
+    OnHealthUpdated.Broadcast(HealthPercent);
 }
 
-// Heal the character
-void UHealthComponent::Heal(float HealAmount)
+void UHealthComponent::HealHealth(float HealAmount)
 {
-	if (CurrentHealth < MaxHealth)  // Assuming max health is 100
-	{
-		CurrentHealth += HealAmount;
-		if (CurrentHealth > MaxHealth)
-		{
-			CurrentHealth = MaxHealth;  // Clamp to max health
-		}
-	}
+    if (CurrentHealth < MaxHealth)
+    {
+        SetCurrentHealth(CurrentHealth + HealAmount);
+    }
 }
 
-void UHealthComponent::HealSatiety(float SatietyAmount)
+void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
 {
-	if (CurrentSatiety < MaxSatiety)
-	{
-		CurrentSatiety += SatietyAmount;
-		if (CurrentSatiety > MaxSatiety)
-		{
-			CurrentSatiety = MaxSatiety;
-		}
-	}
+    if (CurrentHealth > 0)
+    {
+        SetCurrentHealth(CurrentHealth - DamageAmount);
+
+        if (CurrentHealth <= 0)
+        {
+            SetCurrentHealth(0);
+            UE_LOG(LogTemp, Warning, TEXT("%s is now dead"), *GetOwner()->GetName());
+        }
+    }
 }
+
+// Satiety (Hunger) Functions
 
 float UHealthComponent::GetCurrentSatiety() const
 {
-	return CurrentSatiety;
+    return CurrentSatiety;
 }
 
 void UHealthComponent::SetCurrentSatiety(float Satiety)
 {
-	CurrentSatiety = Satiety;
+    CurrentSatiety = FMath::Clamp(Satiety, 0.0f, MaxSatiety);
+    float SatietyPercent = CurrentSatiety / MaxSatiety;
+    OnSatietyUpdated.Broadcast(SatietyPercent);
+}
+
+void UHealthComponent::HealSatiety(float SatietyAmount)
+{
+    if (CurrentSatiety < MaxSatiety)
+    {
+        SetCurrentSatiety(CurrentSatiety + SatietyAmount);
+    }
+}
+
+// Thirst Functions
+
+float UHealthComponent::GetCurrentThirst() const
+{
+    return CurrentThirst;
+}
+
+void UHealthComponent::SetCurrentThirst(float Thirst)
+{
+    CurrentThirst = FMath::Clamp(Thirst, 0.0f, MaxThirst);
+    float ThirstPercent = CurrentThirst / MaxThirst;
+    OnThirstUpdated.Broadcast(ThirstPercent);
+}
+
+void UHealthComponent::HealThirst(float ThirstAmount)
+{
+    if (CurrentThirst < MaxThirst)
+    {
+        SetCurrentThirst(CurrentThirst + ThirstAmount);
+    }
 }

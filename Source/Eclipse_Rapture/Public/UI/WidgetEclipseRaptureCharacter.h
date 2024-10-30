@@ -10,6 +10,7 @@
 
 class UImage;
 class UTextBlock;
+class UProgressBar;
 UCLASS()
 class ECLIPSE_RAPTURE_API UWidgetEclipseRaptureCharacter : public UUserWidget
 {
@@ -17,6 +18,7 @@ class ECLIPSE_RAPTURE_API UWidgetEclipseRaptureCharacter : public UUserWidget
 
 public:
     
+
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
     TObjectPtr<UTextBlock> AmmoCounterText;
 
@@ -25,10 +27,18 @@ public:
 
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
     TObjectPtr<UImage> MantleImage;
+
+    UPROPERTY(BlueprintReadonly, meta = (BindWidget))
+    TObjectPtr<class UHealthBar> HealthBar;
+
+    UPROPERTY(BlueprintReadonly, meta = (BindWidget))
+    TObjectPtr<UProgressBar> SatietyBar;
+
+    UPROPERTY(BlueprintReadonly, meta = (BindWidget))
+    TObjectPtr<UProgressBar> ThirstBar;
 protected:
     // Called when the widget is constructed
     virtual void NativeConstruct() override;
-
 private:
     
 

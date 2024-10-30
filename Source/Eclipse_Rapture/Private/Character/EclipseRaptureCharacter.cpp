@@ -61,7 +61,6 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 
 	//setup health component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
-	HealthComponent->SetCurrentHealth(HealthComponent->MaxHealth);
 
     //setup inventory component
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));

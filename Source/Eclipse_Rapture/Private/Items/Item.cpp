@@ -34,6 +34,11 @@ void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
 }
 
+void AItem::Use(AEclipseRaptureCharacter* Character)
+{
+
+}
+
 
 
 void AItem::BeginPlay()
