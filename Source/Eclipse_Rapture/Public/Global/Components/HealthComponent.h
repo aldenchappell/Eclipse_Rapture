@@ -1,5 +1,3 @@
-// HealthComponent.h
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,57 +5,75 @@
 #include "Interfaces/Damageable.h"
 #include "HealthComponent.generated.h"
 
+// Blueprint multicast delegates to notify UI updates
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthUpdated, float, HealthPercent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSatietyUpdated, float, SatietyPercent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnThirstUpdated, float, ThirstPercent);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UHealthComponent : public UActorComponent, public IDamageable
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	UHealthComponent();
+    UHealthComponent();
 
-	virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
+    virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
 
-#pragma region Health
-	UFUNCTION(BlueprintCallable, Category = Health)
-	float GetCurrentHealth() const;
+    // Delegates to broadcast changes to UI
+    UPROPERTY(BlueprintAssignable, Category = "Health | Delegates")
+    FOnHealthUpdated OnHealthUpdated;
 
-	UFUNCTION(BlueprintCallable, Category = Health)
-	void SetCurrentHealth(float Health);
+    UPROPERTY(BlueprintAssignable, Category = "Satiety | Delegates")
+    FOnSatietyUpdated OnSatietyUpdated;
 
-	UFUNCTION(BlueprintCallable, Category = Health)
-	void Heal(float HealAmount);
+    UPROPERTY(BlueprintAssignable, Category = "Thirst | Delegates")
+    FOnThirstUpdated OnThirstUpdated;
 
+    // Health functions
+    UFUNCTION(BlueprintCallable, Category = Health)
+    float GetCurrentHealth() const;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = Health)
-	float MaxHealth = 100;
+    UFUNCTION(BlueprintCallable, Category = Health)
+    void SetCurrentHealth(float Health);
 
-#pragma endregion
+    UFUNCTION(BlueprintCallable, Category = Health)
+    void HealHealth(float HealAmount);
 
-#pragma region Satiety
-	UFUNCTION(BlueprintCallable, Category = Food)
-	void HealSatiety(float SatietyAmount);
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Health)
+    float MaxHealth = 100.0f;
 
-	UFUNCTION(BlueprintCallable, Category = Food, meta = (ClampMin = 0.0))
-	float GetCurrentSatiety() const;
+    // Satiety (Hunger) functions
+    UFUNCTION(BlueprintCallable, Category = Satiety)
+    float GetCurrentSatiety() const;
 
-	UFUNCTION(BlueprintCallable, Category = Food)
-	void SetCurrentSatiety(float Satiety);
+    UFUNCTION(BlueprintCallable, Category = Satiety)
+    void SetCurrentSatiety(float Satiety);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = Health)
-	float MaxSatiety = 100;
+    UFUNCTION(BlueprintCallable, Category = Satiety)
+    void HealSatiety(float SatietyAmount);
 
-#pragma endregion
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Satiety)
+    float MaxSatiety = 100.0f;
+
+    // Thirst functions
+    UFUNCTION(BlueprintCallable, Category = Thirst)
+    float GetCurrentThirst() const;
+
+    UFUNCTION(BlueprintCallable, Category = Thirst)
+    void SetCurrentThirst(float Thirst);
+
+    UFUNCTION(BlueprintCallable, Category = Thirst)
+    void HealThirst(float ThirstAmount);
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Thirst)
+    float MaxThirst = 100.0f;
 
 protected:
-	virtual void BeginPlay() override;
-
-public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+    virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Health, meta = (AllowPrivateAccess = true))
-	float CurrentHealth;
-
-	UPROPERTY(VisibleAnywhere, Category = Food, meta = (AllowPrivateAccess = true))
-	float CurrentSatiety;
+    float CurrentHealth;
+    float CurrentSatiety;
+    float CurrentThirst;
 };

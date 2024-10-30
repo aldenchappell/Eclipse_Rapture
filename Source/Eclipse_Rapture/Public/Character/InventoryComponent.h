@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// InventoryComponent.h
 
 #pragma once
 
@@ -6,38 +6,40 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
-//Blueprints will bind to this to update UI on inventory change
+// Forward declarations
+class AItem;
+
+// Blueprint multicast delegate to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
-//forward declarations
-class AItem;
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	UInventoryComponent();
+public:
+    UInventoryComponent();
+    virtual void BeginPlay() override;
 
-	virtual void BeginPlay() override;
+    UFUNCTION(Blueprintcallable)
+    bool AddItem(AItem* ItemToAdd);
 
-	bool AddItem(AItem* ItemToAdd);
-	bool RemoveItem(AItem* ItemToRemove);
+    UFUNCTION(Blueprintcallable)
+    bool RemoveItem(AItem* ItemToRemove);
 
-	//items player starts with
-	UPROPERTY(EditDefaultsOnly, Instanced)
-	TArray<TObjectPtr<AItem>> DefaultItems;
+    //Items the player starts with (Blueprint-assignable)
+    UPROPERTY(EditDefaultsOnly, Category = "Inventory")
+    TArray<TSubclassOf<AItem>> DefaultItems;
 
-	//how many items can the player carry?
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Inventory | Inventory Properties")
-	int32 Capacity;
+    // Inventory capacity
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
+    int32 Capacity;
 
-	//delegate for inventory update
-	UPROPERTY(BlueprintAssignable, Category = "Inventory | Inventory Delegates")
-	FOnInventoryUpdated OnInventoryUpdated;
+    // Delegate for inventory updates
+    UPROPERTY(BlueprintAssignable, Category = "Inventory | Inventory Delegates")
+    FOnInventoryUpdated OnInventoryUpdated;
 
-	//number of items in inventory currently
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
-	TArray<TObjectPtr<AItem>> Items;
-		
+    //Current items in the inventory
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
+    TArray<AItem*> Items; 
 };

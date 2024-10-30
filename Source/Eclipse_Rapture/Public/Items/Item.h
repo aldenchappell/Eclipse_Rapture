@@ -27,7 +27,7 @@ public:
 	class UWorld* World;
 
 	UFUNCTION()
-	virtual void Use(class AEclipseRaptureCharacter* Character) PURE_VIRTUAL(AItem, );
+	virtual void Use(class AEclipseRaptureCharacter* Character);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(class AEclipseRaptureCharacter* Character);
