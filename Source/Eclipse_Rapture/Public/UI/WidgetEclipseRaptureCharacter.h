@@ -32,10 +32,10 @@ public:
     TObjectPtr<class UHealthBar> HealthBar;
 
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
-    TObjectPtr<UProgressBar> SatietyBar;
+    TObjectPtr<class USatietyBar> SatietyBar;
 
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
-    TObjectPtr<UProgressBar> ThirstBar;
+    TObjectPtr<class UThirstBar> ThirstBar;
 protected:
     // Called when the widget is constructed
     virtual void NativeConstruct() override;
