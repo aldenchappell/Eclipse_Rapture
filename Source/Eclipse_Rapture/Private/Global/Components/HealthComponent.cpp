@@ -5,13 +5,14 @@
 UHealthComponent::UHealthComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
+    SetCurrentHealth(MaxHealth);
+    SetCurrentSatiety(MaxSatiety);
+    SetCurrentThirst(MaxThirst);
 }
 
 void UHealthComponent::BeginPlay()
 {
-    SetCurrentHealth(MaxHealth);
-    SetCurrentSatiety(MaxSatiety);
-    SetCurrentThirst(MaxThirst);
+    
 }
 
 // Health Functions

@@ -5,12 +5,13 @@
 #include "Global/Components/HealthComponent.h"
 #include "Character/InventoryComponent.h"
 
-void AFoodItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
+
+AFoodItem::AFoodItem()
 {
 
 }
 
-AFoodItem::AFoodItem()
+void AFoodItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
 
 }
