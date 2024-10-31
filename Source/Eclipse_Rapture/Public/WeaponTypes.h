@@ -39,3 +39,16 @@ enum class EWeaponClass : uint8
 	EWC_Melee UMETA(DisplayName = "Melee")
 };
 
+UENUM(BlueprintType)
+enum class EAmmoType : uint8
+{
+	EAT_9mm UMETA(DisplayName = "9mm"),
+	EAT_45 UMETA(DisplayName = ".45mm"),
+	EAT_357 UMETA(DisplayName = ".357mm"),
+	EAT_556 UMETA(DisplayName = "5.56mm"),
+	EAT_762 UMETA(DisplayName = "7.62mm"),
+	EAT_12Gauge UMETA(DisplayName = "12 Gauge"),
+	EAT_Slug UMETA(DisplayName = "Shotgun Slug"),
+	EAT_Rocket UMETA(DisplayName = "Rocket")
+};
+

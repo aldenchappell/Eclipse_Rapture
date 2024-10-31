@@ -495,5 +495,8 @@ public:
 
 	UFUNCTION(Blueprintcallable)
 	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
+
+	UFUNCTION(Blueprintcallable)
+	class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 #pragma endregion
 };
