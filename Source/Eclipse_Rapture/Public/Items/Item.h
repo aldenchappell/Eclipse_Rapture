@@ -18,8 +18,10 @@ class ECLIPSE_RAPTURE_API AItem : public AActor, public IInteractInterface
 	GENERATED_BODY()
 	
 public:	
-	
 	AItem();
+
+	UPROPERTY(BlueprintReadonly, Category = "Item Properties | Player Reference")
+	TObjectPtr<AEclipseRaptureCharacter> PlayerReference;
 
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
 

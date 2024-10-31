@@ -2,11 +2,13 @@
 
 #pragma once
 
+#include "WeaponTypes.h"
 #include "Interfaces/Fire.h"
 #include "WeaponTypes.h"
 #include "CoreMinimal.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "WeaponBase.generated.h"
+
 
 //Forward Declarations
 class UAnimationAsset;
@@ -37,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnEquip();
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Properties")
+	EAmmoType AmmoType;
 
 #pragma region Recoil Properties(to be used in BP_PlayerMain)
 

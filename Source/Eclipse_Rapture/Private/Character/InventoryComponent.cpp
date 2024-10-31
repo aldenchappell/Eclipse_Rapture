@@ -57,3 +57,31 @@ bool UInventoryComponent::RemoveItem(AItem* ItemToRemove)
     }
     return false;
 }
+
+bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
+{
+    for (AItem* Item : Items)
+    {
+        if (Item && Item->IsA(ItemClass))
+        {
+            return true; //Found at least one item of this type
+        }
+    }
+    return false; //No items of this type found
+}
+
+int32 UInventoryComponent::GetItemAmount(TSubclassOf<AItem> ItemClass)
+{
+    //track how many items of this type are found
+    int32 Count = 0;
+
+    for (AItem* Item : Items)
+    {
+        if (Item && Item->IsA(ItemClass))
+        {
+			++Count; //Found an item of this type, increment count
+        }
+    }
+
+    return Count;
+}

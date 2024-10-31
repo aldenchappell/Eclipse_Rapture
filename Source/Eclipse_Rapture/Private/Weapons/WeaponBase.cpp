@@ -52,8 +52,7 @@ void AWeaponBase::Reload(AWeaponBase* WeaponToReload, float InventoryAmmo)
     {
 		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Black, FString("Ammo after reloading"), false);
     }
-    //TODO: Uncomment this once inventory is setup.
-	/*if (InventoryAmmo > 0)
+	if (InventoryAmmo > 0)
 	{
 		if (InventoryAmmo >= MaxMagazineSize)
 		{
@@ -66,7 +65,7 @@ void AWeaponBase::Reload(AWeaponBase* WeaponToReload, float InventoryAmmo)
 			InventoryAmmo = 0;
 		}
         SetCanFire(true);
-	}*/
+	}
 }
 
 
