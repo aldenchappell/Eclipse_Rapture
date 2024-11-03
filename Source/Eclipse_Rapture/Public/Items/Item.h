@@ -28,6 +28,9 @@ public:
 	UPROPERTY(Transient)
 	class UWorld* World;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	bool bCanBeUsed = true;
+
 	UFUNCTION()
 	virtual void Use(class AEclipseRaptureCharacter* Character);
 
@@ -53,6 +56,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
 	float ItemWeight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
+	int32 MaxStackSize;
+
+
 
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;

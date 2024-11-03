@@ -23,9 +23,10 @@ void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 		{
 			for (int AmountToAdd = 0; AmountToAdd < Amount; AmountToAdd++)
 			{
-				OwningInventory->AddItem(this);
+				OwningInventory->AddItem(GetClass());
 			}
 		}
+		Destroy();
 	}
 }
 

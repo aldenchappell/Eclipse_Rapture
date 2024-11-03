@@ -30,21 +30,10 @@ AItem::AItem()
 	UseActionText = FText::FromString("Use");
 }
 
-void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
-{
-}
-
-void AItem::Use(AEclipseRaptureCharacter* Character)
-{
-
-}
-
-
-
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	PlayerReference = Cast<AEclipseRaptureCharacter>(GetWorld()->GetFirstPlayerController());
 
 	//bind overlap events to overlap delegates
@@ -56,6 +45,16 @@ void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
+{
+
+}
+
+void AItem::Use(AEclipseRaptureCharacter* Character)
+{
+	if (!bCanBeUsed) return;
 }
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -617,13 +617,32 @@ bool AEclipseRaptureCharacter::CanSprint()
 
 #pragma region Inventory
 
-void AEclipseRaptureCharacter::UseItem(AItem* ItemToUse)
+void AEclipseRaptureCharacter::UseItem(TSubclassOf<AItem> ItemClassToUse)
 {
-    if (ItemToUse)
+    if (!ItemClassToUse) return;
+
+    // Check if the inventory contains the item class
+    if (InventoryComponent && InventoryComponent->Items.Contains(ItemClassToUse))
     {
-		ItemToUse->Use(this); //c++ version
-        ItemToUse->OnUse(this); //blueprint version
+        // Retrieve the instance of the item
+        AItem* ItemInstance = InventoryComponent->GetItemInstance(ItemClassToUse);
+
+        if (ItemInstance)
+        {
+            // Call the C++ and Blueprint `Use` functions on the item instance
+            ItemInstance->Use(this); // C++ version
+            ItemInstance->OnUse(this); // Blueprint version
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("No instance of the specified item class found in the inventory."));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Item class not found in inventory."));
     }
 }
+
 
 #pragma endregion

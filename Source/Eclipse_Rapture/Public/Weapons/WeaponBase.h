@@ -15,6 +15,8 @@ class UAnimationAsset;
 class UAnimMontage;
 class UBoxComponent;
 class UParticleSystem;
+class UAmmoBase;
+class AItem;
 
 UCLASS()
 class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
@@ -43,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	EAmmoType AmmoType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Properties")
+	TSubclassOf<AItem> RequiredAmmo;
+
 #pragma region Recoil Properties(to be used in BP_PlayerMain)
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Recoil")
@@ -65,7 +70,7 @@ public:
 #pragma region Reloading
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Ammo")
-	void Reload(AWeaponBase* WeaponToReload, float InventoryAmmo);
+	void Reload(AWeaponBase* WeaponToReload, UInventoryComponent* PlayerInventory);
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
 	float ReloadTime = 2.f;

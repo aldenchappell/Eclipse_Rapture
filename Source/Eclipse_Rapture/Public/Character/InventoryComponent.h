@@ -1,16 +1,33 @@
-// InventoryComponent.h
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
-// Forward declarations
+// Forward declaration
 class AItem;
 
 // Blueprint multicast delegate to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
+
+USTRUCT(BlueprintType)
+struct FDefaultItem
+{
+    GENERATED_BODY()
+
+    // The item class
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+    TSubclassOf<AItem> ItemClass;
+
+    // The quantity of the item
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+    int32 Quantity;
+
+    FDefaultItem()
+        : ItemClass(nullptr), Quantity(1)
+    {
+    }  // Default quantity is 1
+};
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent
@@ -21,22 +38,27 @@ public:
     UInventoryComponent();
     virtual void BeginPlay() override;
 
-	//Item ID will help us keep track of all items in the game.
-    //Will make it easier to check for items in the inventory
-    UPROPERTY()
-	int32 ItemID = 0;
+    // Add a single item
+    UFUNCTION(BlueprintCallable)
+    bool AddItem(TSubclassOf<AItem> ItemClass);
 
-    UFUNCTION(Blueprintcallable)
-    bool AddItem(AItem* ItemToAdd);
+    // Add a specified amount of an item
+    UFUNCTION(BlueprintCallable)
+    bool AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
 
-    UFUNCTION(Blueprintcallable)
-    bool RemoveItem(AItem* ItemToRemove);
+    // Remove a single item
+    UFUNCTION(BlueprintCallable)
+    bool RemoveItem(TSubclassOf<AItem> ItemClass);
 
-    //Items the player starts with (Blueprint-assignable)
+    // Remove multiple items
+    UFUNCTION(BlueprintCallable)
+    bool RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
+
+    // Items the player starts with, including specified quantities
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
-    TArray<TSubclassOf<AItem>> DefaultItems;
+    TArray<FDefaultItem> DefaultItems;
 
-    // Inventory capacity
+    // Inventory capacity (maximum number of item types)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
     int32 Capacity;
 
@@ -44,19 +66,27 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Inventory | Inventory Delegates")
     FOnInventoryUpdated OnInventoryUpdated;
 
-    //Current items in the inventory
+    // Map of item types and their quantities
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
-    TArray<AItem*> Items; 
+    TMap<TSubclassOf<AItem>, int32> Items;
 
-    //Check if the player has at least one of the specified item
+    // Array to store actual item instances
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
+    TArray<AItem*> ItemInstances;
+
+    // Check if the player has at least one of the specified item
     UFUNCTION(BlueprintPure)
     bool CheckForItem(TSubclassOf<AItem> ItemClass);
 
-    //Check how many items of a specific type the player has
+    // Get the quantity of a specific item type in the inventory
     UFUNCTION(BlueprintPure)
     int32 GetItemAmount(TSubclassOf<AItem> ItemClass);
 
-    //Get Item ID
-    UFUNCTION(BlueprintCallable)
-	int32 GetItemID() const { return ItemID; }
+    // Get an instance of a specific item type
+    UFUNCTION(BlueprintPure)
+    AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
+
+private:
+    // Helper function to get max stack size of an item type
+    int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
 };
