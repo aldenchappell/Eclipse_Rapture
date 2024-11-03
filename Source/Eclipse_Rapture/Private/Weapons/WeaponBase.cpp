@@ -4,8 +4,8 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Interfaces/Damageable.h"
-
-
+#include "Items/Ammo/AmmoBase.h"
+#include "Character/InventoryComponent.h"
 #include "DrawDebugHelpers.h" //for debug drawing functions
 
 #define TraceChannel ETraceTypeQuery_
@@ -42,31 +42,24 @@ void AWeaponBase::BeginPlay()
     }
 }
 
-void AWeaponBase::Reload(AWeaponBase* WeaponToReload, float InventoryAmmo)
+void AWeaponBase::Reload(AWeaponBase* WeaponToReload, UInventoryComponent* PlayerInventory)
 {
-    if (WeaponToReload->WeaponClass == EWeaponClass::EWC_Melee) return;
+    if (!WeaponToReload || !PlayerInventory) return;
 
-	CurrentAmmo = MaxMagazineSize;
+    int32 InventoryAmmo = PlayerInventory->GetItemAmount(RequiredAmmo);
 
-    if (GEngine)
+    if (InventoryAmmo > 0)
     {
-		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Black, FString("Ammo after reloading"), false);
-    }
-	if (InventoryAmmo > 0)
-	{
-		if (InventoryAmmo >= MaxMagazineSize)
-		{
-			CurrentAmmo = MaxMagazineSize;
-			InventoryAmmo -= MaxMagazineSize;
-		}
-		else
-		{
-			CurrentAmmo = InventoryAmmo;
-			InventoryAmmo = 0;
-		}
+        int32 AmmoNeeded = MaxMagazineSize - CurrentAmmo;
+        int32 AmmoToLoad = FMath::Min(AmmoNeeded, InventoryAmmo);
+
+        CurrentAmmo += AmmoToLoad;
+        PlayerInventory->RemoveItemAmount(RequiredAmmo, AmmoToLoad);
+
         SetCanFire(true);
-	}
+    }
 }
+
 
 
 //For melee weapon collision

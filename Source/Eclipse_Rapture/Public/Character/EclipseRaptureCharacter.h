@@ -53,7 +53,7 @@ public:
 	FVector PlayerADSOffset;
 
 	UFUNCTION(Blueprintcallable, Category = "Inventory | Items")
-	void UseItem(AItem* ItemToUse);
+	void UseItem(TSubclassOf<AItem> ItemToUse);
 
 #pragma region Components
 

@@ -28,7 +28,7 @@ void AFoodItem::Use(AEclipseRaptureCharacter* Character)
 		{
 			if (OwningInventory)
 			{
-				OwningInventory->RemoveItem(this);
+				OwningInventory->RemoveItem(GetClass());
 			}
 		}
 	}

@@ -14,4 +14,10 @@ class ECLIPSE_RAPTURE_API UAmmoBase : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+
+protected:
+
+private:
+
 };
