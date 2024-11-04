@@ -20,6 +20,7 @@ public:
 
 protected:
 	virtual void Use(class AEclipseRaptureCharacter* Character) override;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Healing")
 	float FoodSatietyHealAmount = 25.0f;

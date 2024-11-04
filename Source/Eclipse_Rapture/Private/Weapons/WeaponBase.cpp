@@ -44,22 +44,29 @@ void AWeaponBase::BeginPlay()
 
 void AWeaponBase::Reload(AWeaponBase* WeaponToReload, UInventoryComponent* PlayerInventory)
 {
-    if (!WeaponToReload || !PlayerInventory) return;
+    if (!WeaponToReload || !PlayerInventory || !RequiredAmmo) return;
 
+    // Get the current amount of ammo available in the player's inventory
     int32 InventoryAmmo = PlayerInventory->GetItemAmount(RequiredAmmo);
 
-    if (InventoryAmmo > 0)
+    // Calculate the remaining space in the magazine
+    int32 AmmoNeeded = MaxMagazineSize - CurrentAmmo;
+
+    // Determine the actual amount of ammo to load (minimum of needed ammo and available inventory ammo)
+    int32 AmmoToLoad = FMath::Min(AmmoNeeded, InventoryAmmo);
+
+    // If there is ammo to load, add it to the current magazine and update the inventory
+    if (AmmoToLoad > 0)
     {
-        int32 AmmoNeeded = MaxMagazineSize - CurrentAmmo;
-        int32 AmmoToLoad = FMath::Min(AmmoNeeded, InventoryAmmo);
-
         CurrentAmmo += AmmoToLoad;
+
+        // Remove the used ammo from the player's inventory
         PlayerInventory->RemoveItemAmount(RequiredAmmo, AmmoToLoad);
-
-        SetCanFire(true);
     }
-}
 
+    // Ensure the weapon is ready to fire if there's any ammo in the magazine
+    SetCanFire(true);
+}
 
 
 //For melee weapon collision
