@@ -31,7 +31,7 @@ protected:
 	int32 MaxAmount = 25;
 
 	UPROPERTY()
-	int32 Amount;
+	int32 AmmoDropAmount;
 
 	UFUNCTION()
 	void InitializeAmmoDrop();

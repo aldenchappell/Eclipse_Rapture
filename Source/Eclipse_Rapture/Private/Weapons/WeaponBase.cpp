@@ -42,9 +42,9 @@ void AWeaponBase::BeginPlay()
     }
 }
 
-void AWeaponBase::Reload(AWeaponBase* WeaponToReload, UInventoryComponent* PlayerInventory)
+void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
 {
-    if (!WeaponToReload || !PlayerInventory || !RequiredAmmo) return;
+    if (!PlayerInventory || !RequiredAmmo) return;
 
     // Get the current amount of ammo available in the player's inventory
     int32 InventoryAmmo = PlayerInventory->GetItemAmount(RequiredAmmo);
