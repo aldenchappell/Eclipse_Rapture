@@ -60,7 +60,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
 	int32 MaxStackSize;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Pickup Properties")
+	FText ItemPickupText;
 
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;

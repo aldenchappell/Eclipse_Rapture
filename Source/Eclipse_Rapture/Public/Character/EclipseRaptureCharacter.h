@@ -475,6 +475,9 @@ public:
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
 
+	UFUNCTION(Blueprintcallable)
+	AItem* GetCurrentlyOverlappingItem() const { return CurrentOverlappingItem; }
+
 	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
 	bool GetCanMove() const { return bCanMove; }
 
@@ -498,5 +501,8 @@ public:
 
 	UFUNCTION(Blueprintcallable)
 	class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	
+	UFUNCTION(Blueprintcallable)
+	class UInputMappingContext* GetCharacterMappingContext() const { return EclipseRaptureMapping; }
 #pragma endregion
 };
