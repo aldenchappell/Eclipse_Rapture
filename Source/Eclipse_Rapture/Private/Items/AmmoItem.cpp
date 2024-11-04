@@ -21,10 +21,8 @@ void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 	{
 		if (OwningInventory)
 		{
-			for (int AmountToAdd = 0; AmountToAdd < Amount; AmountToAdd++)
-			{
-				OwningInventory->AddItem(GetClass());
-			}
+			//Add AmmoDropAmount of ammo to the player's inventory
+			OwningInventory->AddItemAmount(GetClass(), AmmoDropAmount);
 		}
 		Destroy();
 	}
@@ -32,12 +30,12 @@ void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 
 void AAmmoItem::Use(AEclipseRaptureCharacter* Character)
 {
-	//update weapon ammo UI
+
 }
 
 void AAmmoItem::InitializeAmmoDrop()
 {
-	Amount = FMath::RandRange(MinAmount, MaxAmount);
+	AmmoDropAmount = FMath::RandRange(MinAmount, MaxAmount);
 
-	UE_LOG(LogTemp, Warning, TEXT("Ammo Amount: %d"), Amount);
+	UE_LOG(LogTemp, Warning, TEXT("Ammo Amount: %d"), AmmoDropAmount);
 }

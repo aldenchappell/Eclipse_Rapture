@@ -13,15 +13,13 @@ AFoodItem::AFoodItem()
 
 void AFoodItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
-
+	Super::Interact_Implementation(Character);
 }
 
 void AFoodItem::Use(AEclipseRaptureCharacter* Character)
 {
 	if (Character && Character->GetHealthComponent())
 	{
-		Character->GetHealthComponent()->HealSatiety(FoodSatietyHealAmount);
-
 		//only remove item from inventory if player is below max satiety
 		if (Character->GetHealthComponent()->GetCurrentSatiety()
 			< Character->GetHealthComponent()->MaxSatiety)
@@ -30,6 +28,7 @@ void AFoodItem::Use(AEclipseRaptureCharacter* Character)
 			{
 				OwningInventory->RemoveItem(GetClass());
 			}
+			Character->GetHealthComponent()->HealSatiety(FoodSatietyHealAmount);
 		}
 	}
 }
