@@ -20,7 +20,6 @@ void UHealthComponent::BeginPlay()
 	OwningCharacter = Cast<AEclipseRaptureCharacter>(GetOwner());
 
     StartHealthUpdateTimer();
-
 }
 
 void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
@@ -72,6 +71,7 @@ void UHealthComponent::SetCurrentSatiety(float Satiety)
 
 void UHealthComponent::HealSatiety(float SatietyAmount)
 {
+    CurrentSatiety = FMath::Clamp(SatietyAmount, 0.0f, MaxSatiety);
     SetCurrentSatiety(CurrentSatiety + SatietyAmount);
 }
 #pragma endregion
