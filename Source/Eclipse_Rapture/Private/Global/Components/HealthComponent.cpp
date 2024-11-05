@@ -19,7 +19,10 @@ void UHealthComponent::BeginPlay()
 
 	OwningCharacter = Cast<AEclipseRaptureCharacter>(GetOwner());
 
-    StartHealthUpdateTimer();
+    if (OwningCharacter->CharacterType == ECharacterType::ECT_Player)
+    {
+        StartHealthUpdateTimer();
+    }
 }
 
 void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
