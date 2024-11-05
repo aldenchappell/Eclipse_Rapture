@@ -61,7 +61,7 @@ public:
 	int32 MaxStackSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Pickup Properties")
-	FText ItemPickupText;
+	FText ItemInteractionPrompt;
 
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;
@@ -82,7 +82,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<USkeletalMeshComponent> ItemSkeleton;
 
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereCollision;
 
 	

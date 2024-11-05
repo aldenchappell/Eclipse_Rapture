@@ -35,6 +35,8 @@ public:
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
+	ECharacterType CharacterType;
 #pragma endregion
 	
 	

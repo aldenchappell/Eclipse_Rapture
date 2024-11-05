@@ -25,7 +25,6 @@ void UInventoryComponent::BeginPlay()
     OnInventoryUpdated.Broadcast();
 }
 
-
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {
     if (!ItemClass || Items.Num() >= Capacity)
@@ -168,7 +167,7 @@ bool UInventoryComponent::RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 A
             {
                 if (ItemInstances[i] && ItemInstances[i]->IsA(ItemClass))
                 {
-                    ItemInstances[i]->Destroy();
+                    ItemInstances[i]->Destroy(); 
                     ItemInstances.RemoveAt(i);
                     break;
                 }
@@ -216,5 +215,3 @@ AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
     }
     return nullptr; // No matching instance found
 }
-
-
