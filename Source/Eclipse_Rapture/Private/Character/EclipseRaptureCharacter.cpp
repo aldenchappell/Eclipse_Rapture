@@ -65,6 +65,8 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //setup inventory component
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 	InventoryComponent->Capacity = 20;
+
+    CharacterType = ECharacterType::ECT_Player;
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
