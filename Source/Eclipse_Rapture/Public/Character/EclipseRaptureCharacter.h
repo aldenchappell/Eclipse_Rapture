@@ -506,5 +506,8 @@ public:
 	
 	UFUNCTION(Blueprintcallable)
 	class UInputMappingContext* GetCharacterMappingContext() const { return EclipseRaptureMapping; }
+
+	UFUNCTION(Blueprintcallable)
+	AItem* GetCurrentOverlappingItem() const { return CurrentOverlappingItem; }
 #pragma endregion
 };
