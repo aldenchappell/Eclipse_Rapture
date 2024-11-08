@@ -39,8 +39,6 @@ public:
 	ECharacterType CharacterType;
 #pragma endregion
 	
-	
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
@@ -392,6 +390,13 @@ protected:
 
 #pragma endregion
 
+#pragma region Static Attached Objects
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Static Attached Objects")
+	TObjectPtr<class UFlashlightComponent> FlashlightComponent;
+	
+#pragma endregion
+
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
@@ -506,5 +511,8 @@ public:
 	
 	UFUNCTION(Blueprintcallable)
 	class UInputMappingContext* GetCharacterMappingContext() const { return EclipseRaptureMapping; }
+
+	UFUNCTION(Blueprintcallable)
+	AItem* GetCurrentOverlappingItem() const { return CurrentOverlappingItem; }
 #pragma endregion
 };

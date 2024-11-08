@@ -5,6 +5,7 @@ enum class ECharacterType : uint8
 	ECT_Player UMETA(DisplayName = "Player"),
 	ECT_Enemy UMETA(DisplayName = "Enemy")
 };
+
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
 {
