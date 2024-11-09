@@ -39,8 +39,6 @@ public:
 	ECharacterType CharacterType;
 #pragma endregion
 	
-	
-
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
@@ -390,6 +388,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
 	TObjectPtr<USkeletalMeshComponent> PlayerShoesMesh;
 
+#pragma endregion
+
+#pragma region Static Attached Objects
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Static Attached Objects")
+	TObjectPtr<class UFlashlightComponent> FlashlightComponent;
+	
 #pragma endregion
 
 private:

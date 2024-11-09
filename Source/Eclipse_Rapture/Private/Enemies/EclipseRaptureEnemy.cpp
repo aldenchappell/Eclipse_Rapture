@@ -3,8 +3,8 @@
 
 #include "Enemies/EclipseRaptureEnemy.h"
 #include "Character/CharacterTypes.h"
+#include "Global/Components/HealthComponent.h"
 
-// Sets default values
 AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -17,11 +17,16 @@ AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 void AEclipseRaptureEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	InitMovementSpeeds();
+}
+
+void AEclipseRaptureEnemy::InitMovementSpeeds()
+{
+	StoredWalkSpeed = WalkSpeed;
+	StoredSprintSpeed = SprintSpeed;
 }
 
 void AEclipseRaptureEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }

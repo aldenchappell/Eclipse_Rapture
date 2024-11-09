@@ -18,6 +18,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Global/Components/HealthComponent.h"
 #include "Character/InventoryComponent.h"
+#include "Items/Components/FlashlightComponent.h"
+#include "Components/SpotLightComponent.h"
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -67,6 +69,13 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 	InventoryComponent->Capacity = 20;
 
     CharacterType = ECharacterType::ECT_Player;
+
+    //setup flashlight
+	FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
+    FlashlightComponent->FlashlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlashlightMesh"));
+    FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
+    FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
+    FlashlightComponent->SetHasFlashlight(false);
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -79,9 +88,20 @@ void AEclipseRaptureCharacter::BeginPlay()
     {
         InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
     }
+
+    if (FlashlightComponent)
+    {
+        if (FlashlightComponent->GetHasFlashlight() && PlayerBodyMesh)
+        {
+            FlashlightComponent->Attach(PlayerBodyMesh, FName("FlashlightSocket"));
+            FlashlightComponent->Enable();
+        }
+        else
+        {
+            FlashlightComponent->Disable();
+        }
+    }
 }
-
-
 
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
