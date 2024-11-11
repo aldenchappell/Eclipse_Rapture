@@ -2,7 +2,7 @@
 
 
 #include "Items/InteractableDoor.h"
-
+#include "Character/InventoryComponent.h"
 
 AInteractableDoor::AInteractableDoor()
 {
@@ -23,16 +23,25 @@ void AInteractableDoor::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	Super::OnSphereOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
+	OverlappingCharacter = Cast<AEclipseRaptureCharacter>(OtherActor);
+
 	UE_LOG(LogTemp, Warning, TEXT("Overlapping with door"));
 }
 
 void AInteractableDoor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
+
+	OverlappingCharacter = nullptr;
 }
 
 void AInteractableDoor::HandleDoorInteraction(bool Opened)
 {
+	if (bIsLocked && OverlappingCharacter)
+	{
+		Unlock(OverlappingCharacter->GetInventoryComponent());
+	}
+
 	if (Opened)
 	{
 		bIsOpen = false;
@@ -45,16 +54,27 @@ void AInteractableDoor::HandleDoorInteraction(bool Opened)
 	}
 }
 
+void AInteractableDoor::Unlock_Implementation(UInventoryComponent* CharacterInventory)
+{
+	if (!bIsLocked) return;
+
+	if (RequiredItemToOpen)
+	{
+		if (CharacterInventory->CheckForItem(RequiredItemToOpen))
+		{
+			bIsLocked = false;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("You need a key to unlock this door"));
+		}
+	}
+	
+}
+
 void AInteractableDoor::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
 	Super::Interact_Implementation(Character);
 
-	if (bIsOpen)
-	{
-		HandleDoorInteraction(true);
-	}
-	else
-	{
-		HandleDoorInteraction(false);
-	}
+	HandleDoorInteraction(bIsOpen);
 }
