@@ -20,6 +20,8 @@
 #include "Character/InventoryComponent.h"
 #include "Items/Components/FlashlightComponent.h"
 #include "Components/SpotLightComponent.h"
+#include "Interfaces/Unlockable.h"
+
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -123,9 +125,6 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
         //Movement
         EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
 
-        //Interact
-        EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
-
         //Melee
 		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Melee);
 
@@ -136,17 +135,6 @@ void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* Player
     }
 }
 #pragma endregion
-void AEclipseRaptureCharacter::Interact()
-{
-    if (CurrentOverlappingItem && CurrentOverlappingItem->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-    {
-        // Call the Execute_Interact function for the interface
-        IInteractInterface::Execute_Interact(CurrentOverlappingItem, this);
-		CurrentOverlappingItem = nullptr;
-
-        UE_LOG(LogTemp, Warning, TEXT("Interacting with item."));
-    }
-}
 
 #pragma region Combat
 

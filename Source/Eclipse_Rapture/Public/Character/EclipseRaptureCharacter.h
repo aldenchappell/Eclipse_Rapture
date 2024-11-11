@@ -162,9 +162,6 @@ protected:
 	TObjectPtr<UInputAction> MovementAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> InteractAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, Category = Input)
@@ -188,7 +185,6 @@ protected:
 #pragma endregion
 
 #pragma region Input Functions
-	void Interact();
 	void Melee();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")

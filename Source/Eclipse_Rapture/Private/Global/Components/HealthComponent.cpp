@@ -25,6 +25,8 @@ void UHealthComponent::BeginPlay()
     }
 }
 
+#pragma region Interface Implementations
+
 void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
 {
     if (CurrentHealth > 0)
@@ -35,10 +37,23 @@ void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector Hit
         if (CurrentHealth <= 0)
         {
             SetCurrentHealth(0);
+            OnDeathEvent.Broadcast();
             UE_LOG(LogTemp, Warning, TEXT("%s is now dead"), *GetOwner()->GetName());
         }
     }
 }
+
+void UHealthComponent::Die_Implementation()
+{
+
+}
+void UHealthComponent::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
+{
+
+}
+
+#pragma endregion
+
 #pragma region Health
 
 // Health Functions
