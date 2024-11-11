@@ -39,7 +39,7 @@ void AInteractableDoor::HandleDoorInteraction(bool Opened)
 {
 	if (bIsLocked && OverlappingCharacter)
 	{
-		Unlock(OverlappingCharacter->GetInventoryComponent());
+		Execute_Unlock(this, OverlappingCharacter->GetInventoryComponent());
 	}
 
 	if (Opened)

@@ -7,6 +7,7 @@
 
 
 // Blueprint multicast delegates to notify UI updates
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthUpdated, float, HealthPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSatietyUpdated, float, SatietyPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnThirstUpdated, float, ThirstPercent);
@@ -19,8 +20,11 @@ class ECLIPSE_RAPTURE_API UHealthComponent : public UActorComponent, public IDam
 public:
     UHealthComponent();
 
-    // Damageable interface implementation
     virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
+
+	virtual void Die_Implementation() override;
+
+    virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
 
     // Health functions
     UFUNCTION(BlueprintCallable, Category = Health)
@@ -70,6 +74,9 @@ public:
 
     UPROPERTY(BlueprintAssignable, Category = "Thirst | Delegates")
     FOnThirstUpdated OnThirstUpdated;
+
+	UPROPERTY(BlueprintAssignable, Category = "Health | Delegates")
+    FOnDeath OnDeathEvent;
 
 protected:
     virtual void BeginPlay() override;

@@ -24,4 +24,10 @@ public:
 	// Function that can be implemented in any class that inherits from this interface
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Damage")
 	void TakeDamage(float DamageAmount, FVector HitLocation);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
+	void Die();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
+	void DropItems(const TArray<TSubclassOf<class AItem>>& InventoryItems);
 };

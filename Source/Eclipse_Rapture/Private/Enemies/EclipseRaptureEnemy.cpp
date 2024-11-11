@@ -4,6 +4,9 @@
 #include "Enemies/EclipseRaptureEnemy.h"
 #include "Character/CharacterTypes.h"
 #include "Global/Components/HealthComponent.h"
+#include "Character/InventoryComponent.h"
+
+
 
 AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 {
@@ -12,6 +15,8 @@ AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 	CharacterType = ECharacterType::ECT_Enemy;
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 void AEclipseRaptureEnemy::BeginPlay()

@@ -76,7 +76,7 @@ protected:
 
 	//Items to drop when the enemy is killed
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Character | Items")
-	TArray<TObjectPtr<AItem>> ItemsToDrop;
+	TArray<TSubclassOf<AItem>> ItemsToDrop;
 
 private:
 
