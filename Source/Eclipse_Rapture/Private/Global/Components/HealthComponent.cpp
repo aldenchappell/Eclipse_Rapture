@@ -49,7 +49,21 @@ void UHealthComponent::Die_Implementation()
 }
 void UHealthComponent::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
 {
+    if (InventoryItems.Num() > 0)
+    {
+		//for (TSubclassOf<AItem> Item : InventoryItems)
+		//{
+		//	FActorSpawnParameters SpawnParams;
+		//	SpawnParams.Owner = GetOwner();
+		//	SpawnParams.Instigator = GetOwner()->GetInstigator();
+		//	FVector CharacterPosition = GetOwner()->GetActorLocation();
+  //          FVector BackpackSpawnOffset = FVector(CharacterPosition.X, CharacterPosition.Y, CharacterPosition.Z + 5.f);
 
+  //          //TODO:
+  //          //Once we have a backpack/storage system setup, switch to spawn a backpack with the inventory items specified.
+		//	GetWorld()->SpawnActor<AItem>(Item, BackpackSpawnOffset, GetOwner()->GetActorRotation(), SpawnParams);
+		//}
+    }
 }
 
 #pragma endregion

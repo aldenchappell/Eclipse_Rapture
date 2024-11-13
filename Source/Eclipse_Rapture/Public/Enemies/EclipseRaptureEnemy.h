@@ -1,14 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
-
+#include "Enemies/EnemyAITypes.h"
 #include "Character/CharacterTypes.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "EclipseRaptureEnemy.generated.h"
 
-class AItem;
 
+class AItem;
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureEnemy : public ACharacter
 {
@@ -26,6 +23,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI | AI Properties")
+	EnemyAIType AIType = EnemyAIType::EAIT_Shooter;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI | AI Properties")
+	EEnemyAIState CurrentAIState = EEnemyAIState::EEAS_Idle;
 
 protected:
 	
@@ -69,6 +72,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
 	float MaxAmmoToHold;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	float Accuracy = 80.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	float FirstShotAccuracyBonus = 20.0f; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	float AmmoCount = 30.0f;
+
+	bool CanFire();
+
 	
 #pragma endregion
 
@@ -77,8 +92,18 @@ protected:
 	//Items to drop when the enemy is killed
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Character | Items")
 	TArray<TSubclassOf<AItem>> ItemsToDrop;
+#pragma endregion
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float CriticalHealthThreshold = 30.0f; // Threshold to trigger a retreat or cover state
+
+	UPROPERTY(BlueprintReadWrite, Category = "Health")
+	bool bIsInCriticalHealth = false;
+
+	void CheckHealthState();
+	void UpdateAIState(EEnemyAIState NewState);
 
 private:
 
-
+public:
 };
