@@ -34,7 +34,7 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerReference = Cast<AEclipseRaptureCharacter>(GetWorld()->GetFirstPlayerController());
+	PlayerReference = *Cast<AEclipseRaptureCharacter>(GetWorld()->GetFirstPlayerController());
 
 	//bind overlap events to overlap delegates
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);

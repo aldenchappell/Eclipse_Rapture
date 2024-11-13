@@ -7,6 +7,8 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
+#include "Enemies/PatrolPathComponent.h"
+#include "Enemies/DespawningComponent.h"
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -34,8 +36,6 @@ AEnemyAIController::AEnemyAIController()
 	if (HearingConfig)
 	{
 		HearingConfig->HearingRange = HearingRange;
-		HearingConfig->bUseLoSHearing = true;
-		HearingConfig->LoSHearingRange = LoseHearingRange;
 		HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
 		HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
 		HearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
@@ -43,16 +43,17 @@ AEnemyAIController::AEnemyAIController()
 		AIPerceptionComponent->ConfigureSense(*HearingConfig);
 	}
 
-	// Set up the perception component to use the configured senses
 	AIPerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
 
+	PatrolPathComponent = CreateDefaultSubobject<UPatrolPathComponent>(TEXT("Path Following Component"));
 
+	DespawnComponent = CreateDefaultSubobject<UDespawningComponent>(TEXT("Despawning Component"));
 }
 
 
 void AEnemyAIController::BeginPlay()
 {
-
+	InitializeEnemyType();
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
@@ -67,4 +68,41 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 void AEnemyAIController::OnUnPossess()
 {
 
+}
+
+void AEnemyAIController::InitializeEnemyType()
+{
+	if (OwningEnemy)
+	{
+		switch (OwningEnemy->AIType)
+		{
+			case EnemyAIType::EAIT_Aggressor:
+				AIPerceptionComponent->SetDominantSense(HearingConfig->GetSenseImplementation());
+				break;
+			case EnemyAIType::EAIT_Shooter:
+				AIPerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
+				break;
+			default:
+				AIPerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
+				UE_LOG(LogTemp, Warning, TEXT("No AI Type assigned to %s, defaulting to Shooter"), *OwningEnemy->GetName());
+				break;
+		}
+	}
+}
+
+void AEnemyAIController::IncreaseAlertValue(float ValueToAdd)
+{
+	//Increase alert value, clamp between 0 and 100
+	SetAlertValue(FMath::Clamp(AlertValue + ValueToAdd, 0.f, 100.f));
+}
+
+void AEnemyAIController::UpdateAlertLevel(float AlertIncrease)
+{
+	AlertValue = FMath::Clamp(AlertValue + AlertIncrease, 0.f, 100.f);
+	if (AlertValue >= 100.f) CurrentAlertLevel = EAlertLevel::EAL_InCombat;
+	else if (AlertValue >= 50.f) CurrentAlertLevel = EAlertLevel::EAL_Alerted;
+	else if (AlertValue >= 20.f) CurrentAlertLevel = EAlertLevel::EAL_Suspicious;
+	else CurrentAlertLevel = EAlertLevel::EAL_Idle;
+
+	//TODO: Implement corresponding behaviors or state changes based on CurrentAlertLevel
 }
