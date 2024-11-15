@@ -72,12 +72,18 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 
     CharacterType = ECharacterType::ECT_Player;
 
-    //setup flashlight
-	FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
-    FlashlightComponent->FlashlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlashlightMesh"));
-    FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-    FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
-    FlashlightComponent->SetHasFlashlight(false);
+    //Constructor for player components
+    if (CharacterType == ECharacterType::ECT_Player)
+    {
+        //setup flashlight
+        FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
+        FlashlightComponent->FlashlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlashlightMesh"));
+        FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
+        FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
+        FlashlightComponent->SetHasFlashlight(false);
+    }
+
+    
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -175,6 +181,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
 
         //Call OnEquip on weapon
         NewWeapon->OnEquip();
+        NewWeapon->OwningActor = this;
 
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();

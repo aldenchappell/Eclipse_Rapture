@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include "Enemies/EnemyAITypes.h"
 #include "Character/CharacterTypes.h"
