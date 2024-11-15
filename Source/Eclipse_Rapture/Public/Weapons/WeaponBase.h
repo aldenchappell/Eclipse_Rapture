@@ -25,6 +25,10 @@ class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
 	
 public:
 	AWeaponBase();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<AActor> OwningActor;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<class AWeaponPickup> PickupClass;
 

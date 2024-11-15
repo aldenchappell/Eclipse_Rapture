@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// CoverObject.h
 
 #pragma once
 
@@ -6,23 +6,24 @@
 #include "UObject/Interface.h"
 #include "CoverObject.generated.h"
 
-// This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCoverObject : public UInterface
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 };
 
-/**
- * 
- */
 class ECLIPSE_RAPTURE_API ICoverObject
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-	
 public:
+    // BlueprintNativeEvent declaration with const reference
+    UFUNCTION(BlueprintNativeEvent, Category = "Cover")
+    void SetCoverPoints(const TArray<class AActor*>& NewCoverPoints);
 
-	UFUNCTION(BlueprintNativeEvent, Category = Cover)
-	void EnterCover(FVector CoverPoint);
+    UFUNCTION(BlueprintNativeEvent, Category = "Cover")
+    TArray<class AActor*> GetCoverPoints();
+
+    UFUNCTION(BlueprintNativeEvent, Category = "Cover")
+    void EnterCover(FVector CoverPoint);
 };
