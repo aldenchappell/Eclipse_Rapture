@@ -42,13 +42,6 @@ AEnemyAIController::AEnemyAIController()
 		AIPerceptionComponent->ConfigureSense(*HearingConfig);
 	}
 
-	//Setup team sense config
-	//TeamConfig = CreateDefaultSubobject<UAISenseConfig_Team>(TEXT("TeamConfig"));
-	//if (TeamConfig)
-	//{
-	//
-	//}
-
 	DespawnComponent = CreateDefaultSubobject<UDespawningComponent>(TEXT("Despawning Component"));
 }
 
