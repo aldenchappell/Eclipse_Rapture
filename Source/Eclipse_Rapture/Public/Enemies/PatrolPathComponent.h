@@ -1,37 +1,36 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PatrolPathComponent.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UPatrolPathComponent : public UActorComponent
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
-public:	
-	UPatrolPathComponent();
+public:
+    UPatrolPathComponent();
 
-	UPROPERTY(EditAnywhere)
-	bool bEnablePatrolling = true;
+    // If true, ignores patrol points and uses random points
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Patrol Points")
+    bool bEnableRandomPointPathfinding = false;
 
-	UPROPERTY(EditAnywhere)
-	bool bEnableRandomPointPathfinding = true;
+    // Patrol points as scene components
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Patrol Points")
+    TArray<class APatrolPoint*> PatrolPoints;
 
-	UPROPERTY(EditAnywhere, Category = "Patrol Points")
-	TArray<AActor*> PatrolPoints;
+    // Gets the location of the patrol point at a specific index
+    UFUNCTION(BlueprintCallable, Category = "Patrol Points")
+    FVector GetWaypointLocation(int32 Index) const;
 
-	UFUNCTION(Blueprintcallable)
-	FVector GetWaypointLocation(int32 Index) const;
-
-	UFUNCTION(BlueprintCallable)
-	int32 GetNextWaypointIndex(int32 CurrentIndex) const;
+    // Gets the next waypoint index based on the current logic
+    UFUNCTION(BlueprintCallable, Category = "Patrol Points")
+    int32 GetNextWaypointIndex();
 
 protected:
+    virtual void BeginPlay() override;
 
-	virtual void BeginPlay() override;
-		
+private:
+    int32 CurrentPatrolPointIndex = 0;
 };

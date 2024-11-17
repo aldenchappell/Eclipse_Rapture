@@ -65,8 +65,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	TObjectPtr<class UAISenseConfig_Hearing> HearingConfig;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	TObjectPtr<class UPatrolPathComponent> PatrolPathComponent;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	//TObjectPtr<class UAISenseConfig_Team> TeamConfig;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	TObjectPtr<class UDespawningComponent> DespawnComponent;
@@ -111,11 +111,8 @@ private:
 
 	UPROPERTY()
 	float AlertValue = 0.f;
-
+	
 	//Getters and Setters
-public:
-
-	void InitializeEnemyType();
 public:
 	
 	UFUNCTION(BlueprintPure, Category = "AI | AI Values")
