@@ -14,10 +14,9 @@ AEnemyAIController::AEnemyAIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// Initialize the perception component
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
 
-	// Create and configure the sight sense
+	//Setup sight sense
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 	if (SightConfig)
 	{
@@ -31,7 +30,7 @@ AEnemyAIController::AEnemyAIController()
 		AIPerceptionComponent->ConfigureSense(*SightConfig);
 	}
 
-	// Create and configure the hearing sense
+	//Setup hearing sense
 	HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
 	if (HearingConfig)
 	{
@@ -43,9 +42,12 @@ AEnemyAIController::AEnemyAIController()
 		AIPerceptionComponent->ConfigureSense(*HearingConfig);
 	}
 
-	AIPerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
-
-	PatrolPathComponent = CreateDefaultSubobject<UPatrolPathComponent>(TEXT("Path Following Component"));
+	//Setup team sense config
+	//TeamConfig = CreateDefaultSubobject<UAISenseConfig_Team>(TEXT("TeamConfig"));
+	//if (TeamConfig)
+	//{
+	//
+	//}
 
 	DespawnComponent = CreateDefaultSubobject<UDespawningComponent>(TEXT("Despawning Component"));
 }
@@ -53,11 +55,13 @@ AEnemyAIController::AEnemyAIController()
 
 void AEnemyAIController::BeginPlay()
 {
-	InitializeEnemyType();
+	Super::BeginPlay();
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
+	Super::OnPossess(InPawn);
+
 	//if enemy is not assigned already, cast and get a reference now
 	if (!OwningEnemy)
 	{
@@ -67,27 +71,7 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 
 void AEnemyAIController::OnUnPossess()
 {
-
-}
-
-void AEnemyAIController::InitializeEnemyType()
-{
-	if (OwningEnemy)
-	{
-		switch (OwningEnemy->AIType)
-		{
-			case EnemyAIType::EAIT_Aggressor:
-				AIPerceptionComponent->SetDominantSense(HearingConfig->GetSenseImplementation());
-				break;
-			case EnemyAIType::EAIT_Shooter:
-				AIPerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
-				break;
-			default:
-				AIPerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
-				UE_LOG(LogTemp, Warning, TEXT("No AI Type assigned to %s, defaulting to Shooter"), *OwningEnemy->GetName());
-				break;
-		}
-	}
+	Super::OnUnPossess();
 }
 
 void AEnemyAIController::IncreaseAlertValue(float ValueToAdd)
