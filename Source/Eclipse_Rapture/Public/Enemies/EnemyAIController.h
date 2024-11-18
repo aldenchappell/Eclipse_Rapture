@@ -33,10 +33,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AI | AI Functions")
 	void IncreaseAlertValue(float ValueToAdd);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Alert System")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Alert System")
 	EAlertLevel CurrentAlertLevel = EAlertLevel::EAL_Idle;
 
 	//Adjust alert level based on stimulus
+	UFUNCTION(BlueprintCallable, Category = "AI | Alert System")
 	void UpdateAlertLevel(float AlertIncrease); 
 
 protected:

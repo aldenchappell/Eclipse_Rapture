@@ -10,20 +10,28 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
+    AActor* Owner = GetOwner();
+    if (Owner)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("InventoryComponent owner: %s"), *Owner->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
+    }
 
-    // Spawn default items from their classes
+    // Add default items
     for (const FDefaultItem& DefaultItem : DefaultItems)
     {
-        if (DefaultItem.ItemClass)  // Check if the item class is valid
+        if (DefaultItem.ItemClass)
         {
-            // Add the specified amount of the item to the inventory
             AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
         }
     }
 
-    // UI update
     OnInventoryUpdated.Broadcast();
 }
+
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {
@@ -67,9 +75,10 @@ bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 
 bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount)
 {
-    // Check if ItemClass is valid, the amount is greater than 0, and capacity allows it
     if (!ItemClass || Amount <= 0 || Items.Num() >= Capacity)
     {
+        UE_LOG(LogTemp, Error, TEXT("AddItemAmount failed: ItemClass=%s, Amount=%d, CurrentItems=%d, Capacity=%d"),
+               *GetNameSafe(ItemClass), Amount, Items.Num(), Capacity);
         return false;
     }
 
@@ -79,21 +88,18 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
     if (ExistingCount)
     {
         int32 TotalAmount = *ExistingCount + Amount;
-
-        // Check if the total amount exceeds the max stack size
         if (TotalAmount <= MaxStackSize)
         {
-            *ExistingCount = TotalAmount; // Simply add to the current count
+            *ExistingCount = TotalAmount;
         }
         else
         {
-            *ExistingCount = MaxStackSize; // Limit to max stack size
+            *ExistingCount = MaxStackSize;
             return false; // Couldn't add the full amount due to stack limit
         }
     }
     else
     {
-        // If item doesn't exist, add a new entry with the lesser of Amount or MaxStackSize
         int32 AmountToAdd = FMath::Min(Amount, MaxStackSize);
         Items.Add(ItemClass, AmountToAdd);
 
@@ -102,15 +108,19 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
         if (NewItem)
         {
             ItemInstances.Add(NewItem);
-            NewItem->OwningInventory = this; // Optional: Set ownership
+            NewItem->OwningInventory = this;
+            UE_LOG(LogTemp, Warning, TEXT("Spawned item instance: %s"), *NewItem->GetName());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to spawn item instance for: %s"), *ItemClass->GetName());
         }
     }
 
-    // Notify UI or other systems about the update
     OnInventoryUpdated.Broadcast();
-
     return true;
 }
+
 
 bool UInventoryComponent::RemoveItem(TSubclassOf<AItem> ItemClass)
 {
@@ -199,10 +209,19 @@ int32 UInventoryComponent::GetMaxStackSize(TSubclassOf<AItem> ItemClass) const
     if (ItemClass)
     {
         AItem* Item = ItemClass->GetDefaultObject<AItem>();
-        return Item ? FMath::Max(1, static_cast<int32>(Item->MaxStackSize)) : 1; // Default to 1 if MaxStackSize is 0
+        if (Item)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("MaxStackSize for %s is %d"), *ItemClass->GetName(), Item->MaxStackSize);
+            return FMath::Max(1, static_cast<int32>(Item->MaxStackSize));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("GetDefaultObject failed for %s"), *ItemClass->GetName());
+        }
     }
     return 1;
 }
+
 
 AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
 {
