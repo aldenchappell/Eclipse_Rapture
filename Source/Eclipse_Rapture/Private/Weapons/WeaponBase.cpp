@@ -6,7 +6,8 @@
 #include "Interfaces/Damageable.h"
 #include "Items/Ammo/AmmoBase.h"
 #include "Character/InventoryComponent.h"
-#include "DrawDebugHelpers.h" //for debug drawing functions
+#include "DrawDebugHelpers.h" 
+#include "Items/WeaponPickup.h"
 
 #define TraceChannel ETraceTypeQuery_
 AWeaponBase::AWeaponBase()
@@ -131,6 +132,19 @@ void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
         }
         IgnoreActors.AddUnique(HitInfo.GetActor());
     }
+}
+
+UTexture2D* AWeaponBase::GetThumbnailTexture()
+{
+    if (PickupClass)
+    {
+        const AWeaponPickup* PickupDefault = PickupClass->GetDefaultObject<AWeaponPickup>();
+        if (PickupDefault)
+        {
+            return PickupDefault->ThumbnailTexture;
+        }
+    }
+    return nullptr;
 }
 
 
