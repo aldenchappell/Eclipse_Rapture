@@ -255,4 +255,7 @@ public: //Getters and Setters
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int GetMaxMagazineSize() { return MaxMagazineSize; }
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE class UTexture2D* GetThumbnailTexture();
 };
