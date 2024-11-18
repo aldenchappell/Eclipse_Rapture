@@ -67,11 +67,11 @@ public:
     FOnInventoryUpdated OnInventoryUpdated;
 
     // Map of item types and their quantities
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory | Inventory Properties")
     TMap<TSubclassOf<AItem>, int32> Items;
 
     // Array to store actual item instances
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory | Inventory Properties")
     TArray<AItem*> ItemInstances;
 
     // Check if the player has at least one of the specified item

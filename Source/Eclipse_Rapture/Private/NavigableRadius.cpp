@@ -15,6 +15,8 @@ UNavigableRadius::UNavigableRadius()
         {
 			NavigableRadiusSphere->SetupAttachment(GetOwner()->GetRootComponent());
 			NavigableRadiusSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            NavigableRadiusSphere->SetSphereRadius(Radius);
+			NavigableRadiusSphere->SetCollisionResponseToAllChannels(ECR_Ignore);
         }
     }
 }
