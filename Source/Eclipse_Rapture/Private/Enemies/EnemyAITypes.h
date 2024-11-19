@@ -3,8 +3,8 @@
 UENUM(BlueprintType)
 enum class EnemyAIType : uint8
 {
-	EAIT_Aggressor UMETA(DisplayName = "Standard Enemy"),
-	EAIT_Shooter UMETA(DisplayName = "Patrol Enemy"),
+	EAIT_Aggressor UMETA(DisplayName = "Aggressor Enemy"),
+	EAIT_Shooter UMETA(DisplayName = "Shooter Enemy"),
 	EAIT_Boss UMETA(DisplayName = "Boss Enemy")
 };
 
