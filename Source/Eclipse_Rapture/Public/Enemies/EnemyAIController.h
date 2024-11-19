@@ -21,12 +21,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
 	class UBlackboardData* BlackboardData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
-	class UBlackboardComponent* BlackboardComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
-	class UBehaviorTreeComponent* BehaviorTreeComponent;
-
 	UPROPERTY(BlueprintReadWrite, Category = "AI | AI Properties")
 	int32 CurrentPatrolPoint = 0;
 
@@ -39,6 +33,28 @@ public:
 	//Adjust alert level based on stimulus
 	UFUNCTION(BlueprintCallable, Category = "AI | Alert System")
 	void UpdateAlertLevel(float AlertIncrease); 
+
+#pragma region Blackboard Keys
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName Key_AttackTarget = "AttackTarget";
+
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName
+
+		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName*/
+
+#pragma endregion
 
 protected:
 	virtual void BeginPlay() override;
