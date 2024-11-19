@@ -24,6 +24,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "AI | AI Properties")
 	EEnemyAIState CurrentAIState = EEnemyAIState::EEAS_Idle;
 
+	UPROPERTY(BlueprintReadWrite, Category = "AI | AI Properties")
+	TObjectPtr<class AEnemyAIController> AIController;
+
 protected:
 	
 	virtual void BeginPlay() override;
@@ -39,13 +42,25 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
 	float MaxAmmoToHold;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
 	float Accuracy = 80.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
+	float MinXAccuracy = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
+	float MaxXAccuracy = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
+	float MinYAccuracy = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
+	float MaxYAccuracy = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
 	float FirstShotAccuracyBonus = 20.0f; 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
 	float AmmoCount = 30.0f;
 
 	bool CanFire();
@@ -72,4 +87,7 @@ protected:
 private:
 
 public:
+	UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")
+	FVector GetAdjustedAimDirection(const FVector& OriginalDirection) const;
+
 };

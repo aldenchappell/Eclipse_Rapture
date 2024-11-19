@@ -41,6 +41,21 @@ void AEclipseRaptureEnemy::UpdateAIState(EEnemyAIState NewState)
 	//TODO: Update behavior tree or animation as needed based on NewState
 }
 
+FVector AEclipseRaptureEnemy::GetAdjustedAimDirection(const FVector& OriginalDirection) const
+{
+	// Calculate deviation based on accuracy
+	float Deviation = (100.0f - Accuracy) / 100.0f; // Higher deviation for lower accuracy
+
+	// Generate random offset
+	float RandomX = FMath::FRandRange(-Deviation, Deviation);
+	float RandomY = FMath::FRandRange(-Deviation, Deviation);
+	float RandomZ = FMath::FRandRange(-Deviation, Deviation);
+
+	FVector AdjustedDirection = OriginalDirection + FVector(RandomX, RandomY, RandomZ);
+	return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
+}
+
+
 bool AEclipseRaptureEnemy::CanFire()
 {
 	if (AmmoCount <= 0) return false;
