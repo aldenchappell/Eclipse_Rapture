@@ -27,23 +27,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 
-	//For ui mostly
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	int32 CurrentWeaponAmmo;
+	
 
 protected:
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& Value);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-#pragma region Movement Values
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
-	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
-
-	
-
-#pragma endregion
 
 #pragma region Movement Properties
 
@@ -209,40 +199,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Static Attached Objects")
 	TObjectPtr<class UFlashlightComponent> FlashlightComponent;
-
-#pragma endregion
-
-#pragma region Swapping Weapons
-	UFUNCTION()
-	void SwapWeapon(EWeaponClass NewWeaponClass);
-
-	UFUNCTION()
-	void EquipWeapon(AWeaponBase* Weapon);
-
-	UFUNCTION()
-	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
-
-	//for weapon swapping
-	UPROPERTY()
-	TObjectPtr<AWeaponBase> CurrentWeapon;
-
-
-	FORCEINLINE void EquipUnarmed();
-	FORCEINLINE void EquipPrimaryWeapon();
-	void SetSwapTimer();
-	FORCEINLINE void EquipSecondaryWeapon();
-
-	// Timer handle to manage swap cooldown
-	FTimerHandle WeaponSwapTimerHandle;
-
-	// Flag to track if swapping is allowed
-	bool bCanSwapWeapon = true;
-
-	// Helper function to reset the swap ability
-	void ResetSwap();
-
-	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Properties")
-	void OnWeaponUpdateSetAmmo();
 
 #pragma endregion
 

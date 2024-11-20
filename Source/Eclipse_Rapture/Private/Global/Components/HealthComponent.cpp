@@ -3,6 +3,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "Character/EclipseRaptureCharacter.h"
+#include "Kismet/GameplayStatics.h"
+#include "AI/AISystemBase.h"
 
 UHealthComponent::UHealthComponent()
 {
@@ -33,6 +35,8 @@ void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector Hit
     {
 		float TargetHealth = CurrentHealth - DamageAmount;
         SetCurrentHealth(FMath::Lerp(GetCurrentHealth(), TargetHealth, 1.5f));
+        
+		UGameplayStatics::ApplyDamage(GetOwner(), DamageAmount, nullptr, nullptr, nullptr);
 
         if (CurrentHealth <= 0)
         {
