@@ -39,13 +39,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
 	FName Key_AttackTarget = "AttackTarget";
 
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
-	FName
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName Key_State = "StateKeyName";
 
-		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
-	FName
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	FName Key_PointOfInterest = "PointOfInterest";
 
-		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+		/*	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
 	FName
 
 		UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
@@ -81,6 +81,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	TObjectPtr<class UAISenseConfig_Hearing> HearingConfig;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	TObjectPtr<class UAISenseConfig_Damage> DamageConfig;
 
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	//TObjectPtr<class UAISenseConfig_Team> TeamConfig;

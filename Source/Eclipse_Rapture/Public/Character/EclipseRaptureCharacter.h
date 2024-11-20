@@ -37,11 +37,19 @@ public:
 	ECharacterType CharacterType;
 #pragma endregion
 
+	//For ui mostly
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	int32 CurrentWeaponAmmo;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
 	FVector PlayerADSOffset;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
 
 #pragma region Components
 
@@ -57,6 +65,44 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+#pragma region Weapon Swapping
+
+	UFUNCTION(BlueprintCallable)
+	void SwapWeapon(EWeaponClass NewWeaponClass);
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
+
+	//for weapon swapping
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<AWeaponBase> CurrentWeapon;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void OnWeaponUpdateSetAmmo();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipWeapon(AWeaponBase* Weapon);
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipUnarmed();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipPrimaryWeapon();
+	
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipSecondaryWeapon();
+
+	void SetSwapTimer();
+
+	// Timer handle to manage swap cooldown
+	FTimerHandle WeaponSwapTimerHandle;
+
+	// Flag to track if swapping is allowed
+	bool bCanSwapWeapon = true;
+
+	// Helper function to reset the swap ability
+	void ResetSwap();
+#pragma endregion
 
 
 	UPROPERTY(VisibleAnywhere, Category = "Items")

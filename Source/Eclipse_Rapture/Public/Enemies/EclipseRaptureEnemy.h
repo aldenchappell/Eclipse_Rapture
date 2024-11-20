@@ -34,9 +34,6 @@ protected:
 #pragma region Weapons
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
-	TSubclassOf<class AWeaponBase> CurrentWeapon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
 	float MinAmmoToHold;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
