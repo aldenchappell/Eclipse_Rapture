@@ -93,7 +93,28 @@ void APlayerMain::Melee()
 {
     if (!bCanMelee) return;
 
+   
+
     UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
+    if (!AnimInstance)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null."))
+            return;
+    }
+
+    if (!MeleeMontage)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Melee Montage is null."))
+            return;
+    }
+
+    if (CurrentMovementState == ECharacterMovementState::ECMS_Melee)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Movement state already melee.."))
+            return;
+        
+    }
+
     if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
     {
         UE_LOG(LogTemp, Warning, TEXT("Starting melee attack."));
