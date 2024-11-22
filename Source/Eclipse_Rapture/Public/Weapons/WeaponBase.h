@@ -126,8 +126,12 @@ protected:
 #pragma endregion
 
 #pragma region Ammo
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Ammo")
 	int32 CurrentAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
+	bool bEnableRandomStartingMagSize = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Ammo")
 	int32 MaxHoldableAmmo;
@@ -258,4 +262,7 @@ public: //Getters and Setters
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE class UTexture2D* GetThumbnailTexture();
+
+	UFUNCTION(BlueprintPure)
+	FORCEINLINE FName GetAttachName() const { return SocketName; }
 };

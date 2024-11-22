@@ -80,8 +80,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void OnWeaponUpdateSetAmmo();
 
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipWeapon(AWeaponBase* Weapon);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void EquipWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Blueprintcallable)
 	virtual void EquipUnarmed();
