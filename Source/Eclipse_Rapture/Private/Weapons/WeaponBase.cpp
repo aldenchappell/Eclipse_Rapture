@@ -15,27 +15,27 @@ AWeaponBase::AWeaponBase()
     PrimaryActorTick.bCanEverTick = true;
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-    WeaponMesh->SetupAttachment(GetRootComponent());
+   /* WeaponMesh->SetupAttachment(GetRootComponent());*/
+	SetRootComponent(WeaponMesh);
 
 	WeaponBox = CreateDefaultSubobject<UBoxComponent>(TEXT("WeaponBox"));
+	WeaponBox->SetupAttachment(WeaponMesh);
     WeaponBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     WeaponBox->SetCollisionResponseToAllChannels(ECR_Overlap);
     WeaponBox->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
     
 	MeleeBoxTraceStart = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTraceStart"));
-    MeleeBoxTraceStart->SetupAttachment(GetRootComponent());
+    MeleeBoxTraceStart->SetupAttachment(WeaponMesh);
 
 	MeleeBoxTraceEnd = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxTraceEnd"));
-    MeleeBoxTraceEnd->SetupAttachment(GetRootComponent());   
+    MeleeBoxTraceEnd->SetupAttachment(WeaponMesh);
 }
 
 
 void AWeaponBase::BeginPlay()
 {
     Super::BeginPlay();
-
-    CurrentAmmo = MaxMagazineSize;
-
+    
     //should only be true on melee weapons. false by default
     if (bShouldDoBoxOverlapCheck)
     {
@@ -114,7 +114,7 @@ void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
     //UE_LOG(LogTemp, Warning, TEXT("Box Y size: $d"), *BoxHalfSize.Y.ToString());
     //UE_LOG(LogTemp, Warning, TEXT("Box Z size: $d"), *BoxHalfSize.Z.ToString());
     //If we hit something, apply damage
-    if (GotHit && HitInfo.GetActor())
+    if (GotHit && HitInfo.GetComponent())
     {
         UGameplayStatics::ApplyDamage(
             OtherActor,
@@ -124,11 +124,11 @@ void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
             UDamageType::StaticClass()
         );
 
-        IDamageable* DamageableActor = Cast<IDamageable>(HitInfo.GetActor());
+        IDamageable* DamageableComponent = Cast<IDamageable>(HitInfo.GetComponent());
 
-        if (DamageableActor)
+        if (DamageableComponent)
         {
-            DamageableActor->Execute_TakeDamage(HitInfo.GetActor(), Damage, HitInfo.ImpactPoint);
+            DamageableComponent->Execute_TakeDamage(HitInfo.GetComponent(), Damage, HitInfo.ImpactPoint);
         }
         IgnoreActors.AddUnique(HitInfo.GetActor());
     }

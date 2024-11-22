@@ -216,7 +216,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
 }
 
 
-void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
+void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
 {
     if (!Weapon)
     {
@@ -226,14 +226,31 @@ void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
 
     // Ensure the weapon is attached to the correct socket on the player's mesh
     FName SocketName = Weapon->SocketName;
-    if (PlayerBodyMesh->DoesSocketExist(SocketName))
+
+    switch (CharacterType)
     {
-        Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-        UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
+    case ECharacterType::ECT_Player:
+        if (PlayerBodyMesh->DoesSocketExist(SocketName))
+        {
+            Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
+        }
+        break;
+    case ECharacterType::ECT_Enemy:
+        if (GetMesh()->DoesSocketExist(SocketName))
+        {
+            Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on enemy mesh!"), *SocketName.ToString());
+        }
+        break;
     }
 
     // Ensure the weapon is visible and collision is enabled
@@ -244,6 +261,7 @@ void AEclipseRaptureCharacter::EquipWeapon(AWeaponBase* Weapon)
     // Store the reference to the currently equipped weapon
     CurrentWeapon = Weapon;
 }
+
 
 AWeaponBase* AEclipseRaptureCharacter::GetCurrentWeaponByClass(EWeaponClass WeaponClass)
 {
@@ -308,6 +326,7 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
     if (SecondaryWeapon)
     {
         SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
+        UE_LOG(LogTemp, Warning, TEXT("Hiding secondary weapon: %s"), *SecondaryWeapon->GetName());
     }
 
 
