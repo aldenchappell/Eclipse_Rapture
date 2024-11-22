@@ -29,10 +29,10 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "AI | Properties")
     TObjectPtr<class AEnemyAIController> AIController;
 
-    UPROPERTY(BlueprintAssignable, Category = "Weapons | Delegates")
+    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnEquipWeapon OnEquipWeapon;
 
-    UPROPERTY(BlueprintAssignable, Category = "Weapons | Delegates")
+    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnUnequipWeapon OnUnequipWeapon;
 
 protected:
