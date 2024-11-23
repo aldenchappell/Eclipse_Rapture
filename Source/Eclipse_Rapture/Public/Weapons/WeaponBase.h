@@ -27,7 +27,7 @@ public:
 	AWeaponBase();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AActor> OwningActor;
+	TObjectPtr<class AEclipseRaptureCharacter> OwningCharacter;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<class AWeaponPickup> PickupClass;

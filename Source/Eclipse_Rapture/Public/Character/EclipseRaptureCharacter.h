@@ -224,6 +224,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int CurrentWeaponIndex;
+
+#pragma region Accuracy
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
+	float Accuracy = 80.0f;
+
+#pragma endregion
 #pragma endregion
 
 #pragma region Mantling
@@ -305,5 +312,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Character | Weapons")
 	AWeaponBase* GetCurrentWeapon();
+
+	//Adjust aim direction based on accuracy
+	UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")
+	FVector GetAdjustedAimDirection(const FVector& OriginalDirection) const;
 #pragma endregion
 };

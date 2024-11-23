@@ -107,7 +107,7 @@ void AEclipseRaptureEnemy::AddWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeap
         }
 
         // Initialize weapon properties
-        SpawnedWeapon->OwningActor = this;
+        SpawnedWeapon->OwningCharacter = this;
 
         // Add to CurrentWeapons map
         CurrentWeapons.Add(WeaponSlot, SpawnedWeapon);
@@ -128,19 +128,7 @@ void AEclipseRaptureEnemy::SpawnStartingWeapons()
     }
 }
 
-FVector AEclipseRaptureEnemy::GetAdjustedAimDirection(const FVector& OriginalDirection) const
-{
-    // Calculate deviation based on accuracy
-    float Deviation = (100.0f - Accuracy) / 100.0f; // Higher deviation for lower accuracy
 
-    // Generate random offset
-    float RandomX = FMath::FRandRange(-Deviation, Deviation);
-    float RandomY = FMath::FRandRange(-Deviation, Deviation);
-    float RandomZ = FMath::FRandRange(-Deviation, Deviation);
-
-    FVector AdjustedDirection = OriginalDirection + FVector(RandomX, RandomY, RandomZ);
-    return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
-}
 
 
 bool AEclipseRaptureEnemy::CanFire()

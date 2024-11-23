@@ -66,16 +66,16 @@ public:
     float MaxThirst = 100.0f;
 
     // Delegates to update UI
-    UPROPERTY(BlueprintAssignable, Category = "Health | Delegates")
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Health | Delegates")
     FOnHealthUpdated OnHealthUpdated;
 
-    UPROPERTY(BlueprintAssignable, Category = "Satiety | Delegates")
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Satiety | Delegates")
     FOnSatietyUpdated OnSatietyUpdated;
 
-    UPROPERTY(BlueprintAssignable, Category = "Thirst | Delegates")
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Thirst | Delegates")
     FOnThirstUpdated OnThirstUpdated;
 
-	UPROPERTY(BlueprintAssignable, Category = "Health | Delegates")
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Health | Delegates")
     FOnDeath OnDeathEvent;
 
 protected:

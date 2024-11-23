@@ -198,7 +198,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
 
         //Call OnEquip on weapon
         NewWeapon->OnEquip();
-        NewWeapon->OwningActor = this;
+        NewWeapon->OwningCharacter = this;
 
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
@@ -424,3 +424,16 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
     }
 }
 
+FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& OriginalDirection) const
+{
+    // Calculate deviation based on accuracy
+    float Deviation = (100.0f - Accuracy) / 100.0f; // Higher deviation for lower accuracy
+
+    // Generate random offset
+    float RandomX = FMath::FRandRange(-Deviation, Deviation);
+    float RandomY = FMath::FRandRange(-Deviation, Deviation);
+    float RandomZ = FMath::FRandRange(-Deviation, Deviation);
+
+    FVector AdjustedDirection = OriginalDirection + FVector(RandomX, RandomY, RandomZ);
+    return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
+}
