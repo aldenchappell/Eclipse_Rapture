@@ -15,11 +15,6 @@ class ECLIPSE_RAPTURE_API AEnemyAIController : public AAIController
 public:
 	AEnemyAIController();
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
-	class UBehaviorTree* BehaviorTree;
-
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
-	class UBlackboardData* BlackboardData;
 
 	UPROPERTY(BlueprintReadWrite, Category = "AI | AI Properties")
 	int32 CurrentPatrolPoint = 0;

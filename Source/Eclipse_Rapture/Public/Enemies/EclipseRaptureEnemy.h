@@ -7,6 +7,8 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEquipWeapon);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnequipWeapon);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureEnemy : public AEclipseRaptureCharacter
 {
@@ -35,9 +37,18 @@ public:
     UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnUnequipWeapon OnUnequipWeapon;
 
+    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
+    FOnAttack OnAttack;
+
+    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
+    FOnAttackEnd OnAttackEnd;
+
 protected:
     virtual void BeginPlay() override;
-    
+
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
+    class UBehaviorTree* BehaviorTree;
+
 #pragma region Animation
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Animation")
@@ -75,29 +86,11 @@ protected:
 	UFUNCTION(BlueprintPure, Category = "Weapons")
     bool CanFire();
 
-    // Adjust aim direction based on accuracy
-    UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")
-    FVector GetAdjustedAimDirection(const FVector& OriginalDirection) const;
-
     // Drop items upon death
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Items")
     TArray<TSubclassOf<class AItem>> ItemsToDrop;
 
-    // Accuracy properties
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
-    float Accuracy = 80.0f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
-    float MinXAccuracy = 0.0f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
-    float MaxXAccuracy = 100.0f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
-    float MinYAccuracy = 0.0f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
-    float MaxYAccuracy = 100.0f;
+   
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
     float FirstShotAccuracyBonus = 20.0f;
@@ -118,8 +111,6 @@ protected:
 
     UPROPERTY(BlueprintReadWrite, Category = "Health")
     bool bIsInCriticalHealth = false;
-
-    void CheckHealthState();
 
 #if WITH_EDITOR
     // Editor validation: Ensure designers use valid weapon setups
