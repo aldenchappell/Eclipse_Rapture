@@ -100,9 +100,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Melee")
 	TObjectPtr<UBoxComponent> MeleeBoxTraceEnd;
 
-	UFUNCTION()
+	/*UFUNCTION()
 	void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-					  bool bFromSweep, const FHitResult& SweepResult);
+					  bool bFromSweep, const FHitResult& SweepResult);*/
 
 	UPROPERTY(EditDefaultsOnly)
 	bool bShouldDoBoxOverlapCheck = false;
@@ -214,7 +214,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Properties", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> WeaponBox;
 
 public: //Getters and Setters

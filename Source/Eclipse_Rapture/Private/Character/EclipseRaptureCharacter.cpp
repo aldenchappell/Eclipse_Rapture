@@ -449,14 +449,14 @@ FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& Origina
 
 #pragma region Interface Implementations
 
-void AEclipseRaptureCharacter::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
+void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
 {
     if (!HealthComponent) return;
     if (HealthComponent->GetCurrentHealth() > 0)
     {
-        float TargetHealth = HealthComponent->GetCurrentHealth() - DamageAmount;
+        float TargetHealth = HealthComponent->GetCurrentHealth() - DamageInfo.DamageAmount;
 
-        UGameplayStatics::ApplyDamage(GetOwner(), DamageAmount, nullptr, nullptr, nullptr);
+        UGameplayStatics::ApplyDamage(GetOwner(), DamageInfo.DamageAmount, nullptr, nullptr, nullptr);
         HealthComponent->SetCurrentHealth(
             FMath::Lerp(HealthComponent->GetCurrentHealth(),
             TargetHealth,

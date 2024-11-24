@@ -36,11 +36,11 @@ void AWeaponBase::BeginPlay()
 {
     Super::BeginPlay();
     
-    //should only be true on melee weapons. false by default
-    if (bShouldDoBoxOverlapCheck)
-    {
-        WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnBoxOverlap);
-    }
+    ////should only be true on melee weapons. false by default
+    //if (bShouldDoBoxOverlapCheck)
+    //{
+    //    WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnBoxOverlap);
+    //}
 }
 
 void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
@@ -69,70 +69,67 @@ void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
     SetCanFire(true);
 }
 
-
-//For melee weapon collision
-void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    //debug to see what is getting hit
-    if (GEngine)
-    {
-		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Black, FString("Hit: ") + OtherActor->GetName(), false);
-    }
-
-    //start and end points for the box trace
-    const FVector TraceStart = MeleeBoxTraceStart->GetComponentLocation();
-    const FVector TraceEnd = MeleeBoxTraceEnd->GetComponentLocation();
-
-    TArray<AActor*> ActorsToIgnore;
-    ActorsToIgnore.Add(this);
-
-    //ensure that this weapon is added to the ignore actors list
-    for (AActor* Actor : ActorsToIgnore)
-    {
-        IgnoreActors.AddUnique(Actor);
-    }
-
-    FHitResult HitInfo;
-	FVector BoxHalfSize = WeaponBox->GetScaledBoxExtent(); //WeaponBox half size
-
-	//box trace to see if we hit anything
-    bool GotHit = UKismetSystemLibrary::BoxTraceSingle(
-        GetWorld(),
-        TraceStart,
-        TraceEnd,
-        BoxHalfSize,
-        MeleeBoxTraceStart->GetComponentRotation(),
-        ETraceTypeQuery::TraceTypeQuery1,
-        false,
-        ActorsToIgnore,
-        EDrawDebugTrace::Persistent,
-        HitInfo,
-        true
-    );
-
-	//UE_LOG(LogTemp, Warning, TEXT("Box X size: $d"), *BoxHalfSize.X.ToString());
-    //UE_LOG(LogTemp, Warning, TEXT("Box Y size: $d"), *BoxHalfSize.Y.ToString());
-    //UE_LOG(LogTemp, Warning, TEXT("Box Z size: $d"), *BoxHalfSize.Z.ToString());
-    //If we hit something, apply damage
-    if (GotHit && HitInfo.GetComponent())
-    {
-        UGameplayStatics::ApplyDamage(
-            OtherActor,
-            Damage,
-            GetInstigator()->GetController(),
-            this,
-            UDamageType::StaticClass()
-        );
-
-        IDamageable* DamageableComponent = Cast<IDamageable>(HitInfo.GetComponent());
-
-        if (DamageableComponent)
-        {
-            DamageableComponent->Execute_TakeDamage(HitInfo.GetComponent(), Damage, HitInfo.ImpactPoint);
-        }
-        IgnoreActors.AddUnique(HitInfo.GetActor());
-    }
-}
+//
+////For melee weapon collision
+//void AWeaponBase::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//    //debug to see what is getting hit
+//    if (GEngine)
+//    {
+//		GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Black, FString("Hit: ") + OtherActor->GetName(), false);
+//    }
+//
+//    //start and end points for the box trace
+//    const FVector TraceStart = MeleeBoxTraceStart->GetComponentLocation();
+//    const FVector TraceEnd = MeleeBoxTraceEnd->GetComponentLocation();
+//
+//    TArray<AActor*> ActorsToIgnore;
+//    ActorsToIgnore.Add(this);
+//
+//    //ensure that this weapon is added to the ignore actors list
+//    for (AActor* Actor : ActorsToIgnore)
+//    {
+//        IgnoreActors.AddUnique(Actor);
+//    }
+//
+//    FHitResult HitInfo;
+//	FVector BoxHalfSize = WeaponBox->GetScaledBoxExtent(); //WeaponBox half size
+//
+//	//box trace to see if we hit anything
+//    bool GotHit = UKismetSystemLibrary::BoxTraceSingle(
+//        GetWorld(),
+//        TraceStart,
+//        TraceEnd,
+//        BoxHalfSize,
+//        MeleeBoxTraceStart->GetComponentRotation(),
+//        ETraceTypeQuery::TraceTypeQuery1,
+//        false,
+//        ActorsToIgnore,
+//        EDrawDebugTrace::Persistent,
+//        HitInfo,
+//        true
+//    );
+//
+//    //If we hit something, apply damage
+//    if (GotHit && HitInfo.GetComponent())
+//    {
+//        UGameplayStatics::ApplyDamage(
+//            OtherActor,
+//            Damage,
+//            GetInstigator()->GetController(),
+//            this,
+//            UDamageType::StaticClass()
+//        );
+//
+//        IDamageable* DamageableComponent = Cast<IDamageable>(HitInfo.GetComponent());
+//
+//        if (DamageableComponent)
+//        {
+//            DamageableComponent->Execute_TakeDamage(HitInfo.GetComponent(), Damage, HitInfo.ImpactPoint);
+//        }
+//        IgnoreActors.AddUnique(HitInfo.GetActor());
+//    }
+//}
 
 UTexture2D* AWeaponBase::GetThumbnailTexture()
 {

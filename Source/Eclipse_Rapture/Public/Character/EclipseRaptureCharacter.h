@@ -9,6 +9,7 @@
 #include "WeaponTypes.h"
 #include "Interfaces/CharacterData.h"
 #include "Interfaces/Damageable.h"
+#include "Character/DamageTypes.h"
 #include "EclipseRaptureCharacter.generated.h"
 
 //Forward Declarations
@@ -64,7 +65,7 @@ public:
 #pragma endregion
 	
 #pragma region Damageable Implementations
-	virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
+	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
 
 	virtual void Die_Implementation() override;
 
