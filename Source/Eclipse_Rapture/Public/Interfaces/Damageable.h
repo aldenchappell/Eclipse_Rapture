@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+
 #include "Damageable.generated.h"
 
 // Interface class declaration
@@ -30,4 +31,13 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
 	void DropItems(const TArray<TSubclassOf<class AItem>>& InventoryItems);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	float GetMaxHealth();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	float GetCurrentHealth();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	float GetCriticalHealthThreshold();
 };

@@ -104,13 +104,7 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
     float AmmoCount = 30.0f;
-
-    // Critical health state
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
-    float CriticalHealthThreshold = 30.0f;
-
-    UPROPERTY(BlueprintReadWrite, Category = "Health")
-    bool bIsInCriticalHealth = false;
+    
 
 #if WITH_EDITOR
     // Editor validation: Ensure designers use valid weapon setups

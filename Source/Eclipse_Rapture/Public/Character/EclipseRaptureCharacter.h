@@ -8,6 +8,7 @@
 #include "CharacterTypes.h"
 #include "WeaponTypes.h"
 #include "Interfaces/CharacterData.h"
+#include "Interfaces/Damageable.h"
 #include "EclipseRaptureCharacter.generated.h"
 
 //Forward Declarations
@@ -20,7 +21,8 @@ class USkeletalMeshComponent;
 class UCameraShakeBase;
 
 UCLASS()
-class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter, public ICharacterData
+class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter :
+	public ACharacter, public ICharacterData, public IDamageable
 {
 	GENERATED_BODY()
 
@@ -61,6 +63,17 @@ public:
 
 #pragma endregion
 	
+#pragma region Damageable Implementations
+	virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
+
+	virtual void Die_Implementation() override;
+
+	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
+
+	virtual float GetMaxHealth_Implementation() override;
+	virtual float GetCurrentHealth_Implementation() override;
+	virtual float GetCriticalHealthThreshold_Implementation() override;
+#pragma endregion
 
 protected:
 	virtual void BeginPlay() override;
@@ -229,6 +242,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
 	float Accuracy = 80.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Character | Weapons | Accuracy", meta = (ClampMin = "5", ClampMax = "50"))
+	float MaxAccuracy = 5.f;
+
 
 #pragma endregion
 #pragma endregion

@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Interfaces/Damageable.h"
+
 #include "HealthComponent.generated.h"
 
 
@@ -13,22 +13,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSatietyUpdated, float, SatietyPer
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnThirstUpdated, float, ThirstPercent);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class ECLIPSE_RAPTURE_API UHealthComponent : public UActorComponent, public IDamageable
+class ECLIPSE_RAPTURE_API UHealthComponent : public UActorComponent
 {
     GENERATED_BODY()
 
 public:
     UHealthComponent();
-
-    virtual void TakeDamage_Implementation(float DamageAmount, FVector HitLocation) override;
-
-	virtual void Die_Implementation() override;
-
-    virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
-
-    // Health functions
-    UFUNCTION(BlueprintCallable, Category = Health)
-    float GetCurrentHealth() const;
 
     UFUNCTION(BlueprintCallable, Category = Health)
     void SetCurrentHealth(float Health);
@@ -77,6 +67,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Health | Delegates")
     FOnDeath OnDeathEvent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+    float CriticalHealthThreshold = 30.0f;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Health")
+    bool bIsInCriticalHealth = false;
 
 protected:
     virtual void BeginPlay() override;
@@ -127,4 +123,8 @@ private:
     void ApplyHungerThirstDamage();
 
     class AEclipseRaptureCharacter* OwningCharacter;
+
+public:
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	float GetCurrentHealth() const { return CurrentHealth; }
 };
