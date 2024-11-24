@@ -4,7 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "Character/DamageTypes.h"
 #include "Damageable.generated.h"
+
+USTRUCT(BlueprintType)
+struct FDamageInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector HitLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EDamageType DamageType;
+};
 
 // Interface class declaration
 UINTERFACE(MinimalAPI)
@@ -23,11 +39,20 @@ class ECLIPSE_RAPTURE_API IDamageable
 public:
 	// Function that can be implemented in any class that inherits from this interface
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Damage")
-	void TakeDamage(float DamageAmount, FVector HitLocation);
+	void TakeDamage(FDamageInfo DamageInfo);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
 	void Die();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
 	void DropItems(const TArray<TSubclassOf<class AItem>>& InventoryItems);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	float GetMaxHealth();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	float GetCurrentHealth();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	float GetCriticalHealthThreshold();
 };

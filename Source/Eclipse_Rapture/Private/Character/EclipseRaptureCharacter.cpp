@@ -428,12 +428,92 @@ FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& Origina
 {
     // Calculate deviation based on accuracy
     float Deviation = (100.0f - Accuracy) / 100.0f; // Higher deviation for lower accuracy
+    UE_LOG(LogTemp, Warning, TEXT("Deviation: %f"), Deviation);
 
-    // Generate random offset
-    float RandomX = FMath::FRandRange(-Deviation, Deviation);
-    float RandomY = FMath::FRandRange(-Deviation, Deviation);
-    float RandomZ = FMath::FRandRange(-Deviation, Deviation);
+    // Generate a random deviation angle in radians
+    float MaxAngle = Deviation * PI / 4; // Scale to a maximum cone angle (e.g., 45 degrees when Deviation is 1)
+    float RandomAngle = FMath::FRandRange(0.0f, MaxAngle);
+    float RandomYaw = FMath::FRandRange(0.0f, 2 * PI); // Full rotation around the yaw axis
 
-    FVector AdjustedDirection = OriginalDirection + FVector(RandomX, RandomY, RandomZ);
+    // Convert the random spherical coordinates to Cartesian coordinates
+    FVector RandomOffset = FVector(
+        FMath::Sin(RandomAngle) * FMath::Cos(RandomYaw),
+        FMath::Sin(RandomAngle) * FMath::Sin(RandomYaw),
+        FMath::Cos(RandomAngle)
+    );
+
+    // Align the offset with the original direction
+    FVector AdjustedDirection = OriginalDirection + RandomOffset;
     return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
 }
+
+#pragma region Interface Implementations
+
+void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
+{
+    if (!HealthComponent) return;
+    if (HealthComponent->GetCurrentHealth() > 0)
+    {
+        float TargetHealth = HealthComponent->GetCurrentHealth() - DamageInfo.DamageAmount;
+
+        UGameplayStatics::ApplyDamage(GetOwner(), DamageInfo.DamageAmount, nullptr, nullptr, nullptr);
+        HealthComponent->SetCurrentHealth(
+            FMath::Lerp(HealthComponent->GetCurrentHealth(),
+            TargetHealth,
+            1.5f));
+
+
+        if (HealthComponent->GetCurrentHealth() <= 0)
+        {
+            HealthComponent->SetCurrentHealth(0);
+            HealthComponent->OnDeathEvent.Broadcast();
+            UE_LOG(LogTemp, Warning, TEXT("%s is now dead"), *GetOwner()->GetName());
+        }
+    }
+}
+
+void AEclipseRaptureCharacter::Die_Implementation()
+{
+    if (!HealthComponent) return;
+    HealthComponent->OnDeathEvent.Broadcast();
+}
+void AEclipseRaptureCharacter::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
+{
+    if (!HealthComponent) return;
+    if (InventoryItems.Num() > 0)
+    {
+        //for (TSubclassOf<AItem> Item : InventoryItems)
+        //{
+        //	FActorSpawnParameters SpawnParams;
+        //	SpawnParams.Owner = GetOwner();
+        //	SpawnParams.Instigator = GetOwner()->GetInstigator();
+        //	FVector CharacterPosition = GetOwner()->GetActorLocation();
+  //          FVector BackpackSpawnOffset = FVector(CharacterPosition.X, CharacterPosition.Y, CharacterPosition.Z + 5.f);
+
+  //          //TODO:
+  //          //Once we have a backpack/storage system setup, switch to spawn a backpack with the inventory items specified.
+        //	GetWorld()->SpawnActor<AItem>(Item, BackpackSpawnOffset, GetOwner()->GetActorRotation(), SpawnParams);
+        //}
+    }
+}
+
+float AEclipseRaptureCharacter::GetMaxHealth_Implementation()
+{
+    if (!HealthComponent) return 0 ;
+    return HealthComponent->MaxHealth;
+}
+
+float AEclipseRaptureCharacter::GetCurrentHealth_Implementation()
+{
+    if (!HealthComponent) return 0;
+
+    return HealthComponent->GetCurrentHealth();
+}
+
+float AEclipseRaptureCharacter::GetCriticalHealthThreshold_Implementation()
+{
+	if (!HealthComponent) return 0;
+    return HealthComponent->CriticalHealthThreshold;
+}
+
+#pragma endregion

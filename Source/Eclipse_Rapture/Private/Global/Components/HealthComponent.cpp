@@ -27,58 +27,9 @@ void UHealthComponent::BeginPlay()
     }
 }
 
-#pragma region Interface Implementations
-
-void UHealthComponent::TakeDamage_Implementation(float DamageAmount, FVector HitLocation)
-{
-    if (CurrentHealth > 0)
-    {
-		float TargetHealth = CurrentHealth - DamageAmount;
-        SetCurrentHealth(FMath::Lerp(GetCurrentHealth(), TargetHealth, 1.5f));
-        
-		UGameplayStatics::ApplyDamage(GetOwner(), DamageAmount, nullptr, nullptr, nullptr);
-
-        if (CurrentHealth <= 0)
-        {
-            SetCurrentHealth(0);
-            OnDeathEvent.Broadcast();
-            UE_LOG(LogTemp, Warning, TEXT("%s is now dead"), *GetOwner()->GetName());
-        }
-    }
-}
-
-void UHealthComponent::Die_Implementation()
-{
-
-}
-void UHealthComponent::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
-{
-    if (InventoryItems.Num() > 0)
-    {
-		//for (TSubclassOf<AItem> Item : InventoryItems)
-		//{
-		//	FActorSpawnParameters SpawnParams;
-		//	SpawnParams.Owner = GetOwner();
-		//	SpawnParams.Instigator = GetOwner()->GetInstigator();
-		//	FVector CharacterPosition = GetOwner()->GetActorLocation();
-  //          FVector BackpackSpawnOffset = FVector(CharacterPosition.X, CharacterPosition.Y, CharacterPosition.Z + 5.f);
-
-  //          //TODO:
-  //          //Once we have a backpack/storage system setup, switch to spawn a backpack with the inventory items specified.
-		//	GetWorld()->SpawnActor<AItem>(Item, BackpackSpawnOffset, GetOwner()->GetActorRotation(), SpawnParams);
-		//}
-    }
-}
-
-#pragma endregion
-
 #pragma region Health
 
-// Health Functions
-float UHealthComponent::GetCurrentHealth() const
-{
-    return CurrentHealth;
-}
+
 
 void UHealthComponent::SetCurrentHealth(float Health)
 {
@@ -89,6 +40,7 @@ void UHealthComponent::SetCurrentHealth(float Health)
 void UHealthComponent::HealHealth(float HealAmount)
 {
     SetCurrentHealth(CurrentHealth + HealAmount);
+	OnHealthUpdated.Broadcast(CurrentHealth / MaxHealth);
 }
 #pragma endregion
 
@@ -109,6 +61,7 @@ void UHealthComponent::HealSatiety(float SatietyAmount)
 {
     CurrentSatiety = FMath::Clamp(SatietyAmount, 0.0f, MaxSatiety);
     SetCurrentSatiety(CurrentSatiety + SatietyAmount);
+	OnSatietyUpdated.Broadcast(CurrentSatiety / MaxSatiety);
 }
 #pragma endregion
 
@@ -127,6 +80,7 @@ void UHealthComponent::SetCurrentThirst(float Thirst)
 void UHealthComponent::HealThirst(float ThirstAmount)
 {
     SetCurrentThirst(CurrentThirst + ThirstAmount);
+    OnThirstUpdated.Broadcast(CurrentThirst / MaxThirst);
 }
 #pragma endregion
 
