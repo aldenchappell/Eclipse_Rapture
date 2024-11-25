@@ -67,8 +67,6 @@ public:
 #pragma region Damageable Implementations
 	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
 
-	virtual void Die_Implementation() override;
-
 	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
 
 	virtual float GetMaxHealth_Implementation() override;
