@@ -2,12 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
+#include "Character/DamageTypes.h"
 #include "HealthComponent.generated.h"
 
 
 // Blueprint multicast delegates to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageResponse, EDamageResponse, DamageResponse);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthUpdated, float, HealthPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSatietyUpdated, float, SatietyPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnThirstUpdated, float, ThirstPercent);
@@ -68,6 +69,9 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Health | Delegates")
     FOnDeath OnDeathEvent;
 
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Health | Delegates")
+    FOnDamageResponse OnDamageResponse;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
     float CriticalHealthThreshold = 30.0f;
 
@@ -77,6 +81,10 @@ public:
 protected:
     virtual void BeginPlay() override;
 
+    UPROPERTY(BlueprintReadWrite, Category = "Health")
+    bool bIsAlive = true;
+
+	// Timer for periodic health updates
     void StartHealthUpdateTimer();
 
     //when does the player start taking damage from hunger?
@@ -127,4 +135,7 @@ private:
 public:
 	UFUNCTION(BlueprintCallable, Category = "Health")
 	float GetCurrentHealth() const { return CurrentHealth; }
+
+    UFUNCTION(BlueprintCallable, Category = "Health")
+	bool GetIsAlive() const { return bIsAlive; }
 };

@@ -27,10 +27,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Properties")
     EEnemyAIState CurrentAIState = EEnemyAIState::EEAS_Idle;
 
-    // AI Controller for the enemy
-    UPROPERTY(BlueprintReadWrite, Category = "AI | Properties")
-    TObjectPtr<class AEnemyAIController> AIController;
-
     UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnEquipWeapon OnEquipWeapon;
 

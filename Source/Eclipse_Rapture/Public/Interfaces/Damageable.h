@@ -20,18 +20,18 @@ struct FDamageInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EDamageType DamageType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EDamageResponse DamageResponse;
 };
 
-// Interface class declaration
 UINTERFACE(MinimalAPI)
 class UDamageable : public UInterface
 {
 	GENERATED_BODY()
 };
 
-/**
- * Interface for any object that can take damage.
- */
+
 class ECLIPSE_RAPTURE_API IDamageable
 {
 	GENERATED_BODY()
@@ -40,9 +40,6 @@ public:
 	// Function that can be implemented in any class that inherits from this interface
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Damage")
 	void TakeDamage(FDamageInfo DamageInfo);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
-	void Die();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Death Events")
 	void DropItems(const TArray<TSubclassOf<class AItem>>& InventoryItems);
@@ -55,4 +52,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
 	float GetCriticalHealthThreshold();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	bool GetIsDead();
+
+	//TODO: Add functions for damage areas (could be bone, could be armor, etc)
 };

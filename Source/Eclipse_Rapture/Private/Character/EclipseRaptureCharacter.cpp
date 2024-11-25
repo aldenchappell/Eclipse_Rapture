@@ -472,11 +472,6 @@ void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
     }
 }
 
-void AEclipseRaptureCharacter::Die_Implementation()
-{
-    if (!HealthComponent) return;
-    HealthComponent->OnDeathEvent.Broadcast();
-}
 void AEclipseRaptureCharacter::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
 {
     if (!HealthComponent) return;
@@ -515,5 +510,6 @@ float AEclipseRaptureCharacter::GetCriticalHealthThreshold_Implementation()
 	if (!HealthComponent) return 0;
     return HealthComponent->CriticalHealthThreshold;
 }
+
 
 #pragma endregion

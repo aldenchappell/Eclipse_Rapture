@@ -25,6 +25,7 @@ void UHealthComponent::BeginPlay()
     {
         StartHealthUpdateTimer();
     }
+
 }
 
 #pragma region Health
