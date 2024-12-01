@@ -23,6 +23,9 @@ struct FDamageInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EDamageResponse DamageResponse;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class AActor> DamageCauser;
 };
 
 UINTERFACE(MinimalAPI)
