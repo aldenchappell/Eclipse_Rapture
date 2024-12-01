@@ -8,7 +8,7 @@
 
 // Blueprint multicast delegates to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDamageResponse, EDamageResponse, DamageResponse);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamageResponse, EDamageResponse, DamageResponse, AActor*, DamageCauser);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthUpdated, float, HealthPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSatietyUpdated, float, SatietyPercent);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnThirstUpdated, float, ThirstPercent);
