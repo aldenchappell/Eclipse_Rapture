@@ -1,5 +1,4 @@
 
-
 #include "Character/EclipseRaptureCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -447,7 +446,7 @@ FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& Origina
     return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
 }
 
-#pragma region Interface Implementations
+#pragma region Damageable Interface Implementations
 
 void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
 {
@@ -510,6 +509,7 @@ float AEclipseRaptureCharacter::GetCriticalHealthThreshold_Implementation()
 	if (!HealthComponent) return 0;
     return HealthComponent->CriticalHealthThreshold;
 }
+
 
 
 #pragma endregion
