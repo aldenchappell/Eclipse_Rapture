@@ -56,6 +56,15 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Thirst)
     float MaxThirst = 100.0f;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attack Token System")
+    int32 AttackTokensCount = 1;
+
+    UFUNCTION(BlueprintCallable, Category = "Attack Token System")
+    void ReserveAttackToken(int32 TokenAmount, bool& Success);
+
+    UFUNCTION(BlueprintCallable, Category = "Attack Token System")
+    void ReturnAttackToken(int32 TokenAmount);
+
     // Delegates to update UI
     UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Health | Delegates")
     FOnHealthUpdated OnHealthUpdated;

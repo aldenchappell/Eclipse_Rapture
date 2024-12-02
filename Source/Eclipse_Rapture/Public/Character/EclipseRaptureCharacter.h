@@ -66,12 +66,12 @@ public:
 	
 #pragma region Damageable Implementations
 	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
-
 	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
-
 	virtual float GetMaxHealth_Implementation() override;
 	virtual float GetCurrentHealth_Implementation() override;
 	virtual float GetCriticalHealthThreshold_Implementation() override;
+	virtual void ReserveAttackToken_Implementation(int32 TokenAmount, bool& Success) override;
+	virtual void ReturnAttackToken_Implementation(int32 TokenAmount) override;
 #pragma endregion
 
 protected:
