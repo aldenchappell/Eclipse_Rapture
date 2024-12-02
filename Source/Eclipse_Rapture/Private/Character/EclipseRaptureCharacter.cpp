@@ -510,6 +510,22 @@ float AEclipseRaptureCharacter::GetCriticalHealthThreshold_Implementation()
     return HealthComponent->CriticalHealthThreshold;
 }
 
+void AEclipseRaptureCharacter::ReserveAttackToken_Implementation(int32 TokenAmount, bool& Success)
+{
+    if (HealthComponent)
+    {
+		HealthComponent->ReserveAttackToken(TokenAmount, Success);
+    }
+}
+
+void AEclipseRaptureCharacter::ReturnAttackToken_Implementation(int32 TokenAmount)
+{
+    if (HealthComponent)
+    {
+		HealthComponent->ReturnAttackToken(TokenAmount);
+    }
+}
+
 
 
 #pragma endregion
