@@ -28,4 +28,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapons")
 	bool HasWeaponEquipped() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapons")
+	bool GetIsAiming();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapons")
+	FHitResult GetCurrentWeaponTraceInfo();
 };

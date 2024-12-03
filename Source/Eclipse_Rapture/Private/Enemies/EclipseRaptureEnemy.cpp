@@ -107,11 +107,11 @@ void AEclipseRaptureEnemy::AddWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeap
         }
 
         // Initialize weapon properties
-        SpawnedWeapon->OwningCharacter = this;
+        SpawnedWeapon->OwningActor = this;
 
         // Add to CurrentWeapons map
         CurrentWeapons.Add(WeaponSlot, SpawnedWeapon);
-        OnEquipWeapon.Broadcast();
+		SpawnedWeapon->OnEquipWeapon.Broadcast();
         UE_LOG(LogTemp, Log, TEXT("%s added weapon %s to slot %d."), *GetName(), *SpawnedWeapon->GetName(), static_cast<int32>(WeaponSlot));
     }
     else

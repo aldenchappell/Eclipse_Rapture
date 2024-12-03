@@ -18,6 +18,8 @@ class UParticleSystem;
 class UAmmoBase;
 class AItem;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEquipWeapon);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnequipWeapon);
 UCLASS()
 class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
 {
@@ -27,7 +29,7 @@ public:
 	AWeaponBase();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<class AEclipseRaptureCharacter> OwningCharacter;
+	TObjectPtr<AActor> OwningActor;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<class AWeaponPickup> PickupClass;
@@ -43,8 +45,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> EquipMontage;
 
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void OnEquip();
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Weapon | Delegates")
+	FOnEquipWeapon OnEquipWeapon;
+
+	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapon | Delegates")
+	FOnUnequipWeapon OnUnequipWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	EAmmoType AmmoType;

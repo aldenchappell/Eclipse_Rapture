@@ -5,8 +5,7 @@
 #include "Enemies/EnemyAITypes.h"
 #include "EclipseRaptureEnemy.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEquipWeapon);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnequipWeapon);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttack);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEnd);
 UCLASS()
@@ -25,13 +24,7 @@ public:
 
     // Current AI state (e.g., Idle, InCombat, InCover)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Properties")
-    EEnemyAIState CurrentAIState = EEnemyAIState::EEAS_Idle;
-
-    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
-    FOnEquipWeapon OnEquipWeapon;
-
-    UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
-    FOnUnequipWeapon OnUnequipWeapon;
+    EEnemyAIState CurrentAIState = EEnemyAIState::EEAS_Idle; 
 
     UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnAttack OnAttack;

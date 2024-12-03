@@ -56,7 +56,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Thirst)
     float MaxThirst = 100.0f;
 
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Attack Token System")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Attack Token System")
     int32 AttackTokensCount = 1;
 
     UFUNCTION(BlueprintCallable, Category = "Attack Token System")
