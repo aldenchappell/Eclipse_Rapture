@@ -72,6 +72,8 @@ public:
 	virtual float GetCriticalHealthThreshold_Implementation() override;
 	virtual void ReserveAttackToken_Implementation(int32 TokenAmount, bool& Success) override;
 	virtual void ReturnAttackToken_Implementation(int32 TokenAmount) override;
+	virtual bool GetIsAiming_Implementation() override;
+	virtual FHitResult GetCurrentWeaponTraceInfo_Implementation() override;
 #pragma endregion
 
 protected:
@@ -184,6 +186,9 @@ protected:
 	float ProneMovementSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
+	float CrouchMovementSpeed;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
 	float AimMovementSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
@@ -197,6 +202,9 @@ protected:
 
 
 #pragma region Weapon Properties
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	FHitResult CurrentWeaponTraceInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 PrimaryAmmo;

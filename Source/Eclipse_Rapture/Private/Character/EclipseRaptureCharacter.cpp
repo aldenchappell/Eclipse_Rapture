@@ -196,8 +196,9 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         CurrentWeaponClass = NewWeaponClass;
 
         //Call OnEquip on weapon
-        NewWeapon->OnEquip();
-        NewWeapon->OwningCharacter = this;
+        
+        NewWeapon->OwningActor = this;
+
 
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
@@ -207,6 +208,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         {
             AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
         }
+        NewWeapon->OnEquipWeapon.Broadcast();
     }
     else
     {
@@ -524,6 +526,16 @@ void AEclipseRaptureCharacter::ReturnAttackToken_Implementation(int32 TokenAmoun
     {
 		HealthComponent->ReturnAttackToken(TokenAmount);
     }
+}
+
+bool AEclipseRaptureCharacter::GetIsAiming_Implementation()
+{
+    return bIsAiming;
+}
+
+FHitResult AEclipseRaptureCharacter::GetCurrentWeaponTraceInfo_Implementation()
+{
+    return FHitResult();
 }
 
 
