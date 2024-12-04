@@ -528,12 +528,17 @@ void AEclipseRaptureCharacter::ReturnAttackToken_Implementation(int32 TokenAmoun
     }
 }
 
-bool AEclipseRaptureCharacter::GetIsAiming_Implementation()
+bool AEclipseRaptureCharacter::I_GetIsAiming_Implementation()
 {
     return bIsAiming;
 }
 
-FHitResult AEclipseRaptureCharacter::GetCurrentWeaponTraceInfo_Implementation()
+bool AEclipseRaptureCharacter::I_GetIsReloading_Implementation()
+{
+    return bIsReloading;
+}
+
+FHitResult AEclipseRaptureCharacter::I_GetCurrentWeaponTraceInfo_Implementation()
 {
     return FHitResult();
 }
