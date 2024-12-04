@@ -43,12 +43,12 @@ void AWeaponBase::BeginPlay()
     //}
 }
 
-void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
+void AWeaponBase::Reload(UInventoryComponent* CharacterInventory)
 {
-    if (!PlayerInventory || !RequiredAmmo) return;
+    if (!CharacterInventory || !RequiredAmmo) return;
 
     // Get the current amount of ammo available in the player's inventory
-    int32 InventoryAmmo = PlayerInventory->GetItemAmount(RequiredAmmo);
+    int32 InventoryAmmo = CharacterInventory->GetItemAmount(RequiredAmmo);
 
     // Calculate the remaining space in the magazine
     int32 AmmoNeeded = MaxMagazineSize - CurrentAmmo;
@@ -62,7 +62,7 @@ void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
         CurrentAmmo += AmmoToLoad;
 
         // Remove the used ammo from the player's inventory
-        PlayerInventory->RemoveItemAmount(RequiredAmmo, AmmoToLoad);
+        CharacterInventory->RemoveItemAmount(RequiredAmmo, AmmoToLoad);
     }
 
     // Ensure the weapon is ready to fire if there's any ammo in the magazine

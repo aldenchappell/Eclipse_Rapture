@@ -72,8 +72,9 @@ public:
 	virtual float GetCriticalHealthThreshold_Implementation() override;
 	virtual void ReserveAttackToken_Implementation(int32 TokenAmount, bool& Success) override;
 	virtual void ReturnAttackToken_Implementation(int32 TokenAmount) override;
-	virtual bool GetIsAiming_Implementation() override;
-	virtual FHitResult GetCurrentWeaponTraceInfo_Implementation() override;
+	virtual bool I_GetIsAiming_Implementation() override;
+	virtual bool I_GetIsReloading_Implementation() override;
+	virtual FHitResult I_GetCurrentWeaponTraceInfo_Implementation() override;
 #pragma endregion
 
 protected:
