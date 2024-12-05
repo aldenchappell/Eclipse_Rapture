@@ -79,7 +79,7 @@ public:
 #pragma region Reloading
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Ammo")
-	void Reload(UInventoryComponent* CharacterInventory);
+	void Reload(UInventoryComponent* PlayerInventory);
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
 	float ReloadTime = 2.f;
