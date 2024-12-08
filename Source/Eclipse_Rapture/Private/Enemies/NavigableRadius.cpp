@@ -1,4 +1,4 @@
-#include "NavigableRadius.h"
+#include "Enemies/NavigableRadius.h"
 #include "Components/SphereComponent.h"
 
 UNavigableRadius::UNavigableRadius()

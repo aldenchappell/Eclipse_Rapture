@@ -6,7 +6,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterTypes.h"
-#include "WeaponTypes.h"
+#include "Weapons/WeaponTypes.h"
 #include "Interfaces/CharacterData.h"
 #include "Interfaces/Damageable.h"
 #include "Character/DamageTypes.h"
@@ -290,7 +290,7 @@ protected:
 
 private:
 	bool bCanMove = true;
-
+	bool bHasBuildingBlueprint;
 
 #pragma region Getters And Setters
 

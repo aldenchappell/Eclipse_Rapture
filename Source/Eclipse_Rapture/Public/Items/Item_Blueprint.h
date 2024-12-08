@@ -14,4 +14,9 @@ class ECLIPSE_RAPTURE_API AItem_Blueprint : public AItem
 {
 	GENERATED_BODY()
 	
+
+public:
+	AItem_Blueprint();
+	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
+
 };
