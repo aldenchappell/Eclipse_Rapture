@@ -25,7 +25,7 @@ void UHealthComponent::BeginPlay()
     {
         StartHealthUpdateTimer();
     }
-    UE_LOG(LogTemp, Warning, TEXT("Attack tokens remaining: %d"), AttackTokensCount);
+
 }
 
 #pragma region Health
@@ -83,7 +83,6 @@ void UHealthComponent::HealThirst(float ThirstAmount)
     SetCurrentThirst(CurrentThirst + ThirstAmount);
     OnThirstUpdated.Broadcast(CurrentThirst / MaxThirst);
 }
-
 #pragma endregion
 
 #pragma region Health and Thirst tick functions
@@ -164,25 +163,3 @@ void UHealthComponent::ApplyHungerThirstDamage()
 }
 
 #pragma endregion
-
-#pragma region Attack Tokens - Implemented here and called in enemy and player blueprints.
-
-void UHealthComponent::ReserveAttackToken(int32 TokenAmount, bool& Success)
-{
-	if (AttackTokensCount >= TokenAmount)
-	{
-		AttackTokensCount -= TokenAmount;
-		Success = true;
-		UE_LOG(LogTemp, Warning, TEXT("Attack Token Reserved, tokens remaining: %d"), AttackTokensCount);
-	}
-	else
-	{
-		Success = false;
-        UE_LOG(LogTemp, Warning, TEXT("Failed to reserve Attack Token, tokens remaining: % d"), AttackTokensCount);
-	}
-}
-
-void UHealthComponent::ReturnAttackToken(int32 TokenAmount)
-{
-	AttackTokensCount += TokenAmount;
-}

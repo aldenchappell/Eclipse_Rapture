@@ -1,4 +1,5 @@
 
+
 #include "Character/EclipseRaptureCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -196,9 +197,8 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         CurrentWeaponClass = NewWeaponClass;
 
         //Call OnEquip on weapon
-        
-        NewWeapon->OwningActor = this;
-
+        NewWeapon->OnEquip();
+        NewWeapon->OwningCharacter = this;
 
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
@@ -208,7 +208,6 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         {
             AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
         }
-        NewWeapon->OnEquipWeapon.Broadcast();
     }
     else
     {
@@ -448,7 +447,7 @@ FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& Origina
     return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
 }
 
-#pragma region Damageable Interface Implementations
+#pragma region Interface Implementations
 
 void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
 {
@@ -511,38 +510,6 @@ float AEclipseRaptureCharacter::GetCriticalHealthThreshold_Implementation()
 	if (!HealthComponent) return 0;
     return HealthComponent->CriticalHealthThreshold;
 }
-
-void AEclipseRaptureCharacter::ReserveAttackToken_Implementation(int32 TokenAmount, bool& Success)
-{
-    if (HealthComponent)
-    {
-		HealthComponent->ReserveAttackToken(TokenAmount, Success);
-    }
-}
-
-void AEclipseRaptureCharacter::ReturnAttackToken_Implementation(int32 TokenAmount)
-{
-    if (HealthComponent)
-    {
-		HealthComponent->ReturnAttackToken(TokenAmount);
-    }
-}
-
-bool AEclipseRaptureCharacter::I_GetIsAiming_Implementation()
-{
-    return bIsAiming;
-}
-
-bool AEclipseRaptureCharacter::I_GetIsReloading_Implementation()
-{
-    return bIsReloading;
-}
-
-FHitResult AEclipseRaptureCharacter::I_GetCurrentWeaponTraceInfo_Implementation()
-{
-    return FHitResult();
-}
-
 
 
 #pragma endregion

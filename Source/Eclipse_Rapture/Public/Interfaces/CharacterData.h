@@ -26,20 +26,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inverse Kinematics")
 	void GetHandSwayData(float& SideMove, float& MouseX, float& MouseY) const;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Character")
-	USkeletalMeshComponent* GetSkeleton() const;
-
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapons")
-	bool I_HasWeaponEquipped() const;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapons")
-	bool I_GetIsAiming();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapons")
-	bool I_GetIsReloading();
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapons")
-	FHitResult I_GetCurrentWeaponTraceInfo();
-
-
+	bool HasWeaponEquipped() const;
 };

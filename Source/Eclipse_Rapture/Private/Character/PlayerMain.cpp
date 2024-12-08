@@ -72,7 +72,7 @@ void APlayerMain::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
     if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
     {
         //Movement
-        //EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &APlayerMain::Move);
+        EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &APlayerMain::Move);
 
         //Melee
         EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &APlayerMain::Melee);
@@ -147,20 +147,20 @@ void APlayerMain::Melee()
 
 #pragma region Movement
 
-//void APlayerMain::Move(const FInputActionValue& Value)
-//{
-//    if (!GetCanMove()) return;
-//
-//    FVector2D MovementVector = Value.Get<FVector2D>();
-//
-//    if (Controller != nullptr)
-//    {
-//
-//        // add movement 
-//        AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-//        AddMovementInput(GetActorRightVector(), MovementVector.X);
-//    }
-//}
+void APlayerMain::Move(const FInputActionValue& Value)
+{
+    if (!GetCanMove()) return;
+
+    FVector2D MovementVector = Value.Get<FVector2D>();
+
+    if (Controller != nullptr)
+    {
+
+        // add movement 
+        AddMovementInput(GetActorForwardVector(), MovementVector.Y);
+        AddMovementInput(GetActorRightVector(), MovementVector.X);
+    }
+}
 
 void APlayerMain::HandleHeadbob()
 {

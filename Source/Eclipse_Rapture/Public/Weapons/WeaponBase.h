@@ -18,8 +18,6 @@ class UParticleSystem;
 class UAmmoBase;
 class AItem;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEquipWeapon);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnequipWeapon);
 UCLASS()
 class ECLIPSE_RAPTURE_API AWeaponBase : public AActor, public IFire
 {
@@ -29,7 +27,7 @@ public:
 	AWeaponBase();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AActor> OwningActor;
+	TObjectPtr<class AEclipseRaptureCharacter> OwningCharacter;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<class AWeaponPickup> PickupClass;
@@ -45,11 +43,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
 	TObjectPtr<UAnimMontage> EquipMontage;
 
-	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Weapon | Delegates")
-	FOnEquipWeapon OnEquipWeapon;
-
-	UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapon | Delegates")
-	FOnUnequipWeapon OnUnequipWeapon;
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void OnEquip();
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	EAmmoType AmmoType;
@@ -79,7 +74,7 @@ public:
 #pragma region Reloading
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon | Ammo")
-	void Reload(UInventoryComponent* CharacterInventory);
+	void Reload(UInventoryComponent* PlayerInventory);
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
 	float ReloadTime = 2.f;

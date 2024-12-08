@@ -66,15 +66,12 @@ public:
 	
 #pragma region Damageable Implementations
 	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
+
 	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
+
 	virtual float GetMaxHealth_Implementation() override;
 	virtual float GetCurrentHealth_Implementation() override;
 	virtual float GetCriticalHealthThreshold_Implementation() override;
-	virtual void ReserveAttackToken_Implementation(int32 TokenAmount, bool& Success) override;
-	virtual void ReturnAttackToken_Implementation(int32 TokenAmount) override;
-	virtual bool I_GetIsAiming_Implementation() override;
-	virtual bool I_GetIsReloading_Implementation() override;
-	virtual FHitResult I_GetCurrentWeaponTraceInfo_Implementation() override;
 #pragma endregion
 
 protected:
@@ -187,9 +184,6 @@ protected:
 	float ProneMovementSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
-	float CrouchMovementSpeed;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
 	float AimMovementSpeed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
@@ -203,9 +197,6 @@ protected:
 
 
 #pragma region Weapon Properties
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	FHitResult CurrentWeaponTraceInfo;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int32 PrimaryAmmo;
