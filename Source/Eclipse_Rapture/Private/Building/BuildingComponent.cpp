@@ -5,9 +5,6 @@
 UBuildingComponent::UBuildingComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
-
-    BlueprintMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Blueprint Mesh"));
-    BlueprintMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void UBuildingComponent::BeginPlay()

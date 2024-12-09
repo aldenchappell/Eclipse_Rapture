@@ -72,6 +72,14 @@ void AEclipseRaptureCharacter::BeginPlay()
     GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
 }
 
+void AEclipseRaptureCharacter::SetBuildingBlueprintVisibility_Implementation(bool bNewVisibility)
+{
+	if (BuildingComponent)
+	{
+		
+	}
+}
+
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -346,6 +354,7 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
         }
     }
 }
+
 
 FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& OriginalDirection) const
 {
