@@ -41,6 +41,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
 	bool bHasBuildingBlueprint;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
+	bool bBuildingBlueprintEquipped;
 #pragma endregion
 
 	//For ui mostly

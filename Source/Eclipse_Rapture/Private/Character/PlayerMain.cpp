@@ -15,6 +15,7 @@
 #include "CharacterTypes.generated.h"
 #include "Items/Item.h"
 #include "Weapons/WeaponBase.h"
+#include "Building/BuildingComponent.h"
 
 APlayerMain::APlayerMain()
 {
@@ -30,6 +31,8 @@ APlayerMain::APlayerMain()
     FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
     FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
     FlashlightComponent->SetHasFlashlight(false);
+
+	BuildingComponent->BlueprintMesh->SetupAttachment(GetMesh(), FName("TempBPSocket"));
 }
 
 void APlayerMain::BeginPlay()

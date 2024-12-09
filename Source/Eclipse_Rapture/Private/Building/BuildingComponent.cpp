@@ -5,40 +5,54 @@
 UBuildingComponent::UBuildingComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
+
+    BlueprintMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Blueprint Mesh"));
+    BlueprintMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void UBuildingComponent::BeginPlay()
 {
     Super::BeginPlay();
+    OwningCharacter = Cast<AEclipseRaptureCharacter>(GetOwner());
+    if (!OwningCharacter)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Building Component must be attached to an EclipseRaptureCharacter"));
+    }
 }
 
 bool UBuildingComponent::HasBuildingBlueprint_Implementation()
 {
-    AEclipseRaptureCharacter* Character = Cast<AEclipseRaptureCharacter>(GetOwner());
-    if (Character)
+    if (OwningCharacter)
     {
-        return Character->bHasBuildingBlueprint;
+        return OwningCharacter->bHasBuildingBlueprint;
+    }
+    return false;
+}
+
+bool UBuildingComponent::GetHasBuildingBlueprintEquipped_Implementation()
+{
+    if (OwningCharacter)
+    {
+        return OwningCharacter->bBuildingBlueprintEquipped;
     }
     return false;
 }
 
 void UBuildingComponent::SetHasBuildingBlueprint_Implementation(bool NewHasBlueprint)
 {
-    AEclipseRaptureCharacter* Character = Cast<AEclipseRaptureCharacter>(GetOwner());
-    if (Character)
+    if (OwningCharacter)
     {
-        Character->bHasBuildingBlueprint = NewHasBlueprint;
+        OwningCharacter->bHasBuildingBlueprint = NewHasBlueprint;
     }
 }
 
 void UBuildingComponent::BuildingBlueprintLineTrace_Implementation()
 {
-    AEclipseRaptureCharacter* Character = Cast<AEclipseRaptureCharacter>(GetOwner());
-    if (!Character || !Character->bHasBuildingBlueprint)
+    if (!OwningCharacter || !OwningCharacter->bHasBuildingBlueprint || !OwningCharacter->bBuildingBlueprintEquipped)
         return;
 
-    FVector TraceStart = Character->GetActorLocation() + FVector(0.f, 0.f, 50.f);
-    FVector TraceEnd = TraceStart + Character->GetActorForwardVector() * BuildingTraceLength;
+    FVector TraceStart = OwningCharacter->GetActorLocation() + FVector(0.f, 0.f, 50.f);
+    FVector TraceEnd = TraceStart + OwningCharacter->GetActorForwardVector() * BuildingTraceLength;
 
     FHitResult HitResult;
     bool bDetectedActor = GetWorld()->LineTraceSingleByChannel(
