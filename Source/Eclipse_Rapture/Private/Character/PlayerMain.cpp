@@ -32,7 +32,7 @@ APlayerMain::APlayerMain()
     FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
     FlashlightComponent->SetHasFlashlight(false);
 
-	BuildingComponent->BlueprintMesh->SetupAttachment(PlayerBodyMesh, FName("BuildingBlueprintSocket"));
+	BuildingComponent->BlueprintMesh->SetupAttachment(GetMesh(), FName("BuildingBlueprintSocket"));
 }
 
 void APlayerMain::BeginPlay()
