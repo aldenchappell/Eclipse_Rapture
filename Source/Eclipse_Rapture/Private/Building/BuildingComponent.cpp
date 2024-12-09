@@ -5,65 +5,40 @@
 UBuildingComponent::UBuildingComponent()
 {
     PrimaryComponentTick.bCanEverTick = true;
-
-	BlueprintMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Blueprint Mesh"));
-	BlueprintMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void UBuildingComponent::BeginPlay()
 {
     Super::BeginPlay();
-    OwningCharacter = Cast<AEclipseRaptureCharacter>(GetOwner());
-    if (!OwningCharacter)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Building Component must be attached to an EclipseRaptureCharacter"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("OwningCharacter set to: %s"), *OwningCharacter->GetName());
-    }
 }
-
 
 bool UBuildingComponent::HasBuildingBlueprint_Implementation()
 {
-    if (OwningCharacter)
+    AEclipseRaptureCharacter* Character = Cast<AEclipseRaptureCharacter>(GetOwner());
+    if (Character)
     {
-        return OwningCharacter->bHasBuildingBlueprint;
-    }
-    return false;
-}
-
-bool UBuildingComponent::GetHasBuildingBlueprintEquipped_Implementation()
-{
-    if (OwningCharacter)
-    {
-		return OwningCharacter->bBuildingBlueprintEquipped;
+        return Character->bHasBuildingBlueprint;
     }
     return false;
 }
 
 void UBuildingComponent::SetHasBuildingBlueprint_Implementation(bool NewHasBlueprint)
 {
-    if (OwningCharacter)
+    AEclipseRaptureCharacter* Character = Cast<AEclipseRaptureCharacter>(GetOwner());
+    if (Character)
     {
-        OwningCharacter->bHasBuildingBlueprint = NewHasBlueprint;
-        UE_LOG(LogTemp, Warning, TEXT("bHasBuildingBlueprint set to %s"), NewHasBlueprint ? TEXT("true") : TEXT("false"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("OwningCharacter is null in SetHasBuildingBlueprint."));
+        Character->bHasBuildingBlueprint = NewHasBlueprint;
     }
 }
 
-
 void UBuildingComponent::BuildingBlueprintLineTrace_Implementation()
 {
-    if (!OwningCharacter || !OwningCharacter->bHasBuildingBlueprint || !OwningCharacter->bBuildingBlueprintEquipped)
+    AEclipseRaptureCharacter* Character = Cast<AEclipseRaptureCharacter>(GetOwner());
+    if (!Character || !Character->bHasBuildingBlueprint)
         return;
 
-    FVector TraceStart = OwningCharacter->GetActorLocation() + FVector(0.f, 0.f, 50.f);
-    FVector TraceEnd = TraceStart + OwningCharacter->GetActorForwardVector() * BuildingTraceLength;
+    FVector TraceStart = Character->GetActorLocation() + FVector(0.f, 0.f, 50.f);
+    FVector TraceEnd = TraceStart + Character->GetActorForwardVector() * BuildingTraceLength;
 
     FHitResult HitResult;
     bool bDetectedActor = GetWorld()->LineTraceSingleByChannel(
