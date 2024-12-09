@@ -31,6 +31,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	void InitBuildingComponent();
+	void InitFlashlightComponent();
 	void Move(const FInputActionValue& Value);
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
