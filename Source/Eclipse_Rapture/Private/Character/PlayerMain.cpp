@@ -15,7 +15,6 @@
 #include "CharacterTypes.generated.h"
 #include "Items/Item.h"
 #include "Weapons/WeaponBase.h"
-#include "Building/BuildingComponent.h"
 
 APlayerMain::APlayerMain()
 {
@@ -31,8 +30,6 @@ APlayerMain::APlayerMain()
     FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
     FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
     FlashlightComponent->SetHasFlashlight(false);
-
-	BuildingComponent->BlueprintMesh->SetupAttachment(GetMesh(), FName("BuildingBlueprintSocket"));
 }
 
 void APlayerMain::BeginPlay()
@@ -44,32 +41,6 @@ void APlayerMain::BeginPlay()
         InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
     }
 
-    InitFlashlightComponent();
-    InitBuildingComponent();
-}
-
-
-void APlayerMain::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-
-    HandleHeadbob();
-}
-
-#pragma region BeginPlay Inits
-void APlayerMain::InitBuildingComponent()
-{
-    if (BuildingComponent)
-    {
-        //setup building blueprint
-        BuildingComponent->BlueprintMesh->SetupAttachment(PlayerBodyMesh, FName("BuildingBlueprintSocket"));
-        BuildingComponent->BlueprintMesh->SetVisibility(false);
-        EquipUnarmed();
-    }
-}
-
-void APlayerMain::InitFlashlightComponent()
-{
     if (FlashlightComponent)
     {
         if (FlashlightComponent->GetHasFlashlight() && PlayerBodyMesh)
@@ -84,8 +55,13 @@ void APlayerMain::InitFlashlightComponent()
     }
 }
 
+void APlayerMain::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
 
-#pragma endregion
+    HandleHeadbob();
+}
+
 
 #pragma region Setup Input
 void APlayerMain::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -116,6 +92,8 @@ void APlayerMain::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 void APlayerMain::Melee()
 {
     if (!bCanMelee) return;
+
+   
 
     UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
     if (!AnimInstance)

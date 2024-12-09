@@ -16,20 +16,20 @@ void AItem_Blueprint::Interact_Implementation(AEclipseRaptureCharacter* Characte
 {
     if (Character && Character == OverlappingCharacter)
     {
-        UBuildingComponent* BuildingComp = OverlappingCharacter->FindComponentByClass<UBuildingComponent>();
-        if (BuildingComp)
+        UBuildingComponent* BuildingComp = Character->FindComponentByClass<UBuildingComponent>();
+        if (BuildingComp && BuildingComp->GetClass()->ImplementsInterface(UBuilderInterface::StaticClass()))
         {
+            // Correctly pass the object that implements the interface
             IBuilderInterface::Execute_SetHasBuildingBlueprint(BuildingComp, true);
-            UE_LOG(LogTemp, Warning, TEXT("Player picked up building blueprint. bHasBuildingBlueprint: %s"), Character->bHasBuildingBlueprint ? TEXT("true") : TEXT("false"));
             Destroy();
+            UE_LOG(LogTemp, Warning, TEXT("Player picked up building blueprint."));
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("BuildingComponent not found!"));
+            UE_LOG(LogTemp, Error, TEXT("BuildingComponent not found or does not implement IBuilderInterface!"));
         }
     }
 }
-
 
 void AItem_Blueprint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                                       int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
