@@ -40,7 +40,10 @@ public:
 	ECharacterType CharacterType;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
-	bool bHasBuildingBlueprint;
+	bool bHasBuildingBlueprint = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
+	bool bBuildingBlueprintEquipped = false;
 #pragma endregion
 
 	//For ui mostly
@@ -303,6 +306,9 @@ public:
 
 	UFUNCTION(Blueprintcallable)
 	class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+
+	UFUNCTION(BlueprintCallable)
+	class UBuildingComponent* GetBuildingComponent() const { return BuildingComponent; }
 
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }

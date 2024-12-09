@@ -22,6 +22,9 @@ public:
     void SetHasBuildingBlueprint(bool NewHasBlueprint);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    bool GetHasBuildingBlueprintEquipped();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
     void BuildingBlueprintLineTrace();
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
