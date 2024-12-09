@@ -139,6 +139,8 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         {
             AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
         }
+
+        SetBuildingBlueprintVisibility(false);
     }
     else
     {
@@ -221,7 +223,7 @@ void AEclipseRaptureCharacter::EquipUnarmed()
             WeaponMesh->SetVisibility(false);
         }
     }
-
+	
     SetSwapTimer();
 
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
