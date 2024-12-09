@@ -32,8 +32,7 @@ protected:
 
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
-	UPROPERTY(BlueprintReadonly)
-	TObjectPtr<class AEclipseRaptureCharacter> OverlappingCharacter;
+	
 
 	UFUNCTION()
 	void HandleDoorInteraction(bool Opened);

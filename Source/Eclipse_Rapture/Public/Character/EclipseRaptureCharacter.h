@@ -38,6 +38,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
 	ECharacterType CharacterType;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
+	bool bHasBuildingBlueprint;
 #pragma endregion
 
 	//For ui mostly
@@ -59,8 +62,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Components | Health Component")
 	TObjectPtr<class UHealthComponent> HealthComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory | Components")
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Inventory")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
+	TObjectPtr<class UBuildingComponent> BuildingComponent;
 
 #pragma endregion
 	
@@ -249,26 +255,7 @@ protected:
 #pragma endregion
 #pragma endregion
 
-#pragma region Mantling
-
-	UFUNCTION(BlueprintCallable, Category = "Movement | Mantle")
-	void DoMantleTrace(float TraceLength, float TraceZOffset, float FallHeightAdjust, FVector& MantlePos1, FVector& MantlePos2);
-
-	UFUNCTION(BlueprintImplementableEvent, Category = "Movement | Mantle")
-	void Mantle();
-
-	UPROPERTY(BlueprintReadWrite, Category = "Movement | Mantle")
-	FVector MantlePositionOne;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Movement | Mantle")
-	FVector MantlePositionTwo;
-
-
-
-
-#pragma endregion
 	
-
 
 #pragma region Clothing
 
@@ -290,7 +277,7 @@ protected:
 
 private:
 	bool bCanMove = true;
-	bool bHasBuildingBlueprint;
+
 
 #pragma region Getters And Setters
 
