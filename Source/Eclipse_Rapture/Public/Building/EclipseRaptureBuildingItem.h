@@ -8,6 +8,18 @@
 #include "GameFramework/Actor.h"
 #include "EclipseRaptureBuildingItem.generated.h"
 
+USTRUCT(BlueprintType)
+struct FUpgradeRequirements
+{
+    GENERATED_BODY()
+
+public:
+    // Array of required items for this upgrade level
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+    TArray<TSubclassOf<AItem>> RequiredItems;
+};
+
+
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureBuildingItem : public AActor, public IBuildingInterface
 {
@@ -16,16 +28,26 @@ class ECLIPSE_RAPTURE_API AEclipseRaptureBuildingItem : public AActor, public IB
 public:
     AEclipseRaptureBuildingItem();
 
+    // Map of upgrade levels to their requirements
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Building | Upgrade")
+    TMap<int32, FUpgradeRequirements> RequiredUpgradeItems;
+
 protected:
     virtual void BeginPlay() override;
 
-    //Upgrade type, upgrade level (0 = Wood, 1 = Brick, 2 = Metal, 3 = Reinforced) 
-    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Building | Building Materials")
-	TMap<EUpgradeType, int32> BuildingMaterials;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Building | Mesh")
+	TObjectPtr<class UStaticMeshComponent> BuildingMesh;
 
-    //Upgrade Cost (Will be used to decipher what items the player needs in order to upgrade this building item.
-    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Building | Building Materials")
-	EUpgradeCostType UpgradeCostType;
+    // Materials for each upgrade level
+    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building | Upgrade")
+    TArray<class UMaterial*> Materials;
 
 
+#pragma region Building Interface Implementations
+	virtual void UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo) override;
+    virtual TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
+
+#pragma endregion
 };
+
+

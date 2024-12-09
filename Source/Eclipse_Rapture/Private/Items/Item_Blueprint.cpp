@@ -21,6 +21,7 @@ void AItem_Blueprint::Interact_Implementation(AEclipseRaptureCharacter* Characte
         {
             // Correctly pass the object that implements the interface
             IBuilderInterface::Execute_SetHasBuildingBlueprint(BuildingComp, true);
+            Destroy();
             UE_LOG(LogTemp, Warning, TEXT("Player picked up building blueprint."));
         }
         else
