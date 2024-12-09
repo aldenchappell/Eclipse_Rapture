@@ -1,4 +1,10 @@
 #pragma once
+UENUM(BlueprintType)
+enum class ECharacterType : uint8
+{
+	ECT_Player UMETA(DisplayName = "Player"),
+	ECT_Enemy UMETA(DisplayName = "Enemy")
+};
 
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
@@ -19,7 +25,7 @@ enum class ECharacterMovementState : uint8
 	ECMS_Sprinting UMETA(DisplayName = "Sprinting"),
 	ECMS_Crouching UMETA(DisplayName = "Crouching"),
 	ECMS_Prone UMETA(DisplayName = "Prone"),
-	ECMS_Jumping UMETA(DisplayName = "Jumping")
+	ECMS_Jumping UMETA(DisplayName = "Jumping"),
+	ECMS_Mantling UMETA(DisplayName = "Mantling"),
+	ECMS_Melee UMETA(DisplayName = "Melee")
 };
-
-

@@ -2,38 +2,134 @@
 
 #pragma once
 
-
 #include "InputActionValue.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CharacterTypes.h"
-#include "WeaponTypes.h"
+#include "Weapons/WeaponTypes.h"
+#include "Interfaces/CharacterData.h"
+#include "Interfaces/Damageable.h"
+#include "Character/DamageTypes.h"
 #include "EclipseRaptureCharacter.generated.h"
 
 //Forward Declarations
 class UInputMappingContext;
 class UInputAction;
 class UCameraComponent;
-class UWeaponBase;
+class AWeaponBase;
 class AItem;
+class USkeletalMeshComponent;
+class UCameraShakeBase;
+
 UCLASS()
-class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter : public ACharacter
+class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter :
+	public ACharacter, public ICharacterData, public IDamageable
 {
 	GENERATED_BODY()
+
+	
 
 public:
 #pragma region Setup
 	AEclipseRaptureCharacter();
 	virtual void Tick(float DeltaTime) override;
+	//void HandleFootsteps();
 	void HandleCrouch(float DeltaTime);
-	void HandleFOV(float DeltaTime);
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
+	ECharacterType CharacterType;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
+	bool bHasBuildingBlueprint;
 #pragma endregion
-	void OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
-	void OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust) override;
-	void CalcCamera(float DeltaTime, struct FMinimalViewInfo& OutResult) override;
+
+	//For ui mostly
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	int32 CurrentWeaponAmmo;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	FVector PlayerADSOffset;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+
+#pragma region Components
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Components | Health Component")
+	TObjectPtr<class UHealthComponent> HealthComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Inventory")
+	TObjectPtr<class UInventoryComponent> InventoryComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
+	TObjectPtr<class UBuildingComponent> BuildingComponent;
+
+#pragma endregion
+	
+#pragma region Damageable Implementations
+	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
+
+	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
+
+	virtual float GetMaxHealth_Implementation() override;
+	virtual float GetCurrentHealth_Implementation() override;
+	virtual float GetCriticalHealthThreshold_Implementation() override;
+#pragma endregion
+
+protected:
+	virtual void BeginPlay() override;
+
+#pragma region Weapon Swapping
+
+	UFUNCTION(BlueprintCallable)
+	void SwapWeapon(EWeaponClass NewWeaponClass);
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
+
+	//for weapon swapping
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<AWeaponBase> CurrentWeapon;
+
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void OnWeaponUpdateSetAmmo();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
+	void EquipWeapon(AWeaponBase* Weapon);
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipUnarmed();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipPrimaryWeapon();
+	
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipSecondaryWeapon();
+
+	void SetSwapTimer();
+
+	// Timer handle to manage swap cooldown
+	FTimerHandle WeaponSwapTimerHandle;
+
+	// Flag to track if swapping is allowed
+	bool bCanSwapWeapon = true;
+
+	// Helper function to reset the swap ability
+	void ResetSwap();
+#pragma endregion
+
+
+	UPROPERTY(VisibleAnywhere, Category = "Items")
+	TObjectPtr<AItem> CurrentOverlappingItem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Character Movement")
+	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+
+#pragma region Movement Values
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	FVector CrouchEyeOffset;
@@ -41,6 +137,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Crouch")
 	float CrouchEntranceSpeed;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool bCanCrouch;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool bIsCrouching;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool ToggleCrouching = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	float CameraCrouchOffset = -40.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	FVector ProneEyeOffset;
@@ -51,17 +158,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement | Movement Prone")
 	float ProneEyeHeightZ;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Crouch")
+	bool bIsProning;
 
-	virtual void Jump() override;
-	
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon")
-	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | Movement Mantle")
+	bool bCanMantle;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Aiming")
+	float ADSSpeed = .35f;
 
-protected:
-	virtual void BeginPlay() override;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Aiming")
+	FTransform DefaultTorsoTransform;
+
+#pragma endregion
+
 #pragma region Movement Properties
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement | Movement Properties")
 	float StoredWalkSpeed;
 
@@ -80,149 +192,132 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | Movement Properties")
 	float AimMovementSpeed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Movement | FOV")
-	float DefaultFOV;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
-	float SprintFOV;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Movement | FOV")
-	float AimFOV;
+	float MantleTraceDistance = 100.f;
 
 #pragma endregion
 	
-#pragma region Input Actions
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputMappingContext> EclipseRaptureMapping;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> MovementAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> LookAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> InteractAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> JumpAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> CrouchAction;
-
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ProneAction;
 
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> SprintAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> LeanAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> ShootAction;
 
-	UPROPERTY(EditAnywhere, Category = Input)
-	TObjectPtr<UInputAction> AimAction;
+#pragma region Weapon Properties
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	int32 PrimaryAmmo;
 	
-#pragma endregion
-	void Move(const FInputActionValue& Value);
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	int32 SecondaryAmmo;
 
-	/* LOOK INPUT MOVED TO BLUEPRINT
-	//void Look(const FInputActionValue& Value);
-	*/
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon | Weapon Logic")
+	bool bIsAiming;
 
-	void Interact();
-	void StartProne();
-	void EndProne();
-	void ToggleProne();
-	void StartSprint();
-	void EndSprint();
-	void StartCrouch();
-	void EndCrouch();
-	void ToggleCrouch();
-	void StartShooting();
-	void StopShooting();
-	void StartAiming();
-	void StopAiming();
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon | Weapon Logic")
+	bool bIsReloading;
 
-	UPROPERTY(BlueprintReadWrite, Category = Leaning)
-	bool bResetLeaning;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Logic")
+	bool bHasPrimaryWeapon;
 
-	UPROPERTY(BlueprintReadWrite, Category = Aiming)
-	bool IsAiming;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Logic")
+	bool bHasSecondaryWeapon;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Properties")
-	TObjectPtr<UCameraComponent> FirstPersonCamera;
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Logic")
+	float WeaponSwapCooldown = 2.5f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
-	float HorizontalSensitivity = 0.6f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<AWeaponBase> CurrentWeaponBase;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Camera | Camera Sensitivity")
-	float VerticalSensitivity = 0.6f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
-	TObjectPtr<class AWeaponBase> CurrentWeapon;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	EWeaponType CurrentWeaponType = EWeaponType::EWT_Unarmed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponName CurrentWeaponName = EWeaponName::EWN_Unarmed;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapons | Weapon")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	int CurrentWeaponIndex;
+
+#pragma region Accuracy
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
+	float Accuracy = 80.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Character | Weapons | Accuracy", meta = (ClampMin = "5", ClampMax = "50"))
+	float MaxAccuracy = 5.f;
+
+
+#pragma endregion
+#pragma endregion
+
+	
+
+#pragma region Clothing
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerHelmetMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerChestMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerPantsMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Clothing")
+	TObjectPtr<USkeletalMeshComponent> PlayerShoesMesh;
+
+#pragma endregion
+
+	
+
 private:
-	ECharacterMovementState CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+	bool bCanMove = true;
 
-	UPROPERTY(VisibleAnywhere, Category = "Items", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class AItem> CurrentOverlappingItem;
-	
 
-	UFUNCTION()
-	bool CanSprint();
+#pragma region Getters And Setters
 
-	float SprintFOVMultiplier = 1.2f;
-	float AimFOVMultiplier = .6f;
+public:	
 
-	//Sensitivity and Input values
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	float InputPitch;
+	UFUNCTION(BlueprintCallable, Category = "Character | Movement")
+	ECharacterMovementState GetCurrentMovementState() const { return CurrentMovementState; }
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	float InputYaw;
+	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
+	bool GetCanMove() const { return bCanMove; }
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
-	float InputRoll;
-
-	bool bEnableSensitivityChanges = false;
-	
-	//Shooting Properties
-	UPROPERTY(VisibleAnywhere, Category = "Shooting | Shooting Properties")
-	FTimerHandle ShootTimer;
-
-	UFUNCTION()
-	void ShootTimerExpired();
-	
-public:	//Getters and Setters
-	UFUNCTION(Blueprintcallable)
-	float GetSprintFOVMultiplier() const { return SprintFOVMultiplier; }
-	
-	UFUNCTION(Blueprintcallable)
-	float GetHorizontalSensitivity() const { return HorizontalSensitivity; }
+	UFUNCTION(Blueprintcallable, meta = (BlueprintThreadSafe))
+	bool SetCanMove(bool NewCanMove) { return bCanMove = NewCanMove; }
 
 	UFUNCTION(Blueprintcallable)
-	float GetVerticalSensitivity() const { return VerticalSensitivity; }
-
-
-	UFUNCTION(Blueprintcallable)
-	float SetHorizontalSensitivity(float Sensitivity) { return HorizontalSensitivity = Sensitivity; }
+	bool GetIsReloading() const { return bIsReloading; }
 
 	UFUNCTION(Blueprintcallable)
-	float SetVerticalSensitivity(float Sensitivity) { return VerticalSensitivity = Sensitivity; }
+	void SetIsReloading(bool Reloading) { bIsReloading = Reloading; }
+
+	UFUNCTION(Blueprintcallable)
+	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
+
+	UFUNCTION(Blueprintcallable)
+	class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
 
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
-};
 
+	UFUNCTION(Blueprintcallable)
+	AItem* GetCurrentlyOverlappingItem() const { return CurrentOverlappingItem; }
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Character | Weapons")
+	void GetWeaponOfType(EWeaponClass WeaponType, AWeaponBase*& Weapon, bool& HasWeaponOfType);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Character | Weapons")
+	AWeaponBase* GetCurrentWeapon();
+
+	//Adjust aim direction based on accuracy
+	UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")
+	FVector GetAdjustedAimDirection(const FVector& OriginalDirection) const;
+#pragma endregion
+};

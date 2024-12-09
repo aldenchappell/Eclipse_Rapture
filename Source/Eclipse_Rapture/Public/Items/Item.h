@@ -11,21 +11,67 @@
 
 
 class USphereComponent;
-
+class USkeletalMeshComponent;
 UCLASS()
 class ECLIPSE_RAPTURE_API AItem : public AActor, public IInteractInterface
 {
 	GENERATED_BODY()
 	
 public:	
-	
 	AItem();
 
+	UPROPERTY(BlueprintReadonly, Category = "Item Properties | Player Reference")
+	TObjectPtr<AEclipseRaptureCharacter> PlayerReference;
+
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
+
+	UPROPERTY(Transient)
+	class UWorld* World;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	bool bCanBeUsed = true;
+
+	UFUNCTION()
+	virtual void Use(class AEclipseRaptureCharacter* Character);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUse(class AEclipseRaptureCharacter* Character);
+
+	//Text for using item(Equip, Consume, etc)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	FText UseActionText;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<UStaticMesh> PickupMesh;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<UTexture2D> ThumbnailTexture;
+
+	//Name to show inside of inventory
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	FText ItemDisplayName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (MultiLine = true))
+	FText ItemDescription;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
+	float ItemWeight;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
+	int32 MaxStackSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Pickup Properties")
+	FText ItemInteractionPrompt;
+
+	UPROPERTY()
+	TObjectPtr<class UInventoryComponent> OwningInventory;
+
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 	
+	UPROPERTY(BlueprintReadonly)
+	TObjectPtr<class AEclipseRaptureCharacter> OverlappingCharacter;
 
 	UFUNCTION()
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -33,50 +79,24 @@ protected:
 	UFUNCTION()
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Item Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<USkeletalMeshComponent> ItemSkeleton;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereCollision;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	FString ItemName;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	FString ItemDescription;
+	EItemType ItemType = EItemType::EIT_Pickup;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	TObjectPtr<UTexture2D> InventoryThumbnail;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	float ItemWeight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bStackable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	int32 MaxStackSize;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	int32 CurrentStackSize;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeUsed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeEquipped;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeCrafted;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeConsumed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeRepaired;
+	
 
 private:
-	EItemType ItemType = EItemType::EIT_Pickup;
+	
 
 
 public:	//Getters and Setters

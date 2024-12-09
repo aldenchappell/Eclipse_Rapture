@@ -1,16 +1,20 @@
 
 
 #include "Character/EclipseRaptureCharacter.h"
-#include "Components/InputComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "Camera/CameraComponent.h"
-#include "InputActionValue.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "CharacterTypes.generated.h"
-#include "Items/Item.h"
 #include "Weapons/WeaponBase.h"
+#include "UI/AmmoCounterWComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "UI/WidgetEclipseRaptureCharacter.h"
+#include "Components/Image.h" 
+#include "Kismet/KismetMathLibrary.h"
+#include "Global/Components/HealthComponent.h"
+#include "Character/InventoryComponent.h"
+#include "Items/Components/FlashlightComponent.h"
+#include "Components/SpotLightComponent.h"
+#include "Interfaces/Unlockable.h"
+#include "Building/BuildingComponent.h"
 
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
@@ -46,8 +50,19 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     ProneEntranceSpeed = 2.f;
     ProneEyeHeightZ = -50.f;
 
-    //fov
-    AimFOV = DefaultFOV * AimFOVMultiplier;
+    bIsAiming = false;
+
+	//setup health component
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+
+    //setup inventory component
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
+	InventoryComponent->Capacity = 20;
+
+    //setup building component
+	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
+
+    CharacterType = ECharacterType::ECT_Player;
 }
 
 void AEclipseRaptureCharacter::BeginPlay()
@@ -60,364 +75,364 @@ void AEclipseRaptureCharacter::BeginPlay()
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    HandleFOV(DeltaTime);
-    HandleCrouch(DeltaTime);
-
 }
+
 void AEclipseRaptureCharacter::HandleCrouch(float DeltaTime)
 {
     //Handle crouching interpolation
     float CrouchInterpTime = FMath::Min(1.f, CrouchEntranceSpeed * DeltaTime);
     CrouchEyeOffset = (1.f - CrouchInterpTime) * CrouchEyeOffset;
 }
-void AEclipseRaptureCharacter::HandleFOV(float DeltaTime)
-{
-    //Determine the target FOV based on the current movement state
-    /*float TargetFOV = (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) ? SprintFOV : DefaultFOV;*/
 
-    float TargetFOV = DefaultFOV;
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Aiming)
+void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Attempting to swap to weapon class: %d"), static_cast<int32>(NewWeaponClass));
+
+    // If the new weapon is already equipped, exit early
+    if (CurrentWeaponClass == NewWeaponClass)
     {
-        TargetFOV = AimFOV;
-    }
-	else if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting)
-	{
-		TargetFOV = SprintFOV;
-	}
-    else
-    {
-        TargetFOV = DefaultFOV;
+        UE_LOG(LogTemp, Warning, TEXT("Weapon class %d is already equipped."), static_cast<int32>(NewWeaponClass));
+        return;
     }
 
-    //Lerp the FOV between current and target FOV
-    FirstPersonCamera->FieldOfView = FMath::FInterpTo(FirstPersonCamera->FieldOfView, TargetFOV, DeltaTime, 5.0f); // 5.0f is the interpolation speed
-}
-#pragma region Setup Input
-void AEclipseRaptureCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    //Bind Inputs
-    if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
+    // Handle switching to unarmed
+    if (NewWeaponClass == EWeaponClass::EWC_Unarmed)
     {
-        //Movement
-        EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Move);
-
-		//Looking **MOVED TO BLUEPRINT**
-        //EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Look);
-
-        //Jumping
-        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::Jump);
-        EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopJumping);
-
-        //Crouching (Toggled)
-        EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleCrouch);
-
-        //Sprinting
-        EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::StartSprint);
-        EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::EndSprint);
-
-        //Proning (Toggled)
-        EnhancedInputComponent->BindAction(ProneAction, ETriggerEvent::Started, this, &AEclipseRaptureCharacter::ToggleProne);
-
-        //Interact
-        EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::Interact);
-
-        //Shoot
-        EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartShooting);
-        EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopShooting);
-
-        //Aim
-		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Triggered, this, &AEclipseRaptureCharacter::StartAiming);
-        EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AEclipseRaptureCharacter::StopAiming);
+        EquipUnarmed();
+        return;
     }
-}
-#pragma endregion
-void AEclipseRaptureCharacter::Interact()
-{
-    if (CurrentOverlappingItem && CurrentOverlappingItem->GetClass()->ImplementsInterface(UInteractInterface::StaticClass()))
-    {
-        // Call the Execute_Interact function for the interface
-        IInteractInterface::Execute_Interact(CurrentOverlappingItem, this);
-		CurrentOverlappingItem = nullptr;
-    }
-}
 
-void AEclipseRaptureCharacter::StartShooting()
-{
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent shooting while sprinting
-
-    if (CurrentWeapon && !GetWorldTimerManager().IsTimerActive(ShootTimer) && CurrentWeapon->GetCanFire())
+    // Check if the new weapon exists in the inventory
+    AWeaponBase* NewWeapon = CurrentWeapons.FindRef(NewWeaponClass);
+    if (NewWeapon)
     {
-        float FireRate = CurrentWeapon->GetFireRate();
-    
-        // Semi-auto fires once per click
-        if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_SemiAuto)
+        // Safely detach the current weapon (if any)
+        if (CurrentWeapon)
         {
-            CurrentWeapon->Execute_Fire(CurrentWeapon);  // Fire once
-            CurrentWeapon->SetCanFire(false);  // Prevent further shooting until timer expires
-            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::ShootTimerExpired, FireRate, false);
+            UE_LOG(LogTemp, Warning, TEXT("Detaching current weapon: %s"), *CurrentWeapon->GetName());
+            CurrentWeapon->SetActorHiddenInGame(true);
+            CurrentWeapon->SetActorEnableCollision(false);
+            CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
         }
-        // Automatic continues firing until the button is released
-        else if (CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
+
+        // Equip the new weapon
+        EquipWeapon(NewWeapon);
+        CurrentWeaponClass = NewWeaponClass;
+
+        //Call OnEquip on weapon
+        NewWeapon->OnEquip();
+        NewWeapon->OwningCharacter = this;
+
+        // Update the UI or ammo logic
+        OnWeaponUpdateSetAmmo();
+
+        UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
+        if (AnimInstance && CurrentWeapon->EquipMontage)
         {
-            // Fire once
-            CurrentWeapon->Execute_Fire(CurrentWeapon); 
-            GetWorldTimerManager().SetTimer(ShootTimer, this, &AEclipseRaptureCharacter::StartShooting, FireRate, false); 
+            AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
         }
     }
-    
-}
-
-void AEclipseRaptureCharacter::StopShooting()
-{
-    if (CurrentWeapon && CurrentWeapon->GetWeaponFireMode() == EWeaponFireMode::EWFM_Automatic)
-    {
-        //Clear timer (handling fire rate)
-        GetWorldTimerManager().ClearTimer(ShootTimer);
-    }
-}
-
-void AEclipseRaptureCharacter::StartAiming()
-{
-    if (CurrentWeapon)
-    {
-        CurrentMovementState = ECharacterMovementState::ECMS_Aiming;
-        GetCharacterMovement()->MaxWalkSpeed = AimMovementSpeed;
-        IsAiming = true;
-    }
-}
-
-void AEclipseRaptureCharacter::StopAiming()
-{
-    CurrentMovementState = ECharacterMovementState::ECMS_Idle;
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-    IsAiming = false;
-}
-
-void AEclipseRaptureCharacter::ShootTimerExpired()
-{
-    if (CurrentWeapon)
-    {
-        CurrentWeapon->SetCanFire(true);  // Allow firing again
-    }
-    GetWorldTimerManager().ClearTimer(ShootTimer);  // Clear the timer
-}
-
-
-
-void AEclipseRaptureCharacter::SpawnItem_Implementation(TSubclassOf<AWeaponBase> WeaponToSpawn)
-{
-}
-
-
-#pragma region Movement
-
-void AEclipseRaptureCharacter::OnStartCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
-{
-    if (HalfHeightAdjust == 0.f) return;
-
-    float StartBaseEyeHeight = BaseEyeHeight;
-    Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-    CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight + HalfHeightAdjust;
-
-    if (FirstPersonCamera)
-    {
-        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
-    }
-    
-}
-
-void AEclipseRaptureCharacter::OnEndCrouch(float HalfHeightAdjust, float ScaledHalfHeightAdjust)
-{
-    if (HalfHeightAdjust == 0.f) return;
-
-    float StartBaseEyeHeight = BaseEyeHeight;
-    Super::OnStartCrouch(HalfHeightAdjust, ScaledHalfHeightAdjust);
-    CrouchEyeOffset.Z += StartBaseEyeHeight - BaseEyeHeight - HalfHeightAdjust;
-
-    if (FirstPersonCamera)
-    {
-        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
-    }
-    
-}
-
-void AEclipseRaptureCharacter::CalcCamera(float DeltaTime, FMinimalViewInfo& OutResult)
-{
-    if (FirstPersonCamera)
-    {
-        FirstPersonCamera->GetCameraView(DeltaTime, OutResult);
-        OutResult.Location += CrouchEyeOffset;
-    }
-}
-#pragma region Deprecated Look Input
-/* LOOK INPUT MOVED TO BLUEPRINT
-* //void AEclipseRaptureCharacter::Look(const FInputActionValue& Value)
-//{
-//    FVector2D LookAxisVector = Value.Get<FVector2D>();
-//
-//    if (Controller != nullptr)
-//    {  
-//        float SetVertSens = GetVerticalSensitivity() / 2.5f;
-//        // add yaw and pitch input to controller
-//        AddControllerYawInput(LookAxisVector.X);
-//        if (bEnableSensitivityChanges)
-//        {
-//            AddControllerPitchInput(LookAxisVector.Y * SetVertSens);
-//        }
-//        else
-//        {
-//            AddControllerPitchInput(LookAxisVector.Y);
-//        }
-//
-//        //TODO: Come back to this to make it so the player's head turns with input
-//        InputYaw = LookAxisVector.X * .25f;
-//        InputYaw = FMath::Clamp(InputYaw, -15.f, 15.f);
-//        
-//
-//		InputPitch += LookAxisVector.Y;
-//		InputPitch = FMath::Clamp(InputPitch, -10.f, 18.f);
-//    }
-//}
-*/
-#pragma endregion
-
-void AEclipseRaptureCharacter::Move(const FInputActionValue& Value)
-{
-    FVector2D MovementVector = Value.Get<FVector2D>();
-
-    if (Controller != nullptr)
-    {
-        
-        // add movement 
-        AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-        AddMovementInput(GetActorRightVector(), MovementVector.X);
-
-        
-    }
-}
-
-void AEclipseRaptureCharacter::Jump()
-{
-    Super::Jump();
-    CurrentMovementState = ECharacterMovementState::ECMS_Jumping;
-}
-
-
-
-
-
-void AEclipseRaptureCharacter::StartCrouch()
-{
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting) return;  // Prevent crouching while sprinting
-
-    Crouch();
-    GetCharacterMovement()->MaxWalkSpeed = GetCharacterMovement()->MaxWalkSpeedCrouched;
-    CurrentMovementState = ECharacterMovementState::ECMS_Crouching;
-}
-
-void AEclipseRaptureCharacter::EndCrouch()
-{
-    UnCrouch();
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-
-    if (GetVelocity().Size() > 0)
-    {
-        CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-    }
     else
     {
-        CurrentMovementState = ECharacterMovementState::ECMS_Idle;
+        UE_LOG(LogTemp, Error, TEXT("Weapon class %d not found in inventory!"), static_cast<int32>(NewWeaponClass));
     }
 }
 
-void AEclipseRaptureCharacter::ToggleCrouch()
+
+void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
 {
-    //Check if the player is already crouching
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Crouching)
+    if (!Weapon)
     {
-        EndCrouch();
+        UE_LOG(LogTemp, Error, TEXT("EquipWeapon called with a null weapon!"));
+        return;
     }
-    else
+
+    // Ensure the weapon is attached to the correct socket on the player's mesh
+    FName SocketName = Weapon->SocketName;
+
+    switch (CharacterType)
     {
-        StartCrouch();
+    case ECharacterType::ECT_Player:
+        if (PlayerBodyMesh->DoesSocketExist(SocketName))
+        {
+            Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
+        }
+        break;
+    case ECharacterType::ECT_Enemy:
+        if (GetMesh()->DoesSocketExist(SocketName))
+        {
+            Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on enemy mesh!"), *SocketName.ToString());
+        }
+        break;
     }
+
+    // Ensure the weapon is visible and collision is enabled
+    Weapon->SetActorHiddenInGame(false);
+    Weapon->SetActorEnableCollision(true);
+    Weapon->GetWeaponMesh()->SetVisibility(true, true);  // Force visibility
+
+    // Store the reference to the currently equipped weapon
+    CurrentWeapon = Weapon;
 }
 
 
-
-
-
-void AEclipseRaptureCharacter::StartProne()
+AWeaponBase* AEclipseRaptureCharacter::GetCurrentWeaponByClass(EWeaponClass WeaponClass)
 {
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Sprinting || CurrentMovementState == ECharacterMovementState::ECMS_Crouching) return;
+    // Retrieve the weapon instance from the CurrentWeapons map
+    return CurrentWeapons.Contains(WeaponClass) ? CurrentWeapons[WeaponClass] : nullptr;
+}
 
-    //Enter prone state
-    GetCharacterMovement()->MaxWalkSpeed = ProneMovementSpeed;
-    CurrentMovementState = ECharacterMovementState::ECMS_Prone;
+void AEclipseRaptureCharacter::EquipUnarmed()
+{
+    UE_LOG(LogTemp, Warning, TEXT("Equipping Unarmed."));
 
-    //Transition to prone eye offset
-    ProneEyeOffset.Z = ProneEyeHeightZ; //this value dictates the Z position of the camera when entering the prone position
-
-    if(FirstPersonCamera)
+    if (CurrentWeapons.FindRef(EWeaponClass::EWC_Primary))
     {
-        FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, ProneEyeOffset.Z), false);
+        USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary)->GetWeaponMesh();
+        if (WeaponMesh)
+        {
+            WeaponMesh->SetVisibility(false);
+        }
     }
-}
 
-void AEclipseRaptureCharacter::EndProne()
-{
-    //Exit prone state and return to walking speed and state
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed;
-    CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-
-    //Transition to default eye offset
-    ProneEyeOffset.Z = 0.f;
-
-	if (FirstPersonCamera)
-	{
-		FirstPersonCamera->SetRelativeLocation(FVector(0.f, 0.f, BaseEyeHeight), false);
-	}
-}
-
-
-void AEclipseRaptureCharacter::ToggleProne()
-{
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Prone)
+    if (CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary))
     {
-        EndProne();
+        USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary)->GetWeaponMesh();
+        if (WeaponMesh)
+        {
+            WeaponMesh->SetVisibility(false);
+        }
     }
-    else
+
+    SetSwapTimer();
+
+    CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
+    CurrentWeaponType = EWeaponType::EWT_Unarmed;
+    CurrentWeaponName = EWeaponName::EWN_Unarmed;
+
+    UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
+}
+
+void AEclipseRaptureCharacter::EquipPrimaryWeapon()
+{
+    if (!bCanSwapWeapon)
     {
-        StartProne();
+        UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
+        return;
+    }
+
+    //Check for primary weapon in player weapon inventory
+    AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
+    if (!PrimaryWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No primary weapon found!"));
+        return;
+    }
+
+    SetSwapTimer();
+
+    SwapWeapon(EWeaponClass::EWC_Primary);
+    CurrentWeaponAmmo = PrimaryAmmo;
+
+    //Hide the secondary weapon if equipped
+    AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
+    if (SecondaryWeapon)
+    {
+        SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
+        UE_LOG(LogTemp, Warning, TEXT("Hiding secondary weapon: %s"), *SecondaryWeapon->GetName());
+    }
+
+
+    PrimaryWeapon->GetWeaponMesh()->SetVisibility(true);
+
+    //Update weapon states
+    CurrentWeaponClass = EWeaponClass::EWC_Primary;
+    CurrentWeaponType = EWeaponType::EWT_Primary;
+    CurrentWeaponName = PrimaryWeapon->GetWeaponName();
+    CurrentWeaponBase = PrimaryWeapon;
+
+    UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
+}
+
+void AEclipseRaptureCharacter::EquipSecondaryWeapon()
+{
+    if (!bCanSwapWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
+        return;
+    }
+
+    AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
+    if (!SecondaryWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No secondary weapon found! Cannot swap to secondary."));
+        return;
+    }
+
+    if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Secondary)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Secondary weapon already equipped!"));
+        return;
+    }
+
+    SetSwapTimer();
+
+    SwapWeapon(EWeaponClass::EWC_Secondary);
+    CurrentWeaponAmmo = SecondaryAmmo;
+
+    AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
+    if (PrimaryWeapon)
+    {
+        PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
+    }
+
+    SecondaryWeapon->GetWeaponMesh()->SetVisibility(true);
+    CurrentWeaponClass = EWeaponClass::EWC_Secondary;
+    CurrentWeaponType = EWeaponType::EWT_Secondary;
+    CurrentWeaponName = SecondaryWeapon->GetWeaponName();
+
+    CurrentWeaponBase = SecondaryWeapon;
+
+    UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
+}
+
+
+void AEclipseRaptureCharacter::ResetSwap()
+{
+    bCanSwapWeapon = true;
+    UE_LOG(LogTemp, Warning, TEXT("Weapon swap ready."));
+}
+
+void AEclipseRaptureCharacter::SetSwapTimer()
+{
+    bCanSwapWeapon = false;
+    GetWorld()->GetTimerManager().SetTimer(WeaponSwapTimerHandle, this, &AEclipseRaptureCharacter::ResetSwap, WeaponSwapCooldown, false);
+}
+
+void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
+{
+    if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
+    {
+        switch (CurrentWeaponName)
+        {
+        case EWeaponName::EWN_Pistol_A:
+            SecondaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Pistol_B:
+            SecondaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Rifle_A:
+            PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+        case EWeaponName::EWN_Rifle_B:
+            PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+        default:
+            if (GEngine)
+            {
+                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
+            }
+            break;
+        }
     }
 }
 
-
-void AEclipseRaptureCharacter::StartSprint()
+FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& OriginalDirection) const
 {
-    if (!CanSprint()) return;
+    // Calculate deviation based on accuracy
+    float Deviation = (100.0f - Accuracy) / 100.0f; // Higher deviation for lower accuracy
+    UE_LOG(LogTemp, Warning, TEXT("Deviation: %f"), Deviation);
 
-    CurrentMovementState = ECharacterMovementState::ECMS_Sprinting;
-    GetCharacterMovement()->MaxWalkSpeed = StoredSprintSpeed;
+    // Generate a random deviation angle in radians
+    float MaxAngle = Deviation * PI / 4; // Scale to a maximum cone angle (e.g., 45 degrees when Deviation is 1)
+    float RandomAngle = FMath::FRandRange(0.0f, MaxAngle);
+    float RandomYaw = FMath::FRandRange(0.0f, 2 * PI); // Full rotation around the yaw axis
+
+    // Convert the random spherical coordinates to Cartesian coordinates
+    FVector RandomOffset = FVector(
+        FMath::Sin(RandomAngle) * FMath::Cos(RandomYaw),
+        FMath::Sin(RandomAngle) * FMath::Sin(RandomYaw),
+        FMath::Cos(RandomAngle)
+    );
+
+    // Align the offset with the original direction
+    FVector AdjustedDirection = OriginalDirection + RandomOffset;
+    return AdjustedDirection.GetSafeNormal(); // Normalize the vector to maintain direction
 }
 
-void AEclipseRaptureCharacter::EndSprint()
+#pragma region Interface Implementations
+
+void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
 {
-    CurrentMovementState = ECharacterMovementState::ECMS_Walking;
-    GetCharacterMovement()->MaxWalkSpeed = StoredWalkSpeed; 
+    if (!HealthComponent) return;
+    if (HealthComponent->GetCurrentHealth() > 0)
+    {
+        float TargetHealth = HealthComponent->GetCurrentHealth() - DamageInfo.DamageAmount;
+
+        UGameplayStatics::ApplyDamage(GetOwner(), DamageInfo.DamageAmount, nullptr, nullptr, nullptr);
+        HealthComponent->SetCurrentHealth(
+            FMath::Lerp(HealthComponent->GetCurrentHealth(),
+            TargetHealth,
+            1.5f));
+
+
+        if (HealthComponent->GetCurrentHealth() <= 0)
+        {
+            HealthComponent->SetCurrentHealth(0);
+            HealthComponent->OnDeathEvent.Broadcast();
+            UE_LOG(LogTemp, Warning, TEXT("%s is now dead"), *GetOwner()->GetName());
+        }
+    }
 }
 
-
-bool AEclipseRaptureCharacter::CanSprint()
+void AEclipseRaptureCharacter::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
 {
-    return CurrentMovementState == ECharacterMovementState::ECMS_Walking &&
-        GetVelocity().Size() > 0;  //Make sure player is moving
+    if (!HealthComponent) return;
+    if (InventoryItems.Num() > 0)
+    {
+        //for (TSubclassOf<AItem> Item : InventoryItems)
+        //{
+        //	FActorSpawnParameters SpawnParams;
+        //	SpawnParams.Owner = GetOwner();
+        //	SpawnParams.Instigator = GetOwner()->GetInstigator();
+        //	FVector CharacterPosition = GetOwner()->GetActorLocation();
+  //          FVector BackpackSpawnOffset = FVector(CharacterPosition.X, CharacterPosition.Y, CharacterPosition.Z + 5.f);
+
+  //          //TODO:
+  //          //Once we have a backpack/storage system setup, switch to spawn a backpack with the inventory items specified.
+        //	GetWorld()->SpawnActor<AItem>(Item, BackpackSpawnOffset, GetOwner()->GetActorRotation(), SpawnParams);
+        //}
+    }
 }
 
+float AEclipseRaptureCharacter::GetMaxHealth_Implementation()
+{
+    if (!HealthComponent) return 0 ;
+    return HealthComponent->MaxHealth;
+}
 
+float AEclipseRaptureCharacter::GetCurrentHealth_Implementation()
+{
+    if (!HealthComponent) return 0;
+
+    return HealthComponent->GetCurrentHealth();
+}
+
+float AEclipseRaptureCharacter::GetCriticalHealthThreshold_Implementation()
+{
+	if (!HealthComponent) return 0;
+    return HealthComponent->CriticalHealthThreshold;
+}
 
 
 #pragma endregion
