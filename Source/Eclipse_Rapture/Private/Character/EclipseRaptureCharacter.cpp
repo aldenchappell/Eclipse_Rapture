@@ -14,6 +14,7 @@
 #include "Items/Components/FlashlightComponent.h"
 #include "Components/SpotLightComponent.h"
 #include "Interfaces/Unlockable.h"
+#include "Building/BuildingComponent.h"
 
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
@@ -57,6 +58,9 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //setup inventory component
 	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 	InventoryComponent->Capacity = 20;
+
+    //setup building component
+	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
 
     CharacterType = ECharacterType::ECT_Player;
 }
