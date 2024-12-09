@@ -86,6 +86,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Building Logic")
+	void SetBuildingBlueprintVisibility(bool bNewVisibility);
+
 #pragma region Weapon Swapping
 
 	UFUNCTION(BlueprintCallable)

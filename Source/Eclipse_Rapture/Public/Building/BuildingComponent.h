@@ -13,8 +13,6 @@ class ECLIPSE_RAPTURE_API UBuildingComponent : public UActorComponent, public IB
 public:
     UBuildingComponent();
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly)
-    class UStaticMeshComponent* BlueprintMesh;
 protected:
     virtual void BeginPlay() override;
 
