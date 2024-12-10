@@ -51,4 +51,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
 	class AEclipseRaptureBuildingItem* GetBuildingItem();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    EBuildingType GetBuildingType();
 };

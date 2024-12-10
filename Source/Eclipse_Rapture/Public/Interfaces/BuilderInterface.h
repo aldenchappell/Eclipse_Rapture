@@ -29,4 +29,10 @@ public:
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
     void SetBuildingItemBeingLookedAt(AEclipseRaptureBuildingItem* BuildingItem);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    class AEclipseRaptureBuildingItem* GetBuildingItemBeingLookedAt();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Building | Interfaces")
+	FHitResult GetBuildingBlueprintHitResult();
 };

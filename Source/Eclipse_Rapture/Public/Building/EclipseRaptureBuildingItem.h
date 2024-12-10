@@ -19,6 +19,15 @@ public:
     // Array of quantities matching the RequiredItems
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
     TArray<int32> RequiredQuantities;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+	EUpgradeType SUpgradeType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+	EUpgradeCostType SUpgradeCostType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+    EBuildingType SBuildingType;
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingUpgrade, FUpgradeInfo, UpgradeInfo);
@@ -44,6 +53,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Building | Upgrade")
     FOnBuildingUpgrade OnBuildingUpgrade;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+    EBuildingType BuildingType;
 protected:
     virtual void BeginPlay() override;
 
@@ -60,5 +72,6 @@ protected:
 #pragma region Building Interface Implementations
     virtual void UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo) override;
     virtual TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
+	virtual EBuildingType GetBuildingType_Implementation() override;
 #pragma endregion
 };
