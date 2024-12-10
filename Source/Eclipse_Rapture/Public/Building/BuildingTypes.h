@@ -1,6 +1,18 @@
 #pragma once
 
 UENUM(BlueprintType)
+enum class EBuildingType : uint8
+{
+	EBT_Wall UMETA(DisplayName = "Wall"),
+	EBT_Floor UMETA(DisplayName = "Floor"),
+	EBT_Stairs UMETA(DisplayName = "Stairs"),
+	EBT_Roof UMETA(DisplayName = "Roof"),
+	EBT_Door UMETA(DisplayName = "Door"),
+	EBT_Window UMETA(DisplayName = "Window"),
+	EBT_Foundation UMETA(DisplayName = "Foundation")
+};
+
+UENUM(BlueprintType)
 enum class EUpgradeType : uint8
 {
 	EUT_Wood UMETA(DisplayName = "Wood"),

@@ -111,3 +111,8 @@ TArray<TSubclassOf<AItem>> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_
 
     return RequiredItems;
 }
+
+EBuildingType AEclipseRaptureBuildingItem::GetBuildingType_Implementation()
+{
+    return BuildingType;
+}

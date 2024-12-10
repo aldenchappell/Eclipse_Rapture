@@ -16,8 +16,6 @@ public:
 protected:
     virtual void BeginPlay() override;
 
-
-
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float BuildingTraceLength = 500.f;
 
@@ -26,12 +24,20 @@ protected:
     virtual void SetHasBuildingBlueprint_Implementation(bool NewHasBlueprint) override;
     virtual void BuildingBlueprintLineTrace_Implementation() override;
     virtual void SetBuildingItemBeingLookedAt_Implementation(AEclipseRaptureBuildingItem* BuildingItem) override;
+	virtual AEclipseRaptureBuildingItem* GetBuildingItemBeingLookedAt_Implementation() override;
 
-    UPROPERTY()
-    class AEclipseRaptureBuildingItem* CurrentBuildingItem;
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    FHitResult GetBuildingBlueprintHitResult();
+    virtual FHitResult GetBuildingBlueprintHitResult_Implementation();
+
+    UPROPERTY(BlueprintReadWrite)
+    class AEclipseRaptureCharacter* OwningCharacter;
 
 private:
-
     UPROPERTY()
-    class AEclipseRaptureCharacter* OwningCharacter;
+    FHitResult LastHitResult;
+    
+    UPROPERTY()
+    class AEclipseRaptureBuildingItem* CurrentBuildingItem;
 };
