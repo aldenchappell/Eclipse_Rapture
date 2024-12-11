@@ -62,6 +62,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     //setup building component
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
 
+
     CharacterType = ECharacterType::ECT_Player;
 }
 
