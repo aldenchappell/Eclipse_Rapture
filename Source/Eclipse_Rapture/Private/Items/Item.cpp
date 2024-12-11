@@ -35,12 +35,24 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerReference = *Cast<AEclipseRaptureCharacter>(GetWorld()->GetFirstPlayerController());
+	// Get the player character reference
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		APawn* PlayerPawn = PlayerController->GetPawn();
+		PlayerReference = Cast<AEclipseRaptureCharacter>(PlayerPawn);
+	}
 
-	//bind overlap events to overlap delegates
+	if (!PlayerReference)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PlayerReference is NULL in AItem::BeginPlay."));
+	}
+
+	// Bind overlap events
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 	SphereCollision->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
 }
+
 
 void AItem::Tick(float DeltaTime)
 {
