@@ -66,7 +66,7 @@ protected:
 
     // Materials for each upgrade level
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Building | Upgrade")
-    TArray<class UMaterial*> Materials;
+    TArray<class UMaterialInstance*> Materials;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Building | Messages")
     bool bShowDebugMessages;
