@@ -15,18 +15,32 @@ struct FUpgradeInfo
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     class UInventoryComponent* UpgraderInventory;
 
-    UPROPERTY(BlueprintReadOnly, Category = "Building | Upgrade")
+    UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     class AEclipseRaptureBuildingItem* BuildingItem;
 
     // Upgrade level (0 = Wood, 1 = Brick, 2 = Metal, 3 = Reinforced) 
-    UPROPERTY(BlueprintReadOnly, Category = "Building | Upgrade")
+    UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     int32 UpgradeLevel;
 
     // List of required items for this upgrade
-    UPROPERTY(BlueprintReadOnly, Category = "Building | Upgrade")
+    UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     TArray<TSubclassOf<class AItem>> RequiredItems;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
+    TArray<int32> RequiredQuantities;
 };
 
+USTRUCT(BlueprintType)
+struct FUpgradeResults
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+    bool bUpgradeSuccessful;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
+    FText UpgradeResultMessage;
+};
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -44,7 +58,7 @@ class ECLIPSE_RAPTURE_API IBuildingInterface
 
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
-	void UpgradeBuilding(FUpgradeInfo UpgradeInfo);
+	void UpgradeBuilding(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
     TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems(FUpgradeInfo UpgradeInfo);
