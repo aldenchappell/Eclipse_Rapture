@@ -18,11 +18,13 @@ void AEclipseRaptureBuildingItem::BeginPlay()
     Super::BeginPlay();
 }
 
-void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo)
+void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result)
 {
     if (!UpgradeInfo.UpgraderInventory)
     {
         UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Invalid inventory."));
+		Result.bUpgradeSuccessful = false;
+		Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Invalid inventory.");
         return;
     }
 
@@ -31,12 +33,16 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
         FString Message = FString::Printf(TEXT("Building is fully upgraded (Level: %d)."), CurrentUpgradeLevel);
         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Message);
         UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
+        Result.bUpgradeSuccessful = false;
+        Result.UpgradeResultMessage = FText::FromString(Message);
         return;
     }
 
     if (!UpgradeRequirements.Contains(CurrentUpgradeLevel + 1))
     {
         UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Missing requirements for level %d."), CurrentUpgradeLevel + 1);
+        Result.bUpgradeSuccessful = false;
+		Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Missing requirements.");
         return;
     }
 
@@ -44,6 +50,8 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
     if (Requirements.RequiredItems.Num() != Requirements.RequiredQuantities.Num())
     {
         UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Items and quantities mismatch for level %d."), CurrentUpgradeLevel + 1);
+        Result.bUpgradeSuccessful = false;
+		Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Items and quantities mismatch.");
         return;
     }
 
@@ -63,6 +71,8 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
             );
             GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, MissingItemMessage);
             UE_LOG(LogTemp, Warning, TEXT("%s"), *MissingItemMessage);
+            Result.bUpgradeSuccessful = false;
+			Result.UpgradeResultMessage = FText::FromString(MissingItemMessage);
             return;
         }
     }
@@ -94,10 +104,14 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("Failed to update material for level %d."), CurrentUpgradeLevel + 1);
+        Result.bUpgradeSuccessful = false;
+		Result.UpgradeResultMessage = FText::FromString("Failed to update material.");
     }
 
     // Increment level
     CurrentUpgradeLevel++;
+    Result.bUpgradeSuccessful = true;
+	Result.UpgradeResultMessage = FText::FromString("Upgrade successful.");
 }
 
 TArray<TSubclassOf<AItem>> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo)

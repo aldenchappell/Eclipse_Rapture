@@ -30,6 +30,8 @@ public:
     EBuildingType SBuildingType;
 };
 
+
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingUpgrade, FUpgradeInfo, UpgradeInfo);
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureBuildingItem : public AActor, public IBuildingInterface
@@ -70,7 +72,7 @@ protected:
     bool bShowDebugMessages;
 
 #pragma region Building Interface Implementations
-    virtual void UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo) override;
+    virtual void UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result) override;
     virtual TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
 	virtual EBuildingType GetBuildingType_Implementation() override;
 #pragma endregion
