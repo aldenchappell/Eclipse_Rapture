@@ -1,6 +1,8 @@
 #pragma once
 
+
 #include "Building/BuildingTypes.h"
+#include "Interfaces/Damageable.h"
 #include "Interfaces/BuildingInterface.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -28,7 +30,7 @@ public:
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingUpgrade, FUpgradeInfo, UpgradeInfo);
 UCLASS()
-class ECLIPSE_RAPTURE_API AEclipseRaptureBuildingItem : public AActor, public IBuildingInterface
+class ECLIPSE_RAPTURE_API AEclipseRaptureBuildingItem : public AActor, public IBuildingInterface, public IDamageable
 {
     GENERATED_BODY()
 
@@ -70,6 +72,18 @@ protected:
     virtual EBuildingType GetBuildingType_Implementation() override;
 #pragma endregion
 
+#pragma region Health Interface Implementations
+
+    virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
+    virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
+    virtual float GetMaxHealth_Implementation() override;
+    virtual float GetCurrentHealth_Implementation() override;
+    virtual float GetCriticalHealthThreshold_Implementation() override;
+    virtual bool GetIsDead_Implementation() override;
+
+#pragma endregion
+
+
 #pragma region Test Variables
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Building | Testing")
@@ -77,6 +91,7 @@ protected:
 #pragma endregion
 
 private:
+
     void ValidateRequiredItems(FUpgradeRequirements& Requirements, FString& UpgradeTypeDisplayName, FUpgradeResults& Result);
     void DeductInventoryItems(FUpgradeRequirements& Requirements, FUpgradeInfo& UpgradeInfo);
     void ApplyUpgradedMaterial(FUpgradeInfo& UpgradeInfo, FString& UpgradeTypeDisplayName, FUpgradeResults& Result);

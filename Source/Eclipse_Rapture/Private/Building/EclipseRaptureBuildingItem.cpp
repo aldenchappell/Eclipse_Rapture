@@ -206,3 +206,33 @@ EBuildingType AEclipseRaptureBuildingItem::GetBuildingType_Implementation()
 {
     return BuildingType;
 }
+
+void AEclipseRaptureBuildingItem::TakeDamage_Implementation(FDamageInfo DamageInfo)
+{
+
+}
+
+void AEclipseRaptureBuildingItem::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
+{
+
+}
+
+float AEclipseRaptureBuildingItem::GetMaxHealth_Implementation()
+{
+    return 0.0f;
+}
+
+float AEclipseRaptureBuildingItem::GetCurrentHealth_Implementation()
+{
+    return 0.0f;
+}
+
+float AEclipseRaptureBuildingItem::GetCriticalHealthThreshold_Implementation()
+{
+    return 0.0f;
+}
+
+bool AEclipseRaptureBuildingItem::GetIsDead_Implementation()
+{
+    return false;
+}
