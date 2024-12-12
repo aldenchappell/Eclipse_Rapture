@@ -63,8 +63,15 @@ protected:
 
 #pragma region Building Interface Implementations
     virtual void UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result) override;
+    
     virtual TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
     virtual AEclipseRaptureBuildingItem* GetBuildingItem_Implementation() override;
     virtual EBuildingType GetBuildingType_Implementation() override;
 #pragma endregion
+
+private:
+    void ValidateRequiredItems(FUpgradeRequirements& Requirements, FString& UpgradeTypeDisplayName, FUpgradeResults& Result);
+    void DeductInventoryItems(FUpgradeRequirements& Requirements, FUpgradeInfo& UpgradeInfo);
+    void ApplyUpgradedMaterial(FUpgradeInfo& UpgradeInfo, FString& UpgradeTypeDisplayName, FUpgradeResults& Result);
+    void CheckInventory(FUpgradeRequirements& Requirements, FUpgradeInfo& UpgradeInfo, FUpgradeResults& Result);
 };
