@@ -15,6 +15,7 @@ enum class EBuildingType : uint8
 UENUM(BlueprintType)
 enum class EUpgradeType : uint8
 {
+	EUT_None UMETA(DisplayName = "None"),
 	EUT_Wood UMETA(DisplayName = "Wood"),
 	EUT_Brick UMETA(DisplayName = "Brick"),
 	EUT_Metal UMETA(DisplayName = "Sheet Metal"),

@@ -18,9 +18,9 @@ struct FUpgradeInfo
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     class AEclipseRaptureBuildingItem* BuildingItem;
 
-    // Upgrade level (0 = Wood, 1 = Brick, 2 = Metal, 3 = Reinforced) 
+    // The upgrade type requested (e.g., Wood, Metal, etc.)
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
-    int32 UpgradeLevel;
+    EUpgradeType UpgradeType;
 
     // List of required items for this upgrade
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
@@ -29,6 +29,7 @@ struct FUpgradeInfo
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     TArray<int32> RequiredQuantities;
 };
+
 
 USTRUCT(BlueprintType)
 struct FUpgradeResults
