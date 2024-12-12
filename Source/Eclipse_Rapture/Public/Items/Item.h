@@ -101,6 +101,6 @@ private:
 
 public:	//Getters and Setters
 	
-	
-
+	UFUNCTION(BlueprintPure, Blueprintcallable)
+	FText GetItemDisplayName() const {return ItemDisplayName;}
 };
