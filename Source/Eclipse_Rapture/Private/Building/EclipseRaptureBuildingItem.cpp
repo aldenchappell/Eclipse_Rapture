@@ -8,8 +8,7 @@ AEclipseRaptureBuildingItem::AEclipseRaptureBuildingItem()
     PrimaryActorTick.bCanEverTick = false;
     BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Building Mesh"));
     RootComponent = BuildingMesh;
-    CurrentUpgradeLevel = 0;
-    MaxUpgradeLevel = 3; // Example
+    CurrentUpgradeType = EUpgradeType::EUT_None; // Default upgrade type
     bShowDebugMessages = true;
 }
 
@@ -23,39 +22,53 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
     if (!UpgradeInfo.UpgraderInventory)
     {
         UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Invalid inventory."));
-		Result.bUpgradeSuccessful = false;
-		Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Invalid inventory.");
+        Result.bUpgradeSuccessful = false;
+        Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Invalid inventory.");
         return;
     }
 
-    if (CurrentUpgradeLevel >= MaxUpgradeLevel)
+    if (!UpgradeRequirements.Contains(UpgradeInfo.UpgradeType))
     {
-        FString Message = FString::Printf(TEXT("Building is fully upgraded (Level: %d)."), CurrentUpgradeLevel);
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, Message);
+        FString Message = FString::Printf(TEXT("Upgrade type %s is not valid for this building."), *UEnum::GetValueAsString(UpgradeInfo.UpgradeType));
         UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
         Result.bUpgradeSuccessful = false;
         Result.UpgradeResultMessage = FText::FromString(Message);
         return;
     }
 
-    if (!UpgradeRequirements.Contains(CurrentUpgradeLevel + 1))
+    // Prevent upgrading to a lower tier
+    if (UpgradeInfo.UpgradeType < CurrentUpgradeType)
     {
-        UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Missing requirements for level %d."), CurrentUpgradeLevel + 1);
+        FString Message = FString::Printf(TEXT("Cannot downgrade building from %s to %s."),
+                                          *UEnum::GetValueAsString(CurrentUpgradeType),
+                                          *UEnum::GetValueAsString(UpgradeInfo.UpgradeType));
+        UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
         Result.bUpgradeSuccessful = false;
-		Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Missing requirements.");
+        Result.UpgradeResultMessage = FText::FromString(Message);
         return;
     }
 
-    FUpgradeRequirements Requirements = UpgradeRequirements[CurrentUpgradeLevel + 1];
-    if (Requirements.RequiredItems.Num() != Requirements.RequiredQuantities.Num())
+    // Prevent upgrading to the same tier
+    if (UpgradeInfo.UpgradeType == CurrentUpgradeType)
     {
-        UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Items and quantities mismatch for level %d."), CurrentUpgradeLevel + 1);
+        FString Message = FString::Printf(TEXT("Building is already upgraded to type %s."), *UEnum::GetValueAsString(UpgradeInfo.UpgradeType));
+        UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
         Result.bUpgradeSuccessful = false;
-		Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Items and quantities mismatch.");
+        Result.UpgradeResultMessage = FText::FromString(Message);
         return;
     }
+
+    FUpgradeRequirements Requirements = UpgradeRequirements[UpgradeInfo.UpgradeType];
 
     // Validate required items and quantities
+    if (Requirements.RequiredItems.Num() != Requirements.RequiredQuantities.Num())
+    {
+        UE_LOG(LogTemp, Error, TEXT("Upgrade failed: Items and quantities mismatch for upgrade type %s."), *UEnum::GetValueAsString(UpgradeInfo.UpgradeType));
+        Result.bUpgradeSuccessful = false;
+        Result.UpgradeResultMessage = FText::FromString("Upgrade failed: Items and quantities mismatch.");
+        return;
+    }
+
     for (int32 Index = 0; Index < Requirements.RequiredItems.Num(); ++Index)
     {
         TSubclassOf<AItem> ItemClass = Requirements.RequiredItems[Index];
@@ -69,10 +82,9 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
                 RequiredQuantity,
                 *ItemClass->GetName()
             );
-            GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, MissingItemMessage);
             UE_LOG(LogTemp, Warning, TEXT("%s"), *MissingItemMessage);
             Result.bUpgradeSuccessful = false;
-			Result.UpgradeResultMessage = FText::FromString(MissingItemMessage);
+            Result.UpgradeResultMessage = FText::FromString(MissingItemMessage);
             return;
         }
     }
@@ -89,41 +101,40 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
             QuantityToRemove,
             *ItemClass->GetName()
         );
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, RemovedItemMessage);
         UE_LOG(LogTemp, Log, TEXT("%s"), *RemovedItemMessage);
     }
 
-    // Upgrade material
-    if (BuildingMesh && Materials.IsValidIndex(CurrentUpgradeLevel + 1))
+    // Apply new material
+    if (BuildingMesh && Materials.Contains(UpgradeInfo.UpgradeType))
     {
-        BuildingMesh->SetMaterial(0, Materials[CurrentUpgradeLevel + 1]);
-        FString UpgradeMessage = FString::Printf(TEXT("Building upgraded to level %d."), CurrentUpgradeLevel + 1);
+        BuildingMesh->SetMaterial(0, Materials[UpgradeInfo.UpgradeType]);
+        FString UpgradeMessage = FString::Printf(TEXT("Building upgraded to type %s."), *UEnum::GetValueAsString(UpgradeInfo.UpgradeType));
         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, UpgradeMessage);
         UE_LOG(LogTemp, Log, TEXT("%s"), *UpgradeMessage);
     }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Failed to update material for level %d."), CurrentUpgradeLevel + 1);
-        Result.bUpgradeSuccessful = false;
-		Result.UpgradeResultMessage = FText::FromString("Failed to update material.");
-    }
 
-    // Increment level
-    CurrentUpgradeLevel++;
+    // Update the current upgrade type
+    CurrentUpgradeType = UpgradeInfo.UpgradeType;
     Result.bUpgradeSuccessful = true;
-	Result.UpgradeResultMessage = FText::FromString("Upgrade successful.");
+    Result.UpgradeResultMessage = FText::FromString("Upgrade successful.");
 }
+
 
 TArray<TSubclassOf<AItem>> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo)
 {
     TArray<TSubclassOf<AItem>> RequiredItems;
 
-    if (UpgradeRequirements.Contains(UpgradeInfo.UpgradeLevel))
+    if (UpgradeRequirements.Contains(UpgradeInfo.UpgradeType))
     {
-        RequiredItems = UpgradeRequirements[UpgradeInfo.UpgradeLevel].RequiredItems;
+        RequiredItems = UpgradeRequirements[UpgradeInfo.UpgradeType].RequiredItems;
     }
 
     return RequiredItems;
+}
+
+AEclipseRaptureBuildingItem* AEclipseRaptureBuildingItem::GetBuildingItem_Implementation()
+{
+    return this;
 }
 
 EBuildingType AEclipseRaptureBuildingItem::GetBuildingType_Implementation()
