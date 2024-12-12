@@ -24,8 +24,9 @@ public:
     EUpgradeType UpgradeType;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingUpgrade, FUpgradeInfo, UpgradeInfo);
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingUpgrade, FUpgradeInfo, UpgradeInfo);
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureBuildingItem : public AActor, public IBuildingInterface
 {
@@ -67,6 +68,12 @@ protected:
     virtual TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
     virtual AEclipseRaptureBuildingItem* GetBuildingItem_Implementation() override;
     virtual EBuildingType GetBuildingType_Implementation() override;
+#pragma endregion
+
+#pragma region Test Variables
+
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Building | Testing")
+    bool bDisableInteractionOnMaxUpgrade = false;
 #pragma endregion
 
 private:

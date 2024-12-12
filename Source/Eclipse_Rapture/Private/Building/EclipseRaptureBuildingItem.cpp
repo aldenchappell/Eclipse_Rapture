@@ -37,6 +37,15 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
     FString CurrentUpgradeTypeDisplayName = UpgradeTypeEnum->GetDisplayNameTextByValue(static_cast<int64>(CurrentUpgradeType)).ToString();
     FString BuildingTypeDisplayName = BuildingTypeEnum->GetDisplayNameTextByValue(static_cast<int64>(BuildingType)).ToString();
 
+	if (bDisableInteractionOnMaxUpgrade && CurrentUpgradeType == EUpgradeType::EUT_Reinforced)
+	{
+		FString Message = FString::Printf(TEXT("Building is already at max upgrade level %s."), *UpgradeTypeDisplayName);
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *Message);
+		Result.bUpgradeSuccessful = false;
+		Result.UpgradeResultMessage = FText::FromString(Message);
+		return;
+	}
+
     // Check if upgrade type is valid
     if (!UpgradeRequirements.Contains(UpgradeInfo.UpgradeType))
     {
