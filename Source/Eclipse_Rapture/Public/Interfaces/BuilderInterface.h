@@ -35,4 +35,10 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Building | Interfaces")
 	FHitResult GetBuildingBlueprintHitResult();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    void SetBuildingHitLocation(FVector HitLocation);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    FVector GetBuildingHitLocation();
 };

@@ -125,6 +125,16 @@ AEclipseRaptureBuildingItem* UBuildingComponent::GetBuildingItemBeingLookedAt_Im
     return CurrentBuildingItem;
 }
 
+void UBuildingComponent::SetBuildingHitLocation_Implementation(FVector HitLocation)
+{
+    BuildingHitLocation = HitLocation;
+}
+
+FVector UBuildingComponent::GetBuildingHitLocation_Implementation()
+{
+    return BuildingHitLocation;
+}
+
 FHitResult UBuildingComponent::GetBuildingBlueprintHitResult_Implementation()
 {
     return LastHitResult;

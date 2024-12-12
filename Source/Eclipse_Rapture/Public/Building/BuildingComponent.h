@@ -25,7 +25,8 @@ protected:
     virtual void BuildingBlueprintLineTrace_Implementation() override;
     virtual void SetBuildingItemBeingLookedAt_Implementation(AEclipseRaptureBuildingItem* BuildingItem) override;
 	virtual AEclipseRaptureBuildingItem* GetBuildingItemBeingLookedAt_Implementation() override;
-
+	virtual void SetBuildingHitLocation_Implementation(FVector HitLocation) override;
+    virtual FVector GetBuildingHitLocation_Implementation() override;
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
     FHitResult GetBuildingBlueprintHitResult();
@@ -34,10 +35,16 @@ protected:
     UPROPERTY(BlueprintReadWrite)
     class AEclipseRaptureCharacter* OwningCharacter;
 
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Building | Testing")
+    bool bDisableInteractionOnMaxUpgrade = false;
+
 private:
     UPROPERTY()
     FHitResult LastHitResult;
     
+    UPROPERTY()
+    FVector BuildingHitLocation;
+
     UPROPERTY()
     class AEclipseRaptureBuildingItem* CurrentBuildingItem;
 };
