@@ -36,6 +36,7 @@ enum class EMainItemUseDescriptionType : uint8
 {
 	EMDT_None UMETA(DisplayName = "None"),
 	EMDT_Health UMETA(DisplayName = "Health Restoration"),
+	EMDT_Ammo UMETA(DisplayName = "Ammo Restoration"),
 };
 
 UENUM(BlueprintType)
