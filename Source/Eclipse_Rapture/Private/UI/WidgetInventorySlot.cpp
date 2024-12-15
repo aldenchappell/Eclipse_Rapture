@@ -3,19 +3,19 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Items/Item.h"
+#include "Components/SizeBox.h"
+#include "Components/Button.h"
 
 void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
 {
     if (Item && Item->ThumbnailTexture)
     {
-        // Update UI for valid item
         ItemThumbnail->SetBrushFromTexture(Item->ThumbnailTexture);
         ItemQuantityText->SetText(FText::AsNumber(Quantity));
-        //ItemNameText->SetText(Item->GetItemDisplayName());
+        UseItemButton->SetIsEnabled(true); // Enable button if item is valid
     }
     else
     {
-        // Use debug placeholder for invalid items
         SetDebugSlot();
     }
 
@@ -27,10 +27,12 @@ void UWidgetInventorySlot::SetSlotEmpty()
 {
     ItemThumbnail->SetBrushFromTexture(nullptr);
     ItemQuantityText->SetText(FText::GetEmpty());
-    //ItemNameText->SetText(FText::GetEmpty());
+    UseItemButton->SetIsEnabled(false); // Disable button when slot is empty
+
     bIsOccupied = false;
     OccupyingItem = nullptr;
 }
+
 
 void UWidgetInventorySlot::SetDebugSlot() 
 {
@@ -55,6 +57,7 @@ void UWidgetInventorySlot::SetOccupied(AItem* Item)
     OccupyingItem = Item;
 }
 
+
 bool UWidgetInventorySlot::IsOccupied() const
 {
     return bIsOccupied;
@@ -63,6 +66,17 @@ bool UWidgetInventorySlot::IsOccupied() const
 void UWidgetInventorySlot::ClearSlot()
 {
     SetSlotEmpty();
+    bIsPartOfMultiSlot = false; // Reset multi-slot status
+}
+
+void UWidgetInventorySlot::HandleButtonClicked()
+{
+    if (OccupyingItem)
+    {
+        // Call item use logic (assuming Use function exists in AItem)
+        OccupyingItem->Use(Cast<AEclipseRaptureCharacter>(GetOwningPlayerPawn()));
+        UE_LOG(LogTemp, Log, TEXT("Item %s was clicked and used!"), *OccupyingItem->GetName());
+    }
 }
 
 void UWidgetInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -87,3 +101,33 @@ void UWidgetInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
         TooltipInstance = nullptr;
     }
 }
+
+void UWidgetInventorySlot::SetSlotSize(float Width, float Height)
+{
+    if (SizeBox)
+    {
+        SizeBox->SetWidthOverride(Width);
+        SizeBox->SetHeightOverride(Height);
+    }
+}
+
+
+void UWidgetInventorySlot::AdjustSlotSize(int32 RowSpan, int32 ColumnSpan)
+{
+    if (ItemThumbnail)
+    {
+        FVector2D NewSize = FVector2D(50.f * ColumnSpan, 50.f * RowSpan); // Base slot size = 50x50
+        ItemThumbnail->SetDesiredSizeOverride(NewSize);
+    }
+}
+
+void UWidgetInventorySlot::MarkAsPartOfMultiSlot()
+{
+    bIsPartOfMultiSlot = true;
+}
+
+bool UWidgetInventorySlot::IsPartOfMultiSlot() const
+{
+    return bIsPartOfMultiSlot;
+}
+

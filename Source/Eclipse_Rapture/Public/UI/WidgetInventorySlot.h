@@ -8,7 +8,7 @@ class UImage;
 class UTextBlock;
 class AItem;
 class UWidgetItemTooltip;
-
+class USizeBox;
 /**
  * Inventory Slot UI Widget
  */
@@ -39,16 +39,41 @@ public:
     /** Clear the slot and mark it as empty */
     void ClearSlot();
 
+    /** Mark this slot as part of a multi-slot item */
+    void MarkAsPartOfMultiSlot();
+
+    /** Check if this slot is part of a multi-slot item */
+    bool IsPartOfMultiSlot() const;
+
+    /** Adjust slot size for multi-slot items */
+    void AdjustSlotSize(int32 RowSpan, int32 ColumnSpan);
+
+    /** Dynamically set slot size */
+    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
+    void SetSlotSize(float Width, float Height);
+
+    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
+    void HandleButtonClicked();
+
+
 protected:
     virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
     virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
+
+
     /** UI Elements */
+    UPROPERTY(meta = (BindWidget))
+    class UButton* UseItemButton;
+
     UPROPERTY(meta = (BindWidget))
     UImage* ItemThumbnail;
 
     UPROPERTY(meta = (BindWidget))
     UTextBlock* ItemQuantityText;
+
+    UPROPERTY(meta = (BindWidget))
+    USizeBox* SizeBox;
 
     //UPROPERTY(meta = (BindWidget))
     //UTextBlock* ItemNameText;
@@ -70,4 +95,7 @@ private:
 
     /** Tooltip widget instance */
     UWidgetItemTooltip* TooltipInstance = nullptr;
+
+    /** Whether this slot is part of a multi-slot item */
+    bool bIsPartOfMultiSlot = false;
 };
