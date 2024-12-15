@@ -9,6 +9,17 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+USTRUCT(BlueprintType)
+struct FInventorySpaceRequirements
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
+	int32 RowsRequired;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
+	int32 ColumnsRequired;
+};
 
 class USphereComponent;
 class USkeletalMeshComponent;
@@ -66,6 +77,19 @@ public:
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	FInventorySpaceRequirements InventorySpaceRequired;
+
+	// Inventory grid-related properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory | Position")
+	int32 StartRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory | Position")
+	int32 StartColumn;
+
+	// Additional logic or methods as needed
+	void SetStartPosition(int32 Row, int32 Column);
+	FVector2D GetStartPosition() const;
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
@@ -87,8 +111,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereCollision;
-
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Pickup;
