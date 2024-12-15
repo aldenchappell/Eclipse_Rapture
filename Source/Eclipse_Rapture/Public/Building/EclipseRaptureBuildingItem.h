@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Building/BuildingTypes.h"
 #include "Interfaces/Damageable.h"
 #include "Interfaces/BuildingInterface.h"
