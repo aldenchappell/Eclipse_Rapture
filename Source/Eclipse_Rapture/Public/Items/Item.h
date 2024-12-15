@@ -9,6 +9,15 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
+USTRUCT(BlueprintType)
+struct FInventorySpaceRequirements
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
+	int32 RowsRequired = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
+	int32 ColumnsRequired = 1;
+};
 
 class USphereComponent;
 class USkeletalMeshComponent;
@@ -65,6 +74,9 @@ public:
 
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space")
+	FInventorySpaceRequirements InventorySpaceRequired;
 
 protected:
 	virtual void Tick(float DeltaTime) override;
