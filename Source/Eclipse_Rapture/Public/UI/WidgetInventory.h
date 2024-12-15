@@ -19,7 +19,7 @@ class ECLIPSE_RAPTURE_API UWidgetInventory : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory UI")
-	void InitializeInventory();
+	void InitializeInventory(UInventoryComponent* PlayerInventory);
 
 
 	// Function to refresh the inventory UI with updated inventory data
@@ -54,5 +54,6 @@ private:
 	// Function to place an item in the grid
 	void PlaceItemInSlot(AItem* Item, int32 Quantity, int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired);
 
+	void PopulateSlotsFromInventory(UInventoryComponent* InventoryComponent);
     
 };

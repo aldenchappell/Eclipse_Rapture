@@ -12,23 +12,25 @@ void UWidgetInventory::NativeConstruct()
     //InitializeInventory();
 }
 
-void UWidgetInventory::InitializeInventory()
+void UWidgetInventory::InitializeInventory(UInventoryComponent* PlayerInventory)
 {
     if (!InventoryWrapBox || !InventorySlotClass)
     {
-        UE_LOG(LogTemp, Error, TEXT("InitializeInventory: InventoryWrapBox or InventorySlotClass is missing!"));
+        UE_LOG(LogTemp, Error, TEXT("InitializeInventory: Missing InventoryWrapBox or InventorySlotClass!"));
         return;
     }
 
-    // Clear any previous slots
     InventoryWrapBox->ClearChildren();
     InventorySlots.Empty();
 
-    // Calculate total slots
-    int32 TotalSlots = Rows * Columns;
-    UE_LOG(LogTemp, Log, TEXT("Spawning %d slots with Rows: %d, Columns: %d"), TotalSlots, Rows, Columns);
+    if (!PlayerInventory)
+    {
+        UE_LOG(LogTemp, Error, TEXT("InitializeInventory: Missing InventoryComponent on player!"));
+        return;
+    }
 
-    // Spawn all slots
+    // Create slots for the inventory UI
+    int32 TotalSlots = PlayerInventory->Capacity;
     for (int32 i = 0; i < TotalSlots; ++i)
     {
         UWidgetInventorySlot* SlotWidget = CreateWidget<UWidgetInventorySlot>(this, InventorySlotClass);
@@ -36,15 +38,57 @@ void UWidgetInventory::InitializeInventory()
         {
             InventorySlots.Add(SlotWidget);
             InventoryWrapBox->AddChild(SlotWidget);
-            SlotWidget->SetSlotEmpty(); // Initialize all slots as empty
+            SlotWidget->SetSlotEmpty();
         }
-        else
+    }
+
+    // Populate slots from the default items
+    PopulateSlotsFromInventory(PlayerInventory);
+}
+
+void UWidgetInventory::PopulateSlotsFromInventory(UInventoryComponent* InventoryComponent)
+{
+    for (const auto& ItemPair : InventoryComponent->Items)
+    {
+        AItem* ItemInstance = InventoryComponent->GetItemInstance(ItemPair.Key);
+        if (ItemInstance)
         {
-            UE_LOG(LogTemp, Error, TEXT("Failed to create InventorySlot at index %d"), i);
+            int32 Quantity = ItemPair.Value;
+
+            // Find an empty slot
+            for (UWidgetInventorySlot* InvSlot : InventorySlots)
+            {
+                if (!InvSlot->IsOccupied())
+                {
+                    InvSlot->SetItemDetails(ItemInstance, Quantity);
+                    break;
+                }
+            }
         }
     }
 }
 
+//old version
+//void UWidgetInventory::RefreshInventory(UInventoryComponent* PlayerInventory)
+//{
+//    if (!PlayerInventory || InventorySlots.Num() == 0)
+//    {
+//        UE_LOG(LogTemp, Error, TEXT("RefreshInventory: Invalid PlayerInventory or InventorySlots."));
+//        return;
+//    }
+//
+//    // Clear all slots
+//    for (UWidgetInventorySlot* InvSlot : InventorySlots)
+//    {
+//        if (InvSlot)
+//        {
+//            InvSlot->SetSlotEmpty();
+//        }
+//    }
+//
+//    // Populate slots with the updated inventory data
+//    PopulateSlotsFromInventory(PlayerInventory);
+//}
 void UWidgetInventory::RefreshInventory(UInventoryComponent* PlayerInventory)
 {
     if (!PlayerInventory || InventorySlots.Num() == 0)

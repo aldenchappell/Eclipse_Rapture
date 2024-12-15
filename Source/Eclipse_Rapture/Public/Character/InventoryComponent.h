@@ -86,6 +86,9 @@ public:
     UFUNCTION(BlueprintPure)
     AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
 
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    void PopulateDefaultItems();
+
 private:
     // Helper function to get max stack size of an item type
     int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;

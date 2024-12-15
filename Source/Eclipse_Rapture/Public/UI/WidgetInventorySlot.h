@@ -50,8 +50,8 @@ protected:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* ItemQuantityText;
 
-    UPROPERTY(meta = (BindWidget))
-    UTextBlock* ItemNameText;
+    //UPROPERTY(meta = (BindWidget))
+    //UTextBlock* ItemNameText;
 
     /** Debug placeholder image for invalid items */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")

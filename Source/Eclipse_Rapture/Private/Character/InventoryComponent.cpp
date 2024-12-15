@@ -1,89 +1,50 @@
 #include "Character/InventoryComponent.h"
 #include "Items/Item.h"
+#include "UI/WidgetInventory.h" // Include for communication with the widget
 #include "Engine/World.h"
 
 UInventoryComponent::UInventoryComponent()
 {
-    Capacity = 20;
+    Capacity = 20; // Capacity is no longer enforced directly
 }
 
 void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
+
+    // Ensure we have a valid owner
     AActor* Owner = GetOwner();
-    if (Owner)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("InventoryComponent owner: %s"), *Owner->GetName());
-    }
-    else
+    if (!Owner)
     {
         UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
+        return;
     }
 
-    // Add default items
-    for (const FDefaultItem& DefaultItem : DefaultItems)
-    {
-        if (DefaultItem.ItemClass)
-        {
-            AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
-        }
-    }
-
-    OnInventoryUpdated.Broadcast();
+    PopulateDefaultItems();
 }
-
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {
-    if (!ItemClass || Items.Num() >= Capacity)
-    {
-        return false;
-    }
-
-    int32* ExistingCount = Items.Find(ItemClass);
-    int32 MaxStackSize = GetMaxStackSize(ItemClass);
-
-    if (ExistingCount)
-    {
-        if (*ExistingCount < MaxStackSize)
-        {
-            (*ExistingCount)++;
-        }
-        else
-        {
-            return false; // Item can't be added if it exceeds stack size
-        }
-    }
-    else
-    {
-        Items.Add(ItemClass, 1);
-
-        // Spawn an instance if adding a new item class
-        AItem* NewItem = GetWorld()->SpawnActor<AItem>(ItemClass);
-        if (NewItem)
-        {
-            ItemInstances.Add(NewItem);
-            NewItem->OwningInventory = this; // Optional: Set ownership
-        }
-    }
-
-    // UI update
-    OnInventoryUpdated.Broadcast();
-
-    return true;
+    return AddItemAmount(ItemClass, 1);
 }
 
 bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount)
 {
-    if (!ItemClass || Amount <= 0 || Items.Num() >= Capacity)
+    if (!ItemClass || Amount <= 0)
     {
-        UE_LOG(LogTemp, Error, TEXT("AddItemAmount failed: ItemClass=%s, Amount=%d, CurrentItems=%d, Capacity=%d"),
-               *GetNameSafe(ItemClass), Amount, Items.Num(), Capacity);
+        UE_LOG(LogTemp, Warning, TEXT("AddItemAmount failed: Invalid parameters."));
         return false;
     }
 
+    AItem* DefaultItem = ItemClass->GetDefaultObject<AItem>();
+    if (!DefaultItem)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AddItemAmount failed: Could not get default object for %s."), *ItemClass->GetName());
+        return false;
+    }
+
+    int32 MaxStackSize = DefaultItem->MaxStackSize;
     int32* ExistingCount = Items.Find(ItemClass);
-    int32 MaxStackSize = GetMaxStackSize(ItemClass);
 
     if (ExistingCount)
     {
@@ -95,13 +56,12 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
         else
         {
             *ExistingCount = MaxStackSize;
-            return false; // Couldn't add the full amount due to stack limit
+            Amount = TotalAmount - MaxStackSize; // Remaining amount
         }
     }
     else
     {
-        int32 AmountToAdd = FMath::Min(Amount, MaxStackSize);
-        Items.Add(ItemClass, AmountToAdd);
+        Items.Add(ItemClass, FMath::Min(Amount, MaxStackSize));
 
         // Spawn an instance if adding a new item class
         AItem* NewItem = GetWorld()->SpawnActor<AItem>(ItemClass);
@@ -109,7 +69,7 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
         {
             ItemInstances.Add(NewItem);
             NewItem->OwningInventory = this;
-            UE_LOG(LogTemp, Warning, TEXT("Spawned item instance: %s"), *NewItem->GetName());
+            Amount -= FMath::Min(Amount, MaxStackSize); // Adjust remaining amount
         }
         else
         {
@@ -117,48 +77,19 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
         }
     }
 
+    // Notify UI
     OnInventoryUpdated.Broadcast();
-    return true;
+    return Amount == 0; // True if all items were added
 }
-
 
 bool UInventoryComponent::RemoveItem(TSubclassOf<AItem> ItemClass)
 {
-    int32* ExistingCount = Items.Find(ItemClass);
-
-    if (ExistingCount && *ExistingCount > 0)
-    {
-        if (*ExistingCount > 1)
-        {
-            (*ExistingCount)--;
-        }
-        else
-        {
-            Items.Remove(ItemClass);
-
-            // Remove an instance if count reaches zero
-            for (int32 i = 0; i < ItemInstances.Num(); i++)
-            {
-                if (ItemInstances[i] && ItemInstances[i]->IsA(ItemClass))
-                {
-                    ItemInstances[i]->Destroy();
-                    ItemInstances.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-
-        // UI update
-        OnInventoryUpdated.Broadcast();
-        return true;
-    }
-
-    return false;
+    return RemoveItemAmount(ItemClass, 1);
 }
 
 bool UInventoryComponent::RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount)
 {
-    if (Amount <= 0) return false;  // Ensure valid amount
+    if (Amount <= 0) return false;
 
     int32* ExistingCount = Items.Find(ItemClass);
 
@@ -170,32 +101,38 @@ bool UInventoryComponent::RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 A
         }
         else
         {
-            Items.Remove(ItemClass);  // Remove item completely if amount is greater or equal to existing count
+            Items.Remove(ItemClass);
 
-            // Also destroy instance if available
+            // Remove associated instance
             for (int32 i = 0; i < ItemInstances.Num(); i++)
             {
                 if (ItemInstances[i] && ItemInstances[i]->IsA(ItemClass))
                 {
-                    ItemInstances[i]->Destroy(); 
+                    ItemInstances[i]->Destroy();
                     ItemInstances.RemoveAt(i);
                     break;
                 }
             }
         }
 
-        OnInventoryUpdated.Broadcast();  // Notify UI or other systems about the update
+        // Notify UI
+        OnInventoryUpdated.Broadcast();
         return true;
     }
 
     return false;
 }
 
-
-bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
+AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
 {
-    int32* ExistingCount = Items.Find(ItemClass);
-    return ExistingCount && *ExistingCount > 0;
+    for (AItem* Item : ItemInstances)
+    {
+        if (Item && Item->IsA(ItemClass))
+        {
+            return Item;
+        }
+    }
+    return nullptr;
 }
 
 int32 UInventoryComponent::GetItemAmount(TSubclassOf<AItem> ItemClass)
@@ -208,29 +145,29 @@ int32 UInventoryComponent::GetMaxStackSize(TSubclassOf<AItem> ItemClass) const
 {
     if (ItemClass)
     {
-        AItem* Item = ItemClass->GetDefaultObject<AItem>();
-        if (Item)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("MaxStackSize for %s is %d"), *ItemClass->GetName(), Item->MaxStackSize);
-            return FMath::Max(1, static_cast<int32>(Item->MaxStackSize));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("GetDefaultObject failed for %s"), *ItemClass->GetName());
-        }
+        AItem* DefaultItem = ItemClass->GetDefaultObject<AItem>();
+        return DefaultItem ? DefaultItem->MaxStackSize : 1;
     }
     return 1;
 }
 
-
-AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
+bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
 {
-    for (AItem* Item : ItemInstances)
+    int32* ExistingCount = Items.Find(ItemClass);
+    return ExistingCount && *ExistingCount > 0;
+}
+
+void UInventoryComponent::PopulateDefaultItems()
+{
+    // Add all default items to the inventory
+    for (const FDefaultItem& DefaultItem : DefaultItems)
     {
-        if (Item && Item->IsA(ItemClass))
+        if (DefaultItem.ItemClass)
         {
-            return Item;
+            AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
         }
     }
-    return nullptr; // No matching instance found
+
+    // Notify the UI to update
+    OnInventoryUpdated.Broadcast();
 }

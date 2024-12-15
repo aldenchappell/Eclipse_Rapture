@@ -46,6 +46,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(class AEclipseRaptureCharacter* Character);
 
+#pragma region UI Implements
 	//Text for using item(Equip, Consume, etc)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	FText UseActionText;
@@ -55,6 +56,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UTexture2D> ThumbnailTexture;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<UTexture2D> ItemUseIcon;
 
 	//Name to show inside of inventory
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
@@ -72,11 +76,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Pickup Properties")
 	FText ItemInteractionPrompt;
 
+#pragma endregion
+
 	UPROPERTY()
 	TObjectPtr<class UInventoryComponent> OwningInventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space")
 	FInventorySpaceRequirements InventorySpaceRequired;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	EUseImpactType UseImpactType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	EMainItemUseDescriptionType MainItemUseDescriptionType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	ESecondaryItemUseDescriptionType SecondaryItemUseDescriptionType;
 
 protected:
 	virtual void Tick(float DeltaTime) override;
@@ -105,7 +120,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Pickup;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	EUsecaseType UsecaseType;
 
 private:
 	
@@ -115,4 +131,10 @@ public:	//Getters and Setters
 	
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	FText GetItemDisplayName() const {return ItemDisplayName;}
+
+	UFUNCTION(BlueprintPure, Blueprintcallable)
+	EItemType GetItemType() const { return ItemType; }
+
+	UFUNCTION(BlueprintPure, Blueprintcallable)
+	EUsecaseType GetUsecaseType() const { return UsecaseType; }
 };

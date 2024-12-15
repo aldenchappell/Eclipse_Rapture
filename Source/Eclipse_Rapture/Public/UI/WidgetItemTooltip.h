@@ -10,7 +10,7 @@ class AItem;
 /**
  * Tooltip widget to display item details
  */
-UCLASS()
+UCLASS()	
 class ECLIPSE_RAPTURE_API UWidgetItemTooltip : public UUserWidget
 {
 	GENERATED_BODY()
@@ -32,7 +32,16 @@ protected:
 	UTextBlock* ItemWeightText;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ItemQuantityText;
+	UTextBlock* ItemTypeText;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly)
+	TSubclassOf<class UWidgetItemUse> ItemUseWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	class UWidgetItemUse* ItemUseWidget;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	class UWidgetItemUse* OptionalSecondItemUseWidget;
 
 	virtual void NativeConstruct() override;
 };
