@@ -4,32 +4,11 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
+// Forward declaration
 class AItem;
 
+// Blueprint multicast delegate to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
-
-USTRUCT(BlueprintType)
-struct FInventorySaveData
-{
-    GENERATED_BODY()
-
-    UPROPERTY()
-    TSubclassOf<AItem> ItemClass;
-
-    UPROPERTY()
-    int32 Quantity;
-
-    UPROPERTY()
-    int32 StartRow;
-
-    UPROPERTY()
-    int32 StartColumn;
-
-    FInventorySaveData()
-        : ItemClass(nullptr), Quantity(0), StartRow(0), StartColumn(0)
-    {
-    }
-};
 
 USTRUCT(BlueprintType)
 struct FDefaultItem
@@ -47,7 +26,7 @@ struct FDefaultItem
     FDefaultItem()
         : ItemClass(nullptr), Quantity(1)
     {
-    }
+    }  // Default quantity is 1
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -74,14 +53,6 @@ public:
     // Remove multiple items
     UFUNCTION(BlueprintCallable)
     bool RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
-
-    // Save the current inventory state
-    UFUNCTION(BlueprintCallable, Category = "Inventory Save")
-    TArray<FInventorySaveData> SaveInventory() const;
-
-    // Load the inventory from a save state
-    UFUNCTION(BlueprintCallable, Category = "Inventory Save")
-    void LoadInventory(const TArray<FInventorySaveData>& SavedData);
 
     // Items the player starts with, including specified quantities
     UPROPERTY(EditDefaultsOnly, Category = "Inventory")
@@ -113,7 +84,7 @@ public:
 
     // Get an instance of a specific item type
     UFUNCTION(BlueprintPure)
-    AItem* GetItemInstance(TSubclassOf<AItem> ItemClass) const;
+    AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
 
 private:
     // Helper function to get max stack size of an item type

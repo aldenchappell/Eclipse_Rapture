@@ -29,14 +29,6 @@ AItem::AItem()
 	ItemWeight = 1.f;
 	ItemDisplayName = FText::FromString("Item");
 	UseActionText = FText::FromString("Use");
-
-	// Default values for position
-	StartRow = 0;
-	StartColumn = 0;
-
-	// Default space requirements
-	InventorySpaceRequired.RowsRequired = 1;
-	InventorySpaceRequired.ColumnsRequired = 1;
 }
 
 void AItem::BeginPlay()
@@ -66,17 +58,6 @@ void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void AItem::SetStartPosition(int32 Row, int32 Column)
-{
-	StartRow = Row;
-	StartColumn = Column;
-}
-
-FVector2D AItem::GetStartPosition() const
-{
-	return FVector2D(StartRow, StartColumn);
 }
 
 void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
