@@ -4,7 +4,7 @@
 
 UInventoryComponent::UInventoryComponent()
 {
-    Capacity = 80;
+    Capacity = 20;
 }
 
 void UInventoryComponent::BeginPlay()
@@ -223,7 +223,7 @@ int32 UInventoryComponent::GetMaxStackSize(TSubclassOf<AItem> ItemClass) const
 }
 
 
-AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass) const
+AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
 {
     for (AItem* Item : ItemInstances)
     {
@@ -233,47 +233,4 @@ AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass) const
         }
     }
     return nullptr; // No matching instance found
-}
-
-
-TArray<FInventorySaveData> UInventoryComponent::SaveInventory() const
-{
-    TArray<FInventorySaveData> SavedData;
-
-    for (const auto& ItemPair : Items)
-    {
-        AItem* ItemInstance = GetItemInstance(ItemPair.Key);
-        if (ItemInstance)
-        {
-            FInventorySaveData Data;
-            Data.ItemClass = ItemPair.Key;
-            Data.Quantity = ItemPair.Value;
-            Data.StartRow = ItemInstance->StartRow;
-            Data.StartColumn = ItemInstance->StartColumn;
-
-            SavedData.Add(Data);
-        }
-    }
-
-
-    return SavedData;
-}
-
-void UInventoryComponent::LoadInventory(const TArray<FInventorySaveData>& SavedData)
-{
-    Items.Empty();
-    for (const FInventorySaveData& Data : SavedData)
-    {
-        AddItemAmount(Data.ItemClass, Data.Quantity);
-
-        // Place item in grid
-        AItem* ItemInstance = GetItemInstance(Data.ItemClass);
-        if (ItemInstance)
-        {
-            ItemInstance->StartRow = Data.StartRow;
-            ItemInstance->StartColumn = Data.StartColumn;
-        }
-    }
-
-    OnInventoryUpdated.Broadcast();
 }
