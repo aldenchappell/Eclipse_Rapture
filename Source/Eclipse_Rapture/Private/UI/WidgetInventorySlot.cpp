@@ -11,7 +11,7 @@ void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
         // Update UI for valid item
         ItemThumbnail->SetBrushFromTexture(Item->ThumbnailTexture);
         ItemQuantityText->SetText(FText::AsNumber(Quantity));
-        ItemNameText->SetText(Item->GetItemDisplayName());
+        //ItemNameText->SetText(Item->GetItemDisplayName());
     }
     else
     {
@@ -27,17 +27,17 @@ void UWidgetInventorySlot::SetSlotEmpty()
 {
     ItemThumbnail->SetBrushFromTexture(nullptr);
     ItemQuantityText->SetText(FText::GetEmpty());
-    ItemNameText->SetText(FText::GetEmpty());
+    //ItemNameText->SetText(FText::GetEmpty());
     bIsOccupied = false;
     OccupyingItem = nullptr;
 }
 
-void UWidgetInventorySlot::SetDebugSlot()
+void UWidgetInventorySlot::SetDebugSlot() 
 {
     if (DebugPlaceholderTexture)
     {
         ItemThumbnail->SetBrushFromTexture(DebugPlaceholderTexture);
-        ItemNameText->SetText(FText::FromString("DEBUG ITEM"));
+        //ItemNameText->SetText(FText::FromString("DEBUG ITEM"));
         ItemQuantityText->SetText(FText::FromString("N/A"));
     }
     else
