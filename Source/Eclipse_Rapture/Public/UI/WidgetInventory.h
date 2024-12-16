@@ -25,24 +25,24 @@ protected:
     virtual void NativeConstruct() override;
 
     void GenerateGridSlots();
-    bool CanFitItem(int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired) const;
-    void PlaceItem(UWidgetInventorySlot* ItemSlot, int32 Row, int32 Col, int32 RowsRequired, int32 ColumnsRequired);
+    bool CanPlaceItem(int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired) const;
+    void PlaceItem(UWidgetInventorySlot* ItemSlot, int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired);
 
     void MarkSlotsAsOccupied(int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired);
-    void ResetGridOccupancy();
+    void ResetGrid();
 
     UPROPERTY(meta = (BindWidget))
-    UUniformGridPanel* InventoryGridPanel;
+    UUniformGridPanel* InventoryGrid;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Grid")
-    int32 Rows = 10;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Grid")
-    int32 Columns = 10;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory UI")
+    UPROPERTY(EditDefaultsOnly, Category = "Inventory UI")
     TSubclassOf<UWidgetInventorySlot> InventorySlotClass;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Inventory Settings")
+    int32 TotalRows = 10;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Inventory Settings")
+    int32 TotalColumns = 10;
+
 private:
-    TArray<TArray<bool>> SlotOccupancyGrid; // 2D array for tracking slot occupancy
+    TArray<TArray<bool>> GridSlots; // Tracks slot occupancy
 };
