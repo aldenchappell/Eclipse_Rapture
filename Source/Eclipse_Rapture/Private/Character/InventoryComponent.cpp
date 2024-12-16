@@ -20,8 +20,17 @@ void UInventoryComponent::BeginPlay()
         return;
     }
 
-    PopulateDefaultItems();
+    // Delay the PopulateDefaultItems to ensure UI binds to the delegate
+    FTimerHandle TimerHandle;
+    GetWorld()->GetTimerManager().SetTimer(
+        TimerHandle,
+        this,
+        &UInventoryComponent::PopulateDefaultItems,
+        0.2f, // 0.2-second delay
+        false // Run once
+    );
 }
+
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {

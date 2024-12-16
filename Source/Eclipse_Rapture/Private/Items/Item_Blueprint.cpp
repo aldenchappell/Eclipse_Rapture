@@ -2,6 +2,7 @@
 #include "Building/BuildingComponent.h"
 #include "Interfaces/BuilderInterface.h"
 #include "Character/EclipseRaptureCharacter.h"
+#include "Character/InventoryComponent.h"
 
 AItem_Blueprint::AItem_Blueprint()
 {
@@ -20,6 +21,9 @@ void AItem_Blueprint::Interact_Implementation(AEclipseRaptureCharacter* Characte
         if (BuildingComp)
         {
             IBuilderInterface::Execute_SetHasBuildingBlueprint(BuildingComp, true);
+
+            //add to inventory
+			Character->GetInventoryComponent()->AddItemAmount(GetClass(), 1);
             UE_LOG(LogTemp, Warning, TEXT("Player picked up building blueprint. bHasBuildingBlueprint: %s"), Character->bHasBuildingBlueprint ? TEXT("true") : TEXT("false"));
             Destroy();
         }

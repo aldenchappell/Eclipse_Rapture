@@ -8,11 +8,16 @@
 
 void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
 {
-    if (Item && Item->ThumbnailTexture)
+    if (Item && ItemThumbnail)
     {
         ItemThumbnail->SetBrushFromTexture(Item->ThumbnailTexture);
         ItemQuantityText->SetText(FText::AsNumber(Quantity));
-        UseItemButton->SetIsEnabled(true); // Enable button if item is valid
+        UseItemButton->SetIsEnabled(true);
+
+        AdjustSlotSize(Item->InventorySpaceRequired.RowsRequired, Item->InventorySpaceRequired.ColumnsRequired);
+
+        UE_LOG(LogTemp, Log, TEXT("Item set: %s, Quantity: %d, Rows: %d, Columns: %d"),
+               *Item->GetName(), Quantity, Item->InventorySpaceRequired.RowsRequired, Item->InventorySpaceRequired.ColumnsRequired);
     }
     else
     {
@@ -22,6 +27,7 @@ void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
     bIsOccupied = true;
     OccupyingItem = Item;
 }
+
 
 void UWidgetInventorySlot::SetSlotEmpty()
 {
@@ -108,18 +114,29 @@ void UWidgetInventorySlot::SetSlotSize(float Width, float Height)
     {
         SizeBox->SetWidthOverride(Width);
         SizeBox->SetHeightOverride(Height);
+
+        UE_LOG(LogTemp, Log, TEXT("SetSlotSize: Width: %.1f, Height: %.1f"), Width, Height);
     }
 }
+
+
 
 
 void UWidgetInventorySlot::AdjustSlotSize(int32 RowSpan, int32 ColumnSpan)
 {
-    if (ItemThumbnail)
+    if (SizeBox)
     {
-        FVector2D NewSize = FVector2D(50.f * ColumnSpan, 50.f * RowSpan); // Base slot size = 50x50
-        ItemThumbnail->SetDesiredSizeOverride(NewSize);
+        float SlotWidth = 50.f * ColumnSpan;  // 50px per column
+        float SlotHeight = 50.f * RowSpan;   // 50px per row
+
+        SizeBox->SetWidthOverride(SlotWidth);
+        SizeBox->SetHeightOverride(SlotHeight);
+
+        UE_LOG(LogTemp, Log, TEXT("Adjusted slot size to Width: %.1f, Height: %.1f"), SlotWidth, SlotHeight);
     }
 }
+
+
 
 void UWidgetInventorySlot::MarkAsPartOfMultiSlot()
 {
