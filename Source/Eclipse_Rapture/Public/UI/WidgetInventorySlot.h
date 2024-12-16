@@ -60,6 +60,11 @@ protected:
     virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
     virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Slot | UI Settings")
+    float DefaultColumnSize = 50.f;  // Default width for one column
+
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Slot | UI Settings")
+    float DefaultRowSize = 50.f;     // Default height for one row
 
 
     /** UI Elements */

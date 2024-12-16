@@ -15,7 +15,7 @@ void UWidgetInventory::GenerateGridSlots()
 {
     if (!InventoryGridPanel)
     {
-        UE_LOG(LogTemp, Error, TEXT("InventoryGridPanel not assigned!"));
+        UE_LOG(LogTemp, Error, TEXT("GenerateGridSlots: InventoryGridPanel not assigned!"));
         return;
     }
 
@@ -29,12 +29,26 @@ void UWidgetInventory::GenerateGridSlots()
             UWidgetInventorySlot* SlotWidget = CreateWidget<UWidgetInventorySlot>(this, InventorySlotClass);
             if (SlotWidget)
             {
-                InventoryGridPanel->AddChildToUniformGrid(SlotWidget, Row, Col);
-                SlotWidget->SetSlotEmpty(); // Initialize as empty
+                UUniformGridSlot* GridSlot = InventoryGridPanel->AddChildToUniformGrid(SlotWidget, Row, Col);
+                if (GridSlot)
+                {
+                    GridSlot->SetHorizontalAlignment(HAlign_Left);
+                    GridSlot->SetVerticalAlignment(VAlign_Top);
+                }
+                SlotWidget->SetSlotEmpty();
+
+                // Debug the slot placement
+                UE_LOG(LogTemp, Log, TEXT("Generated Slot at Row: %d, Col: %d"), Row, Col);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Failed to create slot widget at Row: %d, Col: %d"), Row, Col);
             }
         }
     }
+    UE_LOG(LogTemp, Log, TEXT("Generated %d rows x %d columns of slots"), Rows, Columns);
 }
+
 
 void UWidgetInventory::InitializeInventory(UInventoryComponent* PlayerInventory)
 {
@@ -49,10 +63,16 @@ void UWidgetInventory::InitializeInventory(UInventoryComponent* PlayerInventory)
 
 void UWidgetInventory::RefreshInventory(UInventoryComponent* PlayerInventory)
 {
-    if (!PlayerInventory) return;
+    if (!PlayerInventory)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("RefreshInventory: PlayerInventory is null"));
+        return;
+    }
 
     InventoryGridPanel->ClearChildren();
     ResetGridOccupancy();
+
+    UE_LOG(LogTemp, Log, TEXT("Refreshing Inventory. Total Items: %d"), PlayerInventory->Items.Num());
 
     for (const auto& ItemPair : PlayerInventory->Items)
     {
@@ -72,8 +92,16 @@ void UWidgetInventory::RefreshInventory(UInventoryComponent* PlayerInventory)
                             ItemSlot->SetItemDetails(ItemInstance, ItemPair.Value);
                             PlaceItem(ItemSlot, Row, Col, Space.RowsRequired, Space.ColumnsRequired);
                             MarkSlotsAsOccupied(Row, Col, Space.RowsRequired, Space.ColumnsRequired);
+
+                            // Debug item placement
+                            UE_LOG(LogTemp, Log, TEXT("Placed Item: %s at Row: %d, Col: %d, Size: [%d x %d]"),
+                                   *ItemInstance->GetName(), Row, Col, Space.RowsRequired, Space.ColumnsRequired);
                         }
-                        goto NextItem; // Break nested loops
+                        else
+                        {
+                            UE_LOG(LogTemp, Error, TEXT("Failed to create item slot for %s"), *ItemInstance->GetName());
+                        }
+                        goto NextItem;
                     }
                 }
             }
@@ -81,6 +109,7 @@ void UWidgetInventory::RefreshInventory(UInventoryComponent* PlayerInventory)
     NextItem:;
     }
 }
+
 
 bool UWidgetInventory::CanFitItem(int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired) const
 {
@@ -90,38 +119,31 @@ bool UWidgetInventory::CanFitItem(int32 StartRow, int32 StartCol, int32 RowsRequ
         {
             if (StartRow + Row >= Rows || StartCol + Col >= Columns || SlotOccupancyGrid[StartRow + Row][StartCol + Col])
             {
-                return false; // Out of bounds or occupied
+                UE_LOG(LogTemp, Warning, TEXT("Cannot Fit Item: Slot [%d, %d] is occupied or out of bounds"),
+                       StartRow + Row, StartCol + Col);
+                return false;
             }
         }
     }
     return true;
 }
 
+
 void UWidgetInventory::PlaceItem(UWidgetInventorySlot* ItemSlot, int32 Row, int32 Col, int32 RowsRequired, int32 ColumnsRequired)
 {
-    // Add the item slot to the UniformGridPanel
     UUniformGridSlot* GridSlot = InventoryGridPanel->AddChildToUniformGrid(ItemSlot, Row, Col);
 
     if (GridSlot)
     {
-        // Optionally configure the GridSlot (alignment, padding, etc.)
-        GridSlot->SetHorizontalAlignment(HAlign_Fill);
-        GridSlot->SetVerticalAlignment(VAlign_Fill);
+        GridSlot->SetHorizontalAlignment(HAlign_Left);
+        GridSlot->SetVerticalAlignment(VAlign_Top);
 
-        // Dynamically set size of the slot
-        if (ItemSlot)
-        {
-            // Ensure the sizebox exists in the WidgetInventorySlot
-            ItemSlot->SetSlotSize(50.f * ColumnsRequired, 50.f * RowsRequired);
-        }
-
-        UE_LOG(LogTemp, Log, TEXT("Placed item at Row: %d, Col: %d with size [%d x %d]"), Row, Col, RowsRequired, ColumnsRequired);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to place item in grid at Row: %d, Col: %d"), Row, Col);
+        // Adjust slot size
+        ItemSlot->SetSlotSize(50.f * ColumnsRequired, 50.f * RowsRequired);
     }
 }
+
+
 
 void UWidgetInventory::MarkSlotsAsOccupied(int32 StartRow, int32 StartCol, int32 RowsRequired, int32 ColumnsRequired)
 {
@@ -130,9 +152,11 @@ void UWidgetInventory::MarkSlotsAsOccupied(int32 StartRow, int32 StartCol, int32
         for (int32 Col = 0; Col < ColumnsRequired; ++Col)
         {
             SlotOccupancyGrid[StartRow + Row][StartCol + Col] = true;
+            UE_LOG(LogTemp, Log, TEXT("Marked Slot Occupied at [%d, %d]"), StartRow + Row, StartCol + Col);
         }
     }
 }
+
 
 void UWidgetInventory::ResetGridOccupancy()
 {
