@@ -20,15 +20,10 @@ void UInventoryComponent::BeginPlay()
         return;
     }
 
-    // Delay the PopulateDefaultItems to ensure UI binds to the delegate
-    FTimerHandle TimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(
-        TimerHandle,
-        this,
-        &UInventoryComponent::PopulateDefaultItems,
-        0.2f, // 0.2-second delay
-        false // Run once
-    );
+    // Populate items immediately to ensure inventory is ready
+    PopulateDefaultItems();
+
+    OnInventoryUpdated.Broadcast(); // Notify the UI
 }
 
 
@@ -141,8 +136,10 @@ AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
             return Item;
         }
     }
+    UE_LOG(LogTemp, Warning, TEXT("GetItemInstance failed: No instance found for %s"), *ItemClass->GetName());
     return nullptr;
 }
+
 
 int32 UInventoryComponent::GetItemAmount(TSubclassOf<AItem> ItemClass)
 {
@@ -168,15 +165,21 @@ bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
 
 void UInventoryComponent::PopulateDefaultItems()
 {
-    // Add all default items to the inventory
+    UE_LOG(LogTemp, Log, TEXT("Populating default items..."));
+
     for (const FDefaultItem& DefaultItem : DefaultItems)
     {
         if (DefaultItem.ItemClass)
         {
-            AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
+            bool bSuccess = AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
+            if (!bSuccess)
+            {
+                UE_LOG(LogTemp, Error, TEXT("Failed to add default item: %s"), *DefaultItem.ItemClass->GetName());
+            }
         }
     }
 
-    // Notify the UI to update
-    OnInventoryUpdated.Broadcast();
+    OnInventoryUpdated.Broadcast(); // Make sure UI refreshes after adding default items
 }
+
+

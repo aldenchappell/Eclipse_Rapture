@@ -55,10 +55,17 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
     void HandleButtonClicked();
 
+    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
+    void ResetCreatedTooltips();
 
 protected:
     virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
     virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+    virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+    virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+    virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Slot | UI Settings")
     float DefaultColumnSize = 50.f;  // Default width for one column
@@ -91,6 +98,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
+	
+
 private:
     /** State of the slot */
     bool bIsOccupied = false;
@@ -100,6 +109,7 @@ private:
 
     /** Tooltip widget instance */
     UWidgetItemTooltip* TooltipInstance = nullptr;
+	TArray<UWidgetItemTooltip*> CreatedTooltips;
 
     /** Whether this slot is part of a multi-slot item */
     bool bIsPartOfMultiSlot = false;

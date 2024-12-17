@@ -63,7 +63,7 @@ public:
     int32 Capacity;
 
     // Delegate for inventory updates
-    UPROPERTY(BlueprintAssignable, Category = "Inventory | Inventory Delegates")
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
     FOnInventoryUpdated OnInventoryUpdated;
 
     // Map of item types and their quantities

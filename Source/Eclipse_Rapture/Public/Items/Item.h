@@ -123,6 +123,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EUsecaseType UsecaseType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties")
+	bool bDestroyOnPickup = false;
+
 private:
 	
 
