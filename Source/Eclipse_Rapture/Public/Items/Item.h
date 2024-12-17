@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "Character/EclipseRaptureCharacter.h"
 #include "Interfaces/InteractInterface.h"
 #include "ItemTypes.h"
@@ -9,15 +10,6 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
-USTRUCT(BlueprintType)
-struct FInventorySpaceRequirements
-{
-	GENERATED_BODY()
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
-	int32 RowsRequired = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
-	int32 ColumnsRequired = 1;
-};
 
 class USphereComponent;
 class USkeletalMeshComponent;
@@ -55,7 +47,7 @@ public:
 	TObjectPtr<UStaticMesh> PickupMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UTexture2D> ThumbnailTexture;
+	TObjectPtr<UMaterialInterface> ThumbnailTexture;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UTexture2D> ItemUseIcon;

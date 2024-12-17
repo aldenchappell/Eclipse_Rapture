@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
@@ -17,14 +18,14 @@ struct FDefaultItem
 
     // The item class
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-    TSubclassOf<AItem> ItemClass;
+    TSubclassOf<AItem> Item;
 
     // The quantity of the item
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
     int32 Quantity;
 
     FDefaultItem()
-        : ItemClass(nullptr), Quantity(1)
+        : Item(nullptr), Quantity(1)
     {
     }  // Default quantity is 1
 };
@@ -37,6 +38,50 @@ class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent
 public:
     UInventoryComponent();
     virtual void BeginPlay() override;
+
+    
+
+
+#pragma region New Inventory Functions and Variables
+
+    UFUNCTION(BlueprintCallable, Category = "New Inventory")
+    bool TryAddItem(AItem* Item);
+
+    UFUNCTION(BlueprintCallable, Category = "New Inventory")
+	bool IsRoomAvailable(AItem* Item, int32 TopLeftTileIndex);
+
+    UFUNCTION(BlueprintCallable, Category = "New Inventory")
+    FInventorySpaceRequirements IndexToTile(int32 Index);
+
+    UFUNCTION(BlueprintCallable, Category = "New Inventory")
+    bool IsTileValid(FInventorySpaceRequirements Tiling);
+
+    UFUNCTION(BlueprintCallable, Category = "New Inventory")
+	bool GetItemAtIndex(int32 Index, AItem*& Item);
+
+    UFUNCTION(BlueprintCallable, Category = "New Inventory")
+    int32 TileToIndex(FInventorySpaceRequirements Tiling);
+
+	UFUNCTION(BlueprintCallable, Category = "New Inventory")
+	void AddItemAt(AItem* Item, int32 TopLeftIndex);
+
+    UFUNCTION(BlueprintCallable, Category = "Inventory")
+    FInventorySpaceRequirements ForEachIndex(AItem* Item, int32 TopLeftInventoryIndex);
+
+
+	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
+    bool bIsDirty = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
+	TArray<AItem*> InventoryItems;
+
+    UPROPERTY(EditAnywhere,BlueprintReadonly, Category = "New Inventory")
+    int32 Rows = 6;
+
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
+    int32 Columns = 15;
+
+#pragma endregion
 
     // Add a single item
     UFUNCTION(BlueprintCallable)
@@ -86,10 +131,10 @@ public:
     UFUNCTION(BlueprintPure)
     AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
 
-    UFUNCTION(BlueprintCallable, Category = "Inventory")
-    void PopulateDefaultItems();
-
 private:
     // Helper function to get max stack size of an item type
     int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
+
+    UFUNCTION()
+    void PopulateDefaultItems();
 };

@@ -131,7 +131,7 @@ void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
 //    }
 //}
 
-UTexture2D* AWeaponBase::GetThumbnailTexture()
+UMaterialInterface* AWeaponBase::GetThumbnailTexture()
 {
     if (PickupClass)
     {
