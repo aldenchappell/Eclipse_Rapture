@@ -96,6 +96,7 @@ void UWidgetInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const
         {
             TooltipInstance->AddToViewport();
             TooltipInstance->InitializeTooltip(OccupyingItem); // Custom function in tooltip to show item details
+			CreatedTooltips.AddUnique(TooltipInstance);
         }
     }
 }
@@ -106,6 +107,7 @@ void UWidgetInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
     {
         TooltipInstance->RemoveFromParent();
         TooltipInstance = nullptr;
+		CreatedTooltips.Remove(TooltipInstance);
     }
 }
 
@@ -115,7 +117,7 @@ void UWidgetInventorySlot::SetSlotSize(float Width, float Height)
     {
         SizeBox->SetWidthOverride(Width);
         SizeBox->SetHeightOverride(Height);
-
+        UseItemButton->SetRenderScale(FVector2D(Width, Height));
         UE_LOG(LogTemp, Log, TEXT("SetSlotSize: Width: %.1f, Height: %.1f"), Width, Height);
     }
 }
@@ -131,6 +133,7 @@ void UWidgetInventorySlot::AdjustSlotSize(int32 RowSpan, int32 ColumnSpan)
         float SlotHeight = 50.f * RowSpan;
         SizeBox->SetWidthOverride(SlotWidth);
         SizeBox->SetHeightOverride(SlotHeight);
+		UseItemButton->SetRenderScale(FVector2D(ColumnSpan, RowSpan));
     }
     UE_LOG(LogTemp, Log, TEXT("Slot size set to Width: %.1f, Height: %.1f"), 50.f * ColumnSpan, 50.f * RowSpan);
 }
@@ -203,4 +206,18 @@ void UWidgetInventorySlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEve
     }
 }
 
+void UWidgetInventorySlot::ResetCreatedTooltips()
+{
+    if (CreatedTooltips.Num() <= 0) return;
 
+	for (UWidgetItemTooltip* Tooltip : CreatedTooltips)
+	{
+		if (Tooltip)
+		{
+			Tooltip->RemoveFromParent();
+			Tooltip = nullptr;
+            CreatedTooltips.Empty();
+		}
+	}
+   
+}

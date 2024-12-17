@@ -20,15 +20,10 @@ void UInventoryComponent::BeginPlay()
         return;
     }
 
-    // Delay the PopulateDefaultItems to ensure UI binds to the delegate
-    FTimerHandle TimerHandle;
-    GetWorld()->GetTimerManager().SetTimer(
-        TimerHandle,
-        this,
-        &UInventoryComponent::PopulateDefaultItems,
-        0.2f, // 0.2-second delay
-        false // Run once
-    );
+    // Populate items immediately to ensure inventory is ready
+    PopulateDefaultItems();
+
+    OnInventoryUpdated.Broadcast(); // Notify the UI
 }
 
 
@@ -57,88 +52,39 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
 
     if (ExistingCount)
     {
-        // Add to the existing stack
-        *ExistingCount = FMath::Clamp(*ExistingCount + Amount, 0, MaxStackSize);
+        int32 TotalAmount = *ExistingCount + Amount;
+        if (TotalAmount <= MaxStackSize)
+        {
+            *ExistingCount = TotalAmount;
+        }
+        else
+        {
+            *ExistingCount = MaxStackSize;
+            Amount = TotalAmount - MaxStackSize; // Remaining amount
+        }
     }
     else
     {
-        // Spawn and add a new item instance
-        AItem* NewItem = GetWorld()->SpawnActor<AItem>(ItemClass, FVector::ZeroVector, FRotator::ZeroRotator);
+        Items.Add(ItemClass, FMath::Min(Amount, MaxStackSize));
+
+        // Spawn an instance if adding a new item class
+        AItem* NewItem = GetWorld()->SpawnActor<AItem>(ItemClass);
         if (NewItem)
         {
-            Items.Add(ItemClass, FMath::Min(Amount, MaxStackSize));
             ItemInstances.Add(NewItem);
             NewItem->OwningInventory = this;
-
-            UE_LOG(LogTemp, Log, TEXT("Spawned and added item: %s"), *NewItem->GetName());
+            Amount -= FMath::Min(Amount, MaxStackSize); // Adjust remaining amount
         }
         else
         {
             UE_LOG(LogTemp, Error, TEXT("Failed to spawn item instance for: %s"), *ItemClass->GetName());
-            return false;
         }
     }
 
+    // Notify UI
     OnInventoryUpdated.Broadcast();
-    return true;
+    return Amount == 0; // True if all items were added
 }
-
-
-
-//OLD METHOD
-//bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount)
-//{
-//    if (!ItemClass || Amount <= 0)
-//    {
-//        UE_LOG(LogTemp, Warning, TEXT("AddItemAmount failed: Invalid parameters."));
-//        return false;
-//    }
-//
-//    AItem* DefaultItem = ItemClass->GetDefaultObject<AItem>();
-//    if (!DefaultItem)
-//    {
-//        UE_LOG(LogTemp, Warning, TEXT("AddItemAmount failed: Could not get default object for %s."), *ItemClass->GetName());
-//        return false;
-//    }
-//
-//    int32 MaxStackSize = DefaultItem->MaxStackSize;
-//    int32* ExistingCount = Items.Find(ItemClass);
-//
-//    if (ExistingCount)
-//    {
-//        int32 TotalAmount = *ExistingCount + Amount;
-//        if (TotalAmount <= MaxStackSize)
-//        {
-//            *ExistingCount = TotalAmount;
-//        }
-//        else
-//        {
-//            *ExistingCount = MaxStackSize;
-//            Amount = TotalAmount - MaxStackSize; // Remaining amount
-//        }
-//    }
-//    else
-//    {
-//        Items.Add(ItemClass, FMath::Min(Amount, MaxStackSize));
-//
-//        // Spawn an instance if adding a new item class
-//        AItem* NewItem = GetWorld()->SpawnActor<AItem>(ItemClass);
-//        if (NewItem)
-//        {
-//            ItemInstances.Add(NewItem);
-//            NewItem->OwningInventory = this;
-//            Amount -= FMath::Min(Amount, MaxStackSize); // Adjust remaining amount
-//        }
-//        else
-//        {
-//            UE_LOG(LogTemp, Error, TEXT("Failed to spawn item instance for: %s"), *ItemClass->GetName());
-//        }
-//    }
-//
-//    // Notify UI
-//    OnInventoryUpdated.Broadcast();
-//    return Amount == 0; // True if all items were added
-//}
 
 bool UInventoryComponent::RemoveItem(TSubclassOf<AItem> ItemClass)
 {

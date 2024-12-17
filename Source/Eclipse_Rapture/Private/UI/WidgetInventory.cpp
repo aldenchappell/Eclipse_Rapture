@@ -102,6 +102,7 @@ void UWidgetInventory::RefreshInventory(UInventoryComponent* PlayerInventory)
                         PlaceItem(ItemSlot, Row, Col, Rows, Columns);
                         ItemSlot->SetItemDetails(Item, ItemPair.Value);
                         MarkSlotsAsOccupied(Row, Col, Rows, Columns);
+						InventorySlots.AddUnique(ItemSlot);
                         goto NextItem;
                     }
                 }
@@ -159,4 +160,16 @@ void UWidgetInventory::ResetGrid()
         RowArray.Init(false, TotalColumns);
         GridSlots.Add(RowArray);
     }
+}
+
+void UWidgetInventory::ClearInventorySlots()
+{
+	for (UWidgetInventorySlot* InvSlot : InventorySlots)
+	{
+		if (InvSlot)
+		{
+            InvSlot->ResetCreatedTooltips();
+            InventorySlots.Empty();
+		}
+	}
 }

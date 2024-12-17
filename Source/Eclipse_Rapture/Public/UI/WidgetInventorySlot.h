@@ -55,6 +55,8 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
     void HandleButtonClicked();
 
+    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
+    void ResetCreatedTooltips();
 
 protected:
     virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -96,6 +98,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
+	
+
 private:
     /** State of the slot */
     bool bIsOccupied = false;
@@ -105,6 +109,7 @@ private:
 
     /** Tooltip widget instance */
     UWidgetItemTooltip* TooltipInstance = nullptr;
+	TArray<UWidgetItemTooltip*> CreatedTooltips;
 
     /** Whether this slot is part of a multi-slot item */
     bool bIsPartOfMultiSlot = false;

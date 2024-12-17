@@ -43,6 +43,10 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Inventory Settings")
     int32 TotalColumns = 10;
 
+    UFUNCTION(BlueprintCallable)
+    void ClearInventorySlots();
 private:
     TArray<TArray<bool>> GridSlots; // Tracks slot occupancy
+
+	TArray<UWidgetInventorySlot*> InventorySlots; // All inventory slots
 };
