@@ -8,10 +8,10 @@ struct FInventorySpaceRequirements
 {
     GENERATED_BODY()
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
     int32 RowsRequired;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
     int32 ColumnsRequired;
 
     // Default constructor

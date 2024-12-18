@@ -21,6 +21,12 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Inventory UI")
     void RefreshInventory(UInventoryComponent* PlayerInventory);*/
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+    TObjectPtr<class UWidgetInventorySlot> InventorySlot;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory UI")
+    float TileSize;
+
 protected:
     virtual void NativeConstruct() override;
 
@@ -46,14 +52,13 @@ protected:
     UFUNCTION(BlueprintCallable)
     void ClearInventorySlots();*/
 
-	UPROPERTY(meta = (BindWidget))
-    TObjectPtr<class UWidgetInventorySlot> InventorySlot;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Inventory UI")
-    float TileSize;
+    
+	
 
 private:
     //TArray<TArray<bool>> GridSlots; // Tracks slot occupancy
 
 	//TArray<UWidgetInventorySlot*> InventorySlots; // All inventory slots
+
+    
 };

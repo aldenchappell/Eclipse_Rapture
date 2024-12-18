@@ -22,6 +22,9 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
     void SetItemDetails(AItem* Item, int32 Quantity);
 
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Slot")
+    void Refresh();
+
     ///** Clear the slot */
     //UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
     //void SetSlotEmpty();

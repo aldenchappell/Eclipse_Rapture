@@ -39,6 +39,10 @@ void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
     OccupyingItem = Item;
 }
 
+void UWidgetInventorySlot::Refresh_Implementation()
+{
+}
+
  
 
  void UWidgetInventorySlot::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

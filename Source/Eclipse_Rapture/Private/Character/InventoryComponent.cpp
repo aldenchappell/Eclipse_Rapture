@@ -203,6 +203,7 @@ bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
 
 bool UInventoryComponent::TryAddItem(AItem* Item)
 {
+    // Step 1: Validate the input item
     if (!Item)
     {
         UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Invalid Item (nullptr)."));
@@ -211,18 +212,43 @@ bool UInventoryComponent::TryAddItem(AItem* Item)
 
     UE_LOG(LogTemp, Log, TEXT("TryAddItem: Attempting to add item %s to the inventory."), *Item->GetName());
 
-    // Find available space
-    for (int32 TopLeftIndex = 0; TopLeftIndex < InventoryItems.Num(); ++TopLeftIndex)
+    // Step 2: Loop through the inventory slots or items array
+    for (int32 Index = 0; Index < InventoryItems.Num(); ++Index)
     {
-        if (IsRoomAvailable(Item, TopLeftIndex))
+        AItem* InvItem = InventoryItems[Index];
+
+        // Step 3: Check if the current slot is valid
+        if (InvItem)
         {
-            AddItemAt(Item, TopLeftIndex);
-            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Successfully added item %s at index %d."), *Item->GetName(), TopLeftIndex);
-            return true;
+            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Checking slot %d, item exists: %s"), Index, *InvItem->GetName());
+            int32 TopLeftTileIndex = -1;
+
+            // Step 4: Check if there is room available for the item
+            if (IsRoomAvailable(Item, TopLeftTileIndex))
+            {
+                UE_LOG(LogTemp, Log, TEXT("TryAddItem: Found room for item at TopLeftTileIndex %d."), TopLeftTileIndex);
+
+                // Step 5: Add the item to the available space
+                AddItemAt(Item, TopLeftTileIndex);
+
+                // Step 6: Return success
+                UE_LOG(LogTemp, Log, TEXT("TryAddItem: Successfully added item %s at TopLeftTileIndex %d."), *Item->GetName(), TopLeftTileIndex);
+                return true;
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("TryAddItem: No room available for item %s at index %d."), *Item->GetName(), Index);
+            }
+        }
+        else
+        {
+            // If the slot is empty
+            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Slot %d is empty. Skipping check."), Index);
         }
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Failed to add item %s. No available space found."), *Item->GetName());
+    // Step 7: If no room is found, return false
+    UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Failed to add item %s. No available space found in inventory."), *Item->GetName());
     return false;
 }
 
@@ -235,24 +261,34 @@ bool UInventoryComponent::IsRoomAvailable(AItem* Item, int32 TopLeftTileIndex)
         return false;
     }
 
-    FInventorySpaceRequirements Requirements = Item->InventorySpaceRequired;
+    // Get space requirements using ForEachIndex
+    FInventorySpaceRequirements SpaceRequirements = ForEachIndex(Item, TopLeftTileIndex);
 
-    for (int32 Row = 0; Row < Requirements.RowsRequired; ++Row)
+    for (int32 Row = 0; Row < SpaceRequirements.RowsRequired; ++Row)
     {
-        for (int32 Column = 0; Column < Requirements.ColumnsRequired; ++Column)
+        for (int32 Column = 0; Column < SpaceRequirements.ColumnsRequired; ++Column)
         {
             int32 CurrentIndex = TopLeftTileIndex + Column + (Row * Columns);
 
-            if (!InventoryItems.IsValidIndex(CurrentIndex) || InventoryItems[CurrentIndex] != nullptr)
+            // Ensure tile is valid and within bounds
+            if (!InventoryItems.IsValidIndex(CurrentIndex))
             {
-                return false; // Tile is out of bounds or already occupied
+                UE_LOG(LogTemp, Warning, TEXT("IsRoomAvailable: Index %d is out of bounds."), CurrentIndex);
+                return false;
+            }
+
+            // Check if tile is occupied
+            if (InventoryItems[CurrentIndex] != nullptr)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("IsRoomAvailable: Tile %d is already occupied."), CurrentIndex);
+                return false;
             }
         }
     }
 
-    return true; // Space is available
+    // All tiles are valid and unoccupied
+    return true;
 }
-
 
 
 
@@ -315,8 +351,14 @@ FInventorySpaceRequirements UInventoryComponent::IndexToTile(int32 Index)
 
 bool UInventoryComponent::IsTileValid(FInventorySpaceRequirements Tiling)
 {
-    return (Tiling.RowsRequired >= 0 && Tiling.ColumnsRequired >= 0 &&
-            Tiling.RowsRequired < Rows && Tiling.ColumnsRequired < Columns);
+   /* return (Tiling.RowsRequired >= 0 && Tiling.ColumnsRequired >= 0 &&
+            Tiling.RowsRequired < Rows && Tiling.ColumnsRequired < Columns);*/
+
+    bool Valid = Tiling.RowsRequired >= 0 && Tiling.ColumnsRequired >= 0 &&
+        Tiling.RowsRequired < Columns && Tiling.ColumnsRequired < Rows;
+	UE_LOG(LogTemp, Warning, TEXT("IsTileValid: %s"), Valid ? TEXT("True") : TEXT("False"));
+
+    return Valid;
 }
 
 
