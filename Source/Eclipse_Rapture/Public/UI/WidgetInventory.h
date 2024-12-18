@@ -21,10 +21,10 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Inventory UI")
     void RefreshInventory(UInventoryComponent* PlayerInventory);*/
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget), meta = (ExposeOnSpawn = "true"))
     TObjectPtr<class UWidgetInventorySlot> InventorySlot;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory UI")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory UI", meta = (ExposeOnSpawn = "true"))
     float TileSize;
 
 protected:

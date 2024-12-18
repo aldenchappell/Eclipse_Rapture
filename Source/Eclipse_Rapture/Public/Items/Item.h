@@ -47,10 +47,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UStaticMesh> PickupMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<UMaterialInterface> ItemIcon;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<UMaterialInterface> ItemIconRotated;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
@@ -118,13 +118,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EUsecaseType UsecaseType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
+	FInventoryDimensions InventoryDimensions;
+
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties")
 	bool bDestroyOnPickup = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties", meta = (ExposeOnSpawn = "true"));
+	TSubclassOf<AItem> ItemClass;
 private:
 
-	UPROPERTY();
-	TSubclassOf<AItem> ItemClass;
 
 	UPROPERTY()
 	bool bRotated;
@@ -142,4 +145,10 @@ public:	//Getters and Setters
 
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	TSubclassOf<AItem> GetItemClass() const { return ItemClass; }
+
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	FInventoryDimensions GetInventoryDimensions() const { return InventoryDimensions; }
+
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	class UMaterialInterface* GetItemIcon() const;
 };
