@@ -261,7 +261,7 @@ public: //Getters and Setters
 	FORCEINLINE int GetMaxMagazineSize() { return MaxMagazineSize; }
 
 	UFUNCTION(BlueprintPure)
-	FORCEINLINE class UTexture2D* GetThumbnailTexture();
+	FORCEINLINE class UMaterialInterface* GetThumbnailTexture();
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FName GetAttachName() const { return SocketName; }

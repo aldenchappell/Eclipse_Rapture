@@ -2,7 +2,6 @@
 #include "Items/Item.h"
 #include "UI/WidgetInventory.h" // Include for communication with the widget
 #include "Engine/World.h"
-#include "Kismet/KismetArrayLibrary.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -13,9 +12,6 @@ void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Ensure the InventoryItems array matches the grid size
-    InventoryItems.Init(nullptr, Rows * Columns);
-
     // Ensure we have a valid owner
     AActor* Owner = GetOwner();
     if (!Owner)
@@ -24,54 +20,8 @@ void UInventoryComponent::BeginPlay()
         return;
     }
 
-    InventoryItems.SetNum(Rows * Columns);
-
-    // Populate items
     PopulateDefaultItems();
-
-    OnInventoryUpdated.Broadcast(); // Notify the UI
 }
-
-void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    if (bIsDirty)
-    {
-		bIsDirty = false;
-		OnInventoryUpdated.Broadcast();
-    }
-}
-
-
-
-void UInventoryComponent::PopulateDefaultItems()
-{
-    for (const FDefaultItem& DefaultItem : DefaultItems)
-    {
-        if (DefaultItem.Item)
-        {
-            for (int32 i = 0; i < DefaultItem.Quantity; ++i)
-            {
-                // Spawn an instance of the item
-                AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(DefaultItem.Item);
-                if (SpawnedItem)
-                {
-                    bool bSuccess = TryAddItem(SpawnedItem);
-                    if (!bSuccess)
-                    {
-                        UE_LOG(LogTemp, Error, TEXT("Failed to add default item: %s"), *DefaultItem.Item->GetName());
-                        SpawnedItem->Destroy(); // Clean up if not added
-                    }
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("Failed to spawn default item: %s"), *DefaultItem.Item->GetName());
-                }
-            }
-        }
-    }
-}
-
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {
@@ -182,10 +132,8 @@ AItem* UInventoryComponent::GetItemInstance(TSubclassOf<AItem> ItemClass)
             return Item;
         }
     }
-    UE_LOG(LogTemp, Warning, TEXT("GetItemInstance failed: No instance found for %s"), *ItemClass->GetName());
     return nullptr;
 }
-
 
 int32 UInventoryComponent::GetItemAmount(TSubclassOf<AItem> ItemClass)
 {
@@ -209,50 +157,17 @@ bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
     return ExistingCount && *ExistingCount > 0;
 }
 
-#pragma endregion
-
-bool UInventoryComponent::TryAddItem_Implementation(AItem* Item)
+void UInventoryComponent::PopulateDefaultItems()
 {
-    return false;
-}
+    // Add all default items to the inventory
+    for (const FDefaultItem& DefaultItem : DefaultItems)
+    {
+        if (DefaultItem.ItemClass)
+        {
+            AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
+        }
+    }
 
-bool UInventoryComponent::IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex)
-{
-    return false;
-}
-
-bool UInventoryComponent::TryRemoveItem_Implementation(AItem* Item)
-{
-    return false;
-}
-
-void UInventoryComponent::IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements)
-{
-}
-
-bool UInventoryComponent::IsTileValid_Implementation(FInventorySpaceRequirements Tiling)
-{
-    return false;
-}
-
-bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, AItem*& Item)
-{
-    return false;
-}
-
-int32 UInventoryComponent::TileToIndex_Implementation(FInventorySpaceRequirements Tiling)
-{
-    return int32();
-}
-
-void UInventoryComponent::AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex)
-{
-}
-
-void UInventoryComponent::ForEachIndex_Implementation(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
-{
-}
-
-void UInventoryComponent::GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems)
-{
+    // Notify the UI to update
+    OnInventoryUpdated.Broadcast();
 }

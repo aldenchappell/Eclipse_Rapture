@@ -131,14 +131,14 @@ void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
 //    }
 //}
 
-UTexture2D* AWeaponBase::GetThumbnailTexture()
+UMaterialInterface* AWeaponBase::GetThumbnailTexture()
 {
     if (PickupClass)
     {
         const AWeaponPickup* PickupDefault = PickupClass->GetDefaultObject<AWeaponPickup>();
         if (PickupDefault)
         {
-            return PickupDefault->ThumbnailTexture;
+            return PickupDefault->ItemIcon;
         }
     }
     return nullptr;

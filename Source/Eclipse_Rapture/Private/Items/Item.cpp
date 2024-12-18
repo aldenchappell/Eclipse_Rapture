@@ -34,7 +34,7 @@ AItem::AItem()
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-
+	ItemClass = GetClass();
 	// Get the player character reference
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
@@ -52,7 +52,6 @@ void AItem::BeginPlay()
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 	SphereCollision->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
 }
-
 
 void AItem::Tick(float DeltaTime)
 {
@@ -86,4 +85,11 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		Character->SetCurrentlyOverlappingItem(nullptr);
 	}
+}
+
+UMaterialInterface* AItem::GetItemIcon() const
+{
+	if (!ItemIcon || !ItemIconRotated) return nullptr;
+
+	return bRotated ? ItemIconRotated : ItemIcon;
 }

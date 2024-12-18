@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Interfaces/InventoryInterface.h"
+#include "Structures/FInventoryTypes.h"
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
@@ -17,26 +19,57 @@ struct FDefaultItem
 
     // The item class
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-    TSubclassOf<AItem> ItemClass;
+    TSubclassOf<AItem> Item;
 
     // The quantity of the item
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
     int32 Quantity;
 
     FDefaultItem()
-        : ItemClass(nullptr), Quantity(1)
+        : Item(nullptr), Quantity(1)
     {
     }  // Default quantity is 1
 };
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent, public IInventoryInterface
 {
     GENERATED_BODY()
 
 public:
     UInventoryComponent();
     virtual void BeginPlay() override;
+
+    
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+#pragma region New Inventory Functions and Variables
+
+	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
+    bool bIsDirty = false;
+
+	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
+	TArray<AItem*> InventoryItems;
+
+    UPROPERTY(EditAnywhere,BlueprintReadonly, Category = "New Inventory")
+    int32 Rows = 6;
+
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
+    int32 Columns = 15;
+
+#pragma region Inventory Interface Implementations
+
+    virtual bool TryAddItem_Implementation(AItem* Item) override;
+    virtual bool IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex) override;
+    virtual bool TryRemoveItem_Implementation(AItem* Item) override;
+    virtual void IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements) override;
+    virtual bool IsTileValid_Implementation(FInventorySpaceRequirements Tiling) override;
+    virtual bool GetItemAtIndex_Implementation(int32 Index, AItem*& Item) override;
+    virtual int32 TileToIndex_Implementation(FInventorySpaceRequirements Tiling) override;
+    virtual void AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex) override;
+    virtual void ForEachIndex_Implementation(class AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements) override;
+    virtual void GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems) override;
+#pragma endregion
 
     // Add a single item
     UFUNCTION(BlueprintCallable)
@@ -86,10 +119,11 @@ public:
     UFUNCTION(BlueprintPure)
     AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
 
-    UFUNCTION(BlueprintCallable, Category = "Inventory")
-    void PopulateDefaultItems();
-
 private:
     // Helper function to get max stack size of an item type
     int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
+
+    UFUNCTION()
+    void PopulateDefaultItems();
+    
 };
