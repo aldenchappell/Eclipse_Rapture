@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "Character/EclipseRaptureCharacter.h"
 #include "Interfaces/InteractInterface.h"
 #include "ItemTypes.h"
@@ -9,15 +10,6 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
-USTRUCT(BlueprintType)
-struct FInventorySpaceRequirements
-{
-	GENERATED_BODY()
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
-	int32 RowsRequired = 1;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
-	int32 ColumnsRequired = 1;
-};
 
 class USphereComponent;
 class USkeletalMeshComponent;
@@ -25,8 +17,8 @@ UCLASS()
 class ECLIPSE_RAPTURE_API AItem : public AActor, public IInteractInterface
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AItem();
 
 	UPROPERTY(BlueprintReadonly, Category = "Item Properties | Player Reference")
@@ -46,6 +38,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUse(class AEclipseRaptureCharacter* Character);
 
+
 #pragma region UI Implements
 	//Text for using item(Equip, Consume, etc)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
@@ -55,7 +48,10 @@ public:
 	TObjectPtr<UStaticMesh> PickupMesh;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UTexture2D> ThumbnailTexture;
+	TObjectPtr<UMaterialInterface> ItemIcon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	TObjectPtr<UMaterialInterface> ItemIconRotated;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UTexture2D> ItemUseIcon;
@@ -78,7 +74,7 @@ public:
 
 #pragma endregion
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, Category = "References")
 	TObjectPtr<class UInventoryComponent> OwningInventory;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space")
@@ -96,7 +92,7 @@ public:
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
-	
+
 	UPROPERTY(BlueprintReadonly)
 	TObjectPtr<class AEclipseRaptureCharacter> OverlappingCharacter;
 
@@ -115,7 +111,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereCollision;
 
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Pickup;
@@ -127,17 +122,24 @@ protected:
 	bool bDestroyOnPickup = false;
 
 private:
-	
 
+	UPROPERTY();
+	TSubclassOf<AItem> ItemClass;
+
+	UPROPERTY()
+	bool bRotated;
 
 public:	//Getters and Setters
-	
+
 	UFUNCTION(BlueprintPure, Blueprintcallable)
-	FText GetItemDisplayName() const {return ItemDisplayName;}
+	FText GetItemDisplayName() const { return ItemDisplayName; }
 
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	EItemType GetItemType() const { return ItemType; }
 
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	EUsecaseType GetUsecaseType() const { return UsecaseType; }
+
+	UFUNCTION(BlueprintPure, Blueprintcallable)
+	TSubclassOf<AItem> GetItemClass() const { return ItemClass; }
 };

@@ -2,6 +2,7 @@
 #include "Items/Item.h"
 #include "UI/WidgetInventory.h" // Include for communication with the widget
 #include "Engine/World.h"
+#include "Kismet/KismetArrayLibrary.h"
 
 UInventoryComponent::UInventoryComponent()
 {
@@ -12,6 +13,9 @@ void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
 
+    // Ensure the InventoryItems array matches the grid size
+    InventoryItems.Init(nullptr, Rows * Columns);
+
     // Ensure we have a valid owner
     AActor* Owner = GetOwner();
     if (!Owner)
@@ -20,11 +24,42 @@ void UInventoryComponent::BeginPlay()
         return;
     }
 
-    // Populate items immediately to ensure inventory is ready
+    InventoryItems.SetNum(Rows * Columns);
+
+    // Populate items
     PopulateDefaultItems();
 
     OnInventoryUpdated.Broadcast(); // Notify the UI
 }
+
+void UInventoryComponent::PopulateDefaultItems()
+{
+    for (const FDefaultItem& DefaultItem : DefaultItems)
+    {
+        if (DefaultItem.Item)
+        {
+            for (int32 i = 0; i < DefaultItem.Quantity; ++i)
+            {
+                // Spawn an instance of the item
+                AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(DefaultItem.Item);
+                if (SpawnedItem)
+                {
+                    bool bSuccess = TryAddItem(SpawnedItem);
+                    if (!bSuccess)
+                    {
+                        UE_LOG(LogTemp, Error, TEXT("Failed to add default item: %s"), *DefaultItem.Item->GetName());
+                        SpawnedItem->Destroy(); // Clean up if not added
+                    }
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Error, TEXT("Failed to spawn default item: %s"), *DefaultItem.Item->GetName());
+                }
+            }
+        }
+    }
+}
+
 
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
@@ -163,23 +198,267 @@ bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
     return ExistingCount && *ExistingCount > 0;
 }
 
-void UInventoryComponent::PopulateDefaultItems()
-{
-    UE_LOG(LogTemp, Log, TEXT("Populating default items..."));
 
-    for (const FDefaultItem& DefaultItem : DefaultItems)
+#pragma region New Inventory Functions
+
+bool UInventoryComponent::TryAddItem(AItem* Item)
+{
+    // Step 1: Validate the input item
+    if (!Item)
     {
-        if (DefaultItem.ItemClass)
+        UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Invalid Item (nullptr)."));
+        return false;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("TryAddItem: Attempting to add item %s to the inventory."), *Item->GetName());
+
+    // Step 2: Loop through the inventory slots or items array
+    for (int32 Index = 0; Index < InventoryItems.Num(); ++Index)
+    {
+        AItem* InvItem = InventoryItems[Index];
+
+        // Step 3: Check if the current slot is valid
+        if (InvItem)
         {
-            bool bSuccess = AddItemAmount(DefaultItem.ItemClass, DefaultItem.Quantity);
-            if (!bSuccess)
+            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Checking slot %d, item exists: %s"), Index, *InvItem->GetName());
+            int32 TopLeftTileIndex = -1;
+
+            // Step 4: Check if there is room available for the item
+            if (IsRoomAvailable(Item, TopLeftTileIndex))
             {
-                UE_LOG(LogTemp, Error, TEXT("Failed to add default item: %s"), *DefaultItem.ItemClass->GetName());
+                UE_LOG(LogTemp, Log, TEXT("TryAddItem: Found room for item at TopLeftTileIndex %d."), TopLeftTileIndex);
+
+                // Step 5: Add the item to the available space
+                AddItemAt(Item, TopLeftTileIndex);
+
+                // Step 6: Return success
+                UE_LOG(LogTemp, Log, TEXT("TryAddItem: Successfully added item %s at TopLeftTileIndex %d."), *Item->GetName(), TopLeftTileIndex);
+                return true;
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("TryAddItem: No room available for item %s at index %d."), *Item->GetName(), Index);
+            }
+        }
+        else
+        {
+            // If the slot is empty
+            UE_LOG(LogTemp, Log, TEXT("TryAddItem: Slot %d is empty. Skipping check."), Index);
+        }
+    }
+
+    // Step 7: If no room is found, return false
+    UE_LOG(LogTemp, Warning, TEXT("TryAddItem: Failed to add item %s. No available space found in inventory."), *Item->GetName());
+    return false;
+}
+
+
+bool UInventoryComponent::IsRoomAvailable(AItem* Item, int32 TopLeftTileIndex)
+{
+    if (!Item || TopLeftTileIndex < 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("IsRoomAvailable: Invalid Item or TopLeftTileIndex."));
+        return false;
+    }
+
+    // Get space requirements using ForEachIndex
+    FInventorySpaceRequirements SpaceRequirements = ForEachIndex(Item, TopLeftTileIndex);
+
+    for (int32 Row = 0; Row < SpaceRequirements.RowsRequired; ++Row)
+    {
+        for (int32 Column = 0; Column < SpaceRequirements.ColumnsRequired; ++Column)
+        {
+            int32 CurrentIndex = TopLeftTileIndex + Column + (Row * Columns);
+
+            // Ensure tile is valid and within bounds
+            if (!InventoryItems.IsValidIndex(CurrentIndex))
+            {
+                UE_LOG(LogTemp, Warning, TEXT("IsRoomAvailable: Index %d is out of bounds."), CurrentIndex);
+                return false;
+            }
+
+            // Check if tile is occupied
+            if (InventoryItems[CurrentIndex] != nullptr)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("IsRoomAvailable: Tile %d is already occupied."), CurrentIndex);
+                return false;
             }
         }
     }
 
-    OnInventoryUpdated.Broadcast(); // Make sure UI refreshes after adding default items
+    // All tiles are valid and unoccupied
+    return true;
 }
 
 
+
+//bool UInventoryComponent::IsRoomAvailable(AItem* Item, int32 TopLeftTileIndex)
+//{
+//    if (!Item)
+//    {
+//        UE_LOG(LogTemp, Warning, TEXT("IsRoomAvailable: Invalid Item!"));
+//        return false;
+//    }
+//
+//    // Use ForEachIndex to retrieve space requirements and iterate over required indices
+//    FInventorySpaceRequirements SpaceRequirements = ForEachIndex(Item, TopLeftTileIndex);
+//
+//    // Check each index provided by ForEachIndex
+//    for (int32 Row = 0; Row < SpaceRequirements.RowsRequired; ++Row)
+//    {
+//        for (int32 Column = 0; Column < SpaceRequirements.ColumnsRequired; ++Column)
+//        {
+//            int32 CurrentTileIndex = TopLeftTileIndex + Column + (Row * Columns);
+//
+//            // Ensure tile is within bounds
+//            if (!IsTileValid(FInventorySpaceRequirements(Row, Column)))
+//            {
+//                return false;
+//            }
+//
+//            // Check if the tile is occupied
+//            AItem* ExistingItem = nullptr;
+//            if (GetItemAtIndex(CurrentTileIndex, ExistingItem) && ExistingItem != nullptr)
+//            {
+//                return false; // Tile is already occupied
+//            }
+//        }
+//    }
+//
+//    return true; // Room is available
+//}
+
+
+
+FInventorySpaceRequirements UInventoryComponent::IndexToTile(int32 Index)
+{
+    FInventorySpaceRequirements Tile;
+
+    if (Columns == 0) // Prevent division by zero
+    {
+        UE_LOG(LogTemp, Error, TEXT("IndexToTile: Columns is zero, cannot calculate tile position!"));
+        return Tile;
+    }
+
+    // Calculate rows and columns based on the index
+    Tile.RowsRequired = Index / Columns;   // Division for row calculation
+    Tile.ColumnsRequired = Index % Columns; // Modulo for column calculation
+
+    return Tile;
+}
+
+
+
+bool UInventoryComponent::IsTileValid(FInventorySpaceRequirements Tiling)
+{
+   /* return (Tiling.RowsRequired >= 0 && Tiling.ColumnsRequired >= 0 &&
+            Tiling.RowsRequired < Rows && Tiling.ColumnsRequired < Columns);*/
+
+    bool Valid = Tiling.RowsRequired >= 0 && Tiling.ColumnsRequired >= 0 &&
+        Tiling.RowsRequired < Columns && Tiling.ColumnsRequired < Rows;
+	UE_LOG(LogTemp, Warning, TEXT("IsTileValid: %s"), Valid ? TEXT("True") : TEXT("False"));
+
+    return Valid;
+}
+
+
+bool UInventoryComponent::GetItemAtIndex(int32 Index, AItem*& Item)
+{
+    if (InventoryItems.IsValidIndex(Index))
+    {
+        Item = InventoryItems[Index];
+        return true;
+    }
+    Item = nullptr;
+    return false;
+}
+
+
+int32 UInventoryComponent::TileToIndex(FInventorySpaceRequirements Tiling)
+{
+    if (Columns == 0) return -1; // Prevent division by zero
+
+    return Tiling.RowsRequired + Tiling.ColumnsRequired * Columns;
+}
+
+
+
+void UInventoryComponent::AddItemAt(AItem* Item, int32 TopLeftIndex)
+{
+    if (!Item || TopLeftIndex < 0 || !InventoryItems.IsValidIndex(TopLeftIndex))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AddItemAt: Invalid Item or TopLeftIndex %d"), TopLeftIndex);
+        return;
+    }
+
+    FInventorySpaceRequirements Requirements = Item->InventorySpaceRequired;
+
+    // Place the item in the grid
+    for (int32 Row = 0; Row < Requirements.RowsRequired; ++Row)
+    {
+        for (int32 Column = 0; Column < Requirements.ColumnsRequired; ++Column)
+        {
+            int32 CurrentIndex = TopLeftIndex + Column + (Row * Columns);
+
+            if (InventoryItems.IsValidIndex(CurrentIndex))
+            {
+                InventoryItems[CurrentIndex] = Item;
+            }
+        }
+    }
+
+    Item->OwningInventory = this;
+    OnInventoryUpdated.Broadcast();
+}
+
+
+
+FInventorySpaceRequirements UInventoryComponent::ForEachIndex(AItem* Item, int32 TopLeftInventoryIndex)
+{
+    FInventorySpaceRequirements SpaceRequirements;
+
+    if (!Item || TopLeftInventoryIndex < 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("ForEachIndex: Invalid Item or TopLeftIndex."));
+        return SpaceRequirements;
+    }
+
+    // Get space requirements from the item
+    int32 RowsRequired = Item->InventorySpaceRequired.RowsRequired;
+    int32 ColumnsRequired = Item->InventorySpaceRequired.ColumnsRequired;
+
+    SpaceRequirements.RowsRequired = RowsRequired;
+    SpaceRequirements.ColumnsRequired = ColumnsRequired;
+
+    int32 StartRow = TopLeftInventoryIndex / Columns;
+    int32 StartColumn = TopLeftInventoryIndex % Columns;
+
+    UE_LOG(LogTemp, Log, TEXT("ForEachIndex: Starting at Row %d, Column %d"), StartRow, StartColumn);
+
+    // Loop through the required rows and columns
+    for (int32 Row = 0; Row < RowsRequired; ++Row)
+    {
+        for (int32 Column = 0; Column < ColumnsRequired; ++Column)
+        {
+            int32 CurrentRow = StartRow + Row;
+            int32 CurrentColumn = StartColumn + Column;
+
+            // Ensure we are within bounds
+            if (CurrentRow >= 0 && CurrentRow < Rows && CurrentColumn >= 0 && CurrentColumn < Columns)
+            {
+                int32 CurrentIndex = (CurrentRow * Columns) + CurrentColumn;
+                UE_LOG(LogTemp, Log, TEXT("ForEachIndex: Iterating Index %d (Row %d, Column %d)"), CurrentIndex, CurrentRow, CurrentColumn);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("ForEachIndex: Index out of bounds at Row %d, Column %d"), CurrentRow, CurrentColumn);
+            }
+        }
+    }
+
+    return SpaceRequirements;
+}
+
+
+
+#pragma endregion
