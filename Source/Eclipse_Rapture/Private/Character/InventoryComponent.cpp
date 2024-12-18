@@ -17,14 +17,11 @@ void UInventoryComponent::BeginPlay()
     InventoryItems.Init(nullptr, Rows * Columns);
 
     // Ensure we have a valid owner
-    AActor* Owner = GetOwner();
-    if (!Owner)
-    {
-        UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
-        return;
-    }
+    bool retFlag;
+    CheckForOwner(retFlag);
+    if (retFlag) return;
 
-    InventoryItems.SetNum(Rows * Columns);
+    //InventoryItems.SetNum(Rows * Columns);
 
     // Populate items
     PopulateDefaultItems();
@@ -32,14 +29,21 @@ void UInventoryComponent::BeginPlay()
     OnInventoryUpdated.Broadcast(); // Notify the UI
 }
 
+void UInventoryComponent::CheckForOwner(bool& retFlag)
+{
+    retFlag = true;
+    AActor* Owner = GetOwner();
+    if (!Owner)
+    {
+        UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
+        return;
+    }
+    retFlag = false;
+}
+
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    if (bIsDirty)
-    {
-		bIsDirty = false;
-		OnInventoryUpdated.Broadcast();
-    }
 }
 
 

@@ -40,6 +40,8 @@ public:
     UInventoryComponent();
     virtual void BeginPlay() override;
 
+    void CheckForOwner(bool& retFlag);
+
     
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
