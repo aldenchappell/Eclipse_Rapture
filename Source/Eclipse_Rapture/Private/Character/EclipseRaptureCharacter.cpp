@@ -56,8 +56,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 
     //setup inventory component
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
-	InventoryComponent->Capacity = 20;
+	//InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 
     //setup building component
 	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
@@ -358,6 +357,11 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
     }
 }
 
+
+UInventoryComponent* AEclipseRaptureCharacter::GetInventoryComponent_Implementation()
+{
+    return nullptr;
+}
 
 FVector AEclipseRaptureCharacter::GetAdjustedAimDirection(const FVector& OriginalDirection) const
 {

@@ -13,18 +13,6 @@ struct FInventorySpaceRequirements
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
     int32 ColumnsRequired;
-
-    // Default constructor
-    FInventorySpaceRequirements()
-        : RowsRequired(0), ColumnsRequired(0)
-    {
-    }
-
-    // Custom constructor to initialize rows and columns
-    FInventorySpaceRequirements(int32 InRowsRequired, int32 InColumnsRequired)
-        : RowsRequired(InRowsRequired), ColumnsRequired(InColumnsRequired)
-    {
-    }
 };
 
 
@@ -38,8 +26,16 @@ struct FInventoryTile
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
     FVector2D YTiling;
+};
 
-    FInventoryTile() : XTiling(0,0), YTiling(0,0) {}
+USTRUCT(BlueprintType)
+struct FInventoryDimensions
+{
+    GENERATED_BODY()
 
-	FInventoryTile(FVector2D InXTiling, FVector2D InYTiling) : XTiling(InXTiling), YTiling(InYTiling) {}
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
+    int32 DimensionsX;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
+    int32 DimensionsY;
 };
