@@ -86,3 +86,10 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 		Character->SetCurrentlyOverlappingItem(nullptr);
 	}
 }
+
+UMaterialInterface* AItem::GetItemIcon() const
+{
+	if (!ItemIcon || !ItemIconRotated) return nullptr;
+
+	return bRotated ? ItemIconRotated : ItemIcon;
+}

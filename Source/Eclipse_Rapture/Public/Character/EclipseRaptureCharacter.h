@@ -65,7 +65,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Components | Health Component")
 	TObjectPtr<class UHealthComponent> HealthComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Inventory")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
@@ -310,8 +310,8 @@ public:
 	UFUNCTION(Blueprintcallable)
 	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
-	UFUNCTION(Blueprintcallable)
-	class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable)
+	class UInventoryComponent* GetInventoryComponent();
 
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }
