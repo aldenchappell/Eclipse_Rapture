@@ -40,12 +40,16 @@ public:
     UInventoryComponent();
     virtual void BeginPlay() override;
 
-    void CheckForOwner(bool& retFlag);
+    void CheckForOwner();
 
     
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 #pragma region New Inventory Functions and Variables
+
+    // Items the player starts with, including specified quantities
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
+    TArray<FDefaultItem> DefaultItems;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
     bool bIsDirty = false;
@@ -89,9 +93,7 @@ public:
     UFUNCTION(BlueprintCallable)
     bool RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
 
-    // Items the player starts with, including specified quantities
-    UPROPERTY(EditDefaultsOnly, Category = "Inventory")
-    TArray<FDefaultItem> DefaultItems;
+   
 
     // Inventory capacity (maximum number of item types)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
@@ -124,8 +126,5 @@ public:
 private:
     // Helper function to get max stack size of an item type
     int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
-
-    UFUNCTION()
-    void PopulateDefaultItems();
     
 };
