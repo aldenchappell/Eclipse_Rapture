@@ -27,15 +27,15 @@ void AAmmoItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
-	if (PlayerReference)
-	{
-		if (OwningInventory)
-		{
-			//Add AmmoDropAmount of ammo to the player's inventory
-			OwningInventory->AddItemAmount(GetClass(), AmmoDropAmount);
-		}
-		Destroy();
-	}
+	//if (PlayerReference)
+	//{
+	//	if (OwningInventory)
+	//	{
+	//		//Add AmmoDropAmount of ammo to the player's inventory
+	//		//OwningInventory->AddItemAmount(GetClass(), AmmoDropAmount);
+	//	}
+	//	Destroy();
+	//}
 }
 
 void AAmmoItem::Use(AEclipseRaptureCharacter* Character)

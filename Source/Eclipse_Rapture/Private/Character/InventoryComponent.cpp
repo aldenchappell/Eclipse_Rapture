@@ -13,32 +13,17 @@ void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Ensure the InventoryItems array matches the grid size
-    InventoryItems.Init(nullptr, Rows * Columns);
-
-    // Ensure we have a valid owner
-    bool retFlag;
-    CheckForOwner(retFlag);
-    if (retFlag) return;
-
-    //InventoryItems.SetNum(Rows * Columns);
-
-    // Populate items
-    PopulateDefaultItems();
-
-    OnInventoryUpdated.Broadcast(); // Notify the UI
+    CheckForOwner();
 }
 
-void UInventoryComponent::CheckForOwner(bool& retFlag)
+void UInventoryComponent::CheckForOwner()
 {
-    retFlag = true;
     AActor* Owner = GetOwner();
     if (!Owner)
     {
         UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
         return;
     }
-    retFlag = false;
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -46,36 +31,58 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
+#pragma region New Inventory Functions and Variables
 
 
-void UInventoryComponent::PopulateDefaultItems()
+bool UInventoryComponent::TryAddItem_Implementation(AItem* Item)
 {
-    for (const FDefaultItem& DefaultItem : DefaultItems)
-    {
-        if (DefaultItem.Item)
-        {
-            for (int32 i = 0; i < DefaultItem.Quantity; ++i)
-            {
-                // Spawn an instance of the item
-                AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(DefaultItem.Item);
-                if (SpawnedItem)
-                {
-                    bool bSuccess = TryAddItem(SpawnedItem);
-                    if (!bSuccess)
-                    {
-                        UE_LOG(LogTemp, Error, TEXT("Failed to add default item: %s"), *DefaultItem.Item->GetName());
-                        SpawnedItem->Destroy(); // Clean up if not added
-                    }
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("Failed to spawn default item: %s"), *DefaultItem.Item->GetName());
-                }
-            }
-        }
-    }
+    return false;
 }
 
+bool UInventoryComponent::IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex)
+{
+    return false;
+}
+
+bool UInventoryComponent::TryRemoveItem_Implementation(AItem* Item)
+{
+    return false;
+}
+
+void UInventoryComponent::IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements)
+{
+}
+
+bool UInventoryComponent::IsTileValid_Implementation(FInventorySpaceRequirements Tiling)
+{
+    return false;
+}
+
+bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, AItem*& Item)
+{
+    return false;
+}
+
+int32 UInventoryComponent::TileToIndex_Implementation(FInventorySpaceRequirements Tiling)
+{
+    return int32();
+}
+
+void UInventoryComponent::AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex)
+{
+}
+
+void UInventoryComponent::ForEachIndex_Implementation(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
+{
+}
+
+void UInventoryComponent::GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems)
+{
+}
+
+#pragma endregion
+
+#pragma region Old Inventory System
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {
@@ -215,48 +222,3 @@ bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
 
 #pragma endregion
 
-bool UInventoryComponent::TryAddItem_Implementation(AItem* Item)
-{
-    return false;
-}
-
-bool UInventoryComponent::IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex)
-{
-    return false;
-}
-
-bool UInventoryComponent::TryRemoveItem_Implementation(AItem* Item)
-{
-    return false;
-}
-
-void UInventoryComponent::IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements)
-{
-}
-
-bool UInventoryComponent::IsTileValid_Implementation(FInventorySpaceRequirements Tiling)
-{
-    return false;
-}
-
-bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, AItem*& Item)
-{
-    return false;
-}
-
-int32 UInventoryComponent::TileToIndex_Implementation(FInventorySpaceRequirements Tiling)
-{
-    return int32();
-}
-
-void UInventoryComponent::AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex)
-{
-}
-
-void UInventoryComponent::ForEachIndex_Implementation(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
-{
-}
-
-void UInventoryComponent::GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems)
-{
-}

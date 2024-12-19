@@ -53,6 +53,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<UMaterialInterface> ItemIconRotated;
 
+	UFUNCTION(BlueprintCallable, Category = "Item Properties")
+	void Rotate();
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UTexture2D> ItemUseIcon;
 
@@ -147,8 +150,11 @@ public:	//Getters and Setters
 	TSubclassOf<AItem> GetItemClass() const { return ItemClass; }
 
 	UFUNCTION(BlueprintPure, BlueprintCallable)
-	FInventoryDimensions GetInventoryDimensions() const { return InventoryDimensions; }
+	FInventoryDimensions GetInventoryDimensions();
 
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	class UMaterialInterface* GetItemIcon() const;
+
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	bool GetIsRotated() const { return bRotated; }
 };
