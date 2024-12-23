@@ -12,18 +12,6 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
-
-    CheckForOwner();
-}
-
-void UInventoryComponent::CheckForOwner()
-{
-    AActor* Owner = GetOwner();
-    if (!Owner)
-    {
-        UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
-        return;
-    }
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -72,7 +60,7 @@ void UInventoryComponent::AddItemAt_Implementation(UItemObject* ItemObject, int3
 {
 }
 
-void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
+void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements, const FSimpleDelegate& OnCompleted)
 {
 }
 

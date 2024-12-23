@@ -21,7 +21,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Inventory UI")
     void RefreshInventory(UInventoryComponent* PlayerInventory);*/
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget), meta = (ExposeOnSpawn = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))//, meta = (ExposeOnSpawn = "true")))
     TObjectPtr<class UWidgetInventorySlot> InventorySlot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory UI", meta = (ExposeOnSpawn = "true"))

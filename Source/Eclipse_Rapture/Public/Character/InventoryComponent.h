@@ -39,10 +39,6 @@ class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent, public I
 public:
     UInventoryComponent();
     virtual void BeginPlay() override;
-
-    void CheckForOwner();
-
-    
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 #pragma region New Inventory Functions and Variables
@@ -73,7 +69,7 @@ public:
     virtual bool GetItemAtIndex_Implementation(int32 Index, UItemObject*& ItemObject) override;
     virtual int32 TileToIndex_Implementation(FInventorySpaceRequirements Tiling) override;
     virtual void AddItemAt_Implementation(UItemObject* ItemObject, int32 TopLeftIndex) override;
-    virtual void ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements) override;
+    virtual void ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements, const FSimpleDelegate& OnCompleted) override;
     virtual void GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems) override;
 #pragma endregion
 

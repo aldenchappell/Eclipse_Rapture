@@ -68,8 +68,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Inventory")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
-	TObjectPtr<class UBuildingComponent> BuildingComponent;
+	//UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
+	//TObjectPtr<class UBuildingComponent> BuildingComponent;
 
 #pragma endregion
 	

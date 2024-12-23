@@ -55,13 +55,6 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 	//setup health component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 
-    //setup inventory component
-	//InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
-
-    //setup building component
-	BuildingComponent = CreateDefaultSubobject<UBuildingComponent>(TEXT("Building Component"));
-
-
     CharacterType = ECharacterType::ECT_Player;
 }
 
@@ -74,10 +67,10 @@ void AEclipseRaptureCharacter::BeginPlay()
 
 void AEclipseRaptureCharacter::SetBuildingBlueprintVisibility_Implementation(bool bNewVisibility)
 {
-	if (BuildingComponent)
+	/*if (BuildingComponent)
 	{
 		
-	}
+	}*/
 }
 
 void AEclipseRaptureCharacter::Tick(float DeltaTime)
