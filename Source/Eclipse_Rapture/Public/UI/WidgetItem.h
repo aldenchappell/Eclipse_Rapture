@@ -9,7 +9,7 @@
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemoved, class AItem*, ItemObject);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemoved, class UItemObject*, ItemObject);
 UCLASS()
 class ECLIPSE_RAPTURE_API UWidgetItem : public UUserWidget
 {
@@ -35,5 +35,5 @@ protected:
 	FVector2D Size;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Private", meta = (ExposeOnSpawn = "true"))
-	TObjectPtr<class AItem> ItemObject;
+	TObjectPtr<class UItemObject> ItemObject;
 };

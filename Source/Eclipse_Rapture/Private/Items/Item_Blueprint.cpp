@@ -6,10 +6,6 @@
 
 AItem_Blueprint::AItem_Blueprint()
 {
-    ItemDisplayName = FText::FromString("Blueprint");
-    ItemDescription = FText::FromString("A blueprint for building.");
-    ItemWeight = 0.1f;
-    UseActionText = FText::FromString("Pick up building blueprint");
     bCanBeUsed = false;
 }
 

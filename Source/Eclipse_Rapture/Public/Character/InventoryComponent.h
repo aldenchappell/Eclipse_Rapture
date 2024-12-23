@@ -55,7 +55,7 @@ public:
     bool bIsDirty = false;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
-	TArray<AItem*> InventoryItems;
+	TArray<UItemObject*> InventoryItems;
 
     UPROPERTY(EditAnywhere,BlueprintReadonly, Category = "New Inventory")
     int32 Rows = 6;
@@ -65,16 +65,16 @@ public:
 
 #pragma region Inventory Interface Implementations
 
-    virtual bool TryAddItem_Implementation(AItem* Item) override;
-    virtual bool IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex) override;
-    virtual bool TryRemoveItem_Implementation(AItem* Item) override;
+    virtual bool TryAddItem_Implementation(UItemObject* ItemObject) override;
+    virtual bool IsRoomAvailable_Implementation(UItemObject* ItemObject, int32 TopLeftTileIndex) override;
+    virtual bool TryRemoveItem_Implementation(UItemObject* ItemObject) override;
     virtual void IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements) override;
     virtual bool IsTileValid_Implementation(FInventorySpaceRequirements Tiling) override;
-    virtual bool GetItemAtIndex_Implementation(int32 Index, AItem*& Item) override;
+    virtual bool GetItemAtIndex_Implementation(int32 Index, UItemObject*& ItemObject) override;
     virtual int32 TileToIndex_Implementation(FInventorySpaceRequirements Tiling) override;
-    virtual void AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex) override;
-    virtual void ForEachIndex_Implementation(class AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements) override;
-    virtual void GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems) override;
+    virtual void AddItemAt_Implementation(UItemObject* ItemObject, int32 TopLeftIndex) override;
+    virtual void ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements) override;
+    virtual void GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems) override;
 #pragma endregion
 
     // Add a single item

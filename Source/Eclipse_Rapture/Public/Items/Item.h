@@ -10,7 +10,7 @@
 #include "GameFramework/Actor.h"
 #include "Item.generated.h"
 
-
+class UItemObject;
 class USphereComponent;
 class USkeletalMeshComponent;
 UCLASS()
@@ -39,58 +39,9 @@ public:
 	void OnUse(class AEclipseRaptureCharacter* Character);
 
 
-#pragma region UI Implements
-	//Text for using item(Equip, Consume, etc)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	FText UseActionText;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UStaticMesh> PickupMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
-	TObjectPtr<UMaterialInterface> ItemIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
-	TObjectPtr<UMaterialInterface> ItemIconRotated;
-
-	UFUNCTION(BlueprintCallable, Category = "Item Properties")
-	void Rotate();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	TObjectPtr<UTexture2D> ItemUseIcon;
-
-	//Name to show inside of inventory
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
-	FText ItemDisplayName;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (MultiLine = true))
-	FText ItemDescription;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
-	float ItemWeight;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties", meta = (ClampMin = 0.0))
-	int32 MaxStackSize;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Pickup Properties")
-	FText ItemInteractionPrompt;
-
-#pragma endregion
 
 	UPROPERTY(BlueprintReadWrite, Category = "References")
 	TObjectPtr<class UInventoryComponent> OwningInventory;
-
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space")
-	FInventorySpaceRequirements InventorySpaceRequired;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	EUseImpactType UseImpactType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	EMainItemUseDescriptionType MainItemUseDescriptionType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	ESecondaryItemUseDescriptionType SecondaryItemUseDescriptionType;
 
 protected:
 	virtual void Tick(float DeltaTime) override;
@@ -121,24 +72,23 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	EUsecaseType UsecaseType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
-	FInventoryDimensions InventoryDimensions;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties")
 	bool bDestroyOnPickup = false;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties", meta = (ExposeOnSpawn = "true"));
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"));
 	TSubclassOf<AItem> ItemClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
+	TObjectPtr<UItemObject> ItemObject;
 private:
 
 
-	UPROPERTY()
-	bool bRotated;
 
 public:	//Getters and Setters
 
-	UFUNCTION(BlueprintPure, Blueprintcallable)
-	FText GetItemDisplayName() const { return ItemDisplayName; }
+	
 
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	EItemType GetItemType() const { return ItemType; }
@@ -149,12 +99,9 @@ public:	//Getters and Setters
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	TSubclassOf<AItem> GetItemClass() const { return ItemClass; }
 
-	UFUNCTION(BlueprintPure, BlueprintCallable)
-	FInventoryDimensions GetInventoryDimensions();
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable)
+	UItemObject* GetItemObject() const;
 
-	UFUNCTION(BlueprintPure, BlueprintCallable)
-	class UMaterialInterface* GetItemIcon() const;
-
-	UFUNCTION(BlueprintPure, BlueprintCallable)
-	bool GetIsRotated() const { return bRotated; }
+	UFUNCTION(BlueprintCallable)
+	void SetItemObject(UItemObject* NewItemObject);
 };

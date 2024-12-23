@@ -8,7 +8,7 @@
 #include "Character/InventoryComponent.h"
 #include "DrawDebugHelpers.h" 
 #include "Items/WeaponPickup.h"
-
+#include "Items/ItemObject.h"
 #define TraceChannel ETraceTypeQuery_
 AWeaponBase::AWeaponBase()
 {
@@ -138,7 +138,7 @@ UMaterialInterface* AWeaponBase::GetThumbnailTexture()
         const AWeaponPickup* PickupDefault = PickupClass->GetDefaultObject<AWeaponPickup>();
         if (PickupDefault)
         {
-            return PickupDefault->ItemIcon;
+            return PickupDefault->GetItemObject()->GetItemIcon();
         }
     }
     return nullptr;
