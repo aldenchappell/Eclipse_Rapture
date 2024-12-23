@@ -12,26 +12,21 @@ UItemObject::UItemObject()
 	UseActionText = FText::FromString("Use");
 }
 
-FInventoryDimensions UItemObject::GetInventoryDimensions()
+void UItemObject::Rotate_Implementation()
 {
-	if (bRotated)
-	{
-		return InventoryDimensions;
-	}
-	else
-	{
-		return FInventoryDimensions(InventoryDimensions.DimensionsY, InventoryDimensions.DimensionsX);
-	}
 }
 
-UMaterialInterface* UItemObject::GetItemIcon() const
+FInventoryDimensions UItemObject::GetInventoryDimensions_Implementation()
 {
-	if (!ItemIcon || !ItemIconRotated) return nullptr;
-
-	return bRotated ? ItemIconRotated : ItemIcon;
+	return InventoryDimensions;
 }
 
-void UItemObject::Rotate()
+void UItemObject::SetIsRotated(bool bNewIsRotated)
 {
-	bRotated = !bRotated;
+	bRotated = bNewIsRotated;
+}
+
+UMaterialInterface* UItemObject::GetItemIcon_Implementation() const
+{
+	return nullptr;
 }

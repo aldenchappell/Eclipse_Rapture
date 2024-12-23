@@ -54,7 +54,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<UMaterialInterface> ItemIconRotated;
 
-	UFUNCTION(BlueprintCallable, Category = "Item Properties")
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item Properties")
 	void Rotate();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
@@ -89,14 +89,17 @@ public:
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	FInventorySpaceRequirements GetInventorySpaceRequirements() const { return InventorySpaceRequired; }
 
-	UFUNCTION(BlueprintPure, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable)
 	FInventoryDimensions GetInventoryDimensions();
 
-	UFUNCTION(BlueprintPure, BlueprintCallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable)
 	class UMaterialInterface* GetItemIcon() const;
 
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	bool GetIsRotated() const { return bRotated; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsRotated(bool bNewIsRotated);
 
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	float GetItemWeight() const { return ItemWeight; }

@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "Delegates/Delegate.h"
 #include "Structures/FInventoryTypes.h"
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "InventoryInterface.generated.h"
 
-// This class does not need to be modified.
+
+DECLARE_DYNAMIC_DELEGATE(FOnForEachIndexCompleted);
 UINTERFACE(MinimalAPI)
 class UInventoryInterface : public UInterface
 {
@@ -50,7 +52,7 @@ public:
 	void AddItemAt(UItemObject* ItemObject, int32 TopLeftIndex);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
-	void ForEachIndex(class UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
+	void ForEachIndex(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements, const FSimpleDelegate& OnCompleted);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	void GetAllItems(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems);
