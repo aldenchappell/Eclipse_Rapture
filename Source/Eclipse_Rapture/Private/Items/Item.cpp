@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Interfaces/IPhysicsComponent.h"
 #include "Character/PlayerMain.h"
+#include "Items/ItemObject.h"
 
 AItem::AItem()
 {
@@ -26,9 +27,7 @@ AItem::AItem()
 	ItemSkeleton = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeleton"));
 	ItemSkeleton->SetupAttachment(ItemMesh);
 
-	ItemWeight = 1.f;
-	ItemDisplayName = FText::FromString("Item");
-	UseActionText = FText::FromString("Use");
+	
 }
 
 void AItem::BeginPlay()
@@ -69,10 +68,7 @@ void AItem::Use(AEclipseRaptureCharacter* Character)
 	if (!bCanBeUsed) return;
 }
 
-void AItem::Rotate()
-{
-	bRotated = !bRotated;
-}
+
 
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -92,21 +88,12 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	}
 }
 
-FInventoryDimensions AItem::GetInventoryDimensions()
+void AItem::SetItemObject(UItemObject* NewItemObject)
 {
-	if (bRotated)
-	{
-		return InventoryDimensions;
-	}
-	else
-	{
-		return FInventoryDimensions(InventoryDimensions.DimensionsY, InventoryDimensions.DimensionsX);
-	}
+	ItemObject = NewItemObject;
 }
 
-UMaterialInterface* AItem::GetItemIcon() const
+UItemObject* AItem::GetItemObject_Implementation() const
 {
-	if (!ItemIcon || !ItemIconRotated) return nullptr;
-
-	return bRotated ? ItemIconRotated : ItemIcon;
+	return nullptr;
 }

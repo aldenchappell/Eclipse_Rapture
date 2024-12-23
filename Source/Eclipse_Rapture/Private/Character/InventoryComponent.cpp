@@ -3,7 +3,7 @@
 #include "UI/WidgetInventory.h" // Include for communication with the widget
 #include "Engine/World.h"
 #include "Kismet/KismetArrayLibrary.h"
-
+#include "Items/ItemObject.h"
 UInventoryComponent::UInventoryComponent()
 {
     Capacity = 20; // Capacity is no longer enforced directly
@@ -34,17 +34,17 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 #pragma region New Inventory Functions and Variables
 
 
-bool UInventoryComponent::TryAddItem_Implementation(AItem* Item)
+bool UInventoryComponent::TryAddItem_Implementation(UItemObject* ItemObject)
 {
     return false;
 }
 
-bool UInventoryComponent::IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex)
+bool UInventoryComponent::IsRoomAvailable_Implementation(UItemObject* ItemObject, int32 TopLeftTileIndex)
 {
     return false;
 }
 
-bool UInventoryComponent::TryRemoveItem_Implementation(AItem* Item)
+bool UInventoryComponent::TryRemoveItem_Implementation(UItemObject* ItemObject)
 {
     return false;
 }
@@ -58,7 +58,7 @@ bool UInventoryComponent::IsTileValid_Implementation(FInventorySpaceRequirements
     return false;
 }
 
-bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, AItem*& Item)
+bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, UItemObject*& Item)
 {
     return false;
 }
@@ -68,15 +68,15 @@ int32 UInventoryComponent::TileToIndex_Implementation(FInventorySpaceRequirement
     return int32();
 }
 
-void UInventoryComponent::AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex)
+void UInventoryComponent::AddItemAt_Implementation(UItemObject* ItemObject, int32 TopLeftIndex)
 {
 }
 
-void UInventoryComponent::ForEachIndex_Implementation(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
+void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
 {
 }
 
-void UInventoryComponent::GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems)
+void UInventoryComponent::GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems)
 {
 }
 
@@ -104,7 +104,7 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
         return false;
     }
 
-    int32 MaxStackSize = DefaultItem->MaxStackSize;
+    int32 MaxStackSize = DefaultItem->GetItemObject()->GetMaxStackSize();
     int32* ExistingCount = Items.Find(ItemClass);
 
     if (ExistingCount)
@@ -209,7 +209,7 @@ int32 UInventoryComponent::GetMaxStackSize(TSubclassOf<AItem> ItemClass) const
     if (ItemClass)
     {
         AItem* DefaultItem = ItemClass->GetDefaultObject<AItem>();
-        return DefaultItem ? DefaultItem->MaxStackSize : 1;
+        return DefaultItem ? DefaultItem->GetItemObject()->GetMaxStackSize() : 1;
     }
     return 1;
 }

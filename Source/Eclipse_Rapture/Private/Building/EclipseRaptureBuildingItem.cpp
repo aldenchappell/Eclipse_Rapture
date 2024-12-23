@@ -2,6 +2,7 @@
 #include "Items/Item.h"
 #include "Character/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Items/ItemObject.h"
 
 AEclipseRaptureBuildingItem::AEclipseRaptureBuildingItem()
 {
@@ -163,7 +164,7 @@ void AEclipseRaptureBuildingItem::CheckInventory(FUpgradeRequirements& Requireme
                 AItem* Item = Cast<AItem>(ItemClass->GetDefaultObject());
                 if (Item)
                 {
-                    ItemDisplayName = Item->GetItemDisplayName().ToString();
+                    ItemDisplayName = Item->GetItemObject()->GetItemDisplayName().ToString();
                 }
             }
 
