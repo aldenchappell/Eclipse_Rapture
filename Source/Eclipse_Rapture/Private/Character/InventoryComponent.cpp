@@ -60,10 +60,9 @@ void UInventoryComponent::AddItemAt_Implementation(UItemObject* ItemObject, int3
 {
 }
 
-void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements, const FSimpleDelegate& OnCompleted)
+void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
 {
 }
-
 void UInventoryComponent::GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems)
 {
 }
@@ -71,6 +70,8 @@ void UInventoryComponent::GetAllItems_Implementation(TMap<UItemObject*, FInvento
 #pragma endregion
 
 #pragma region Old Inventory System
+
+
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
 {

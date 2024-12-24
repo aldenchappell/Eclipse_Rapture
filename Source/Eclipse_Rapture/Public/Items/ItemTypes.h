@@ -20,7 +20,8 @@ enum class EUsecaseType : uint8
 	EUT_Hunger UMETA(DisplayName = "Hunger"),
 	EUT_Weapon UMETA(DisplayName = "Weapon"),
 	EUT_Clothing UMETA(DisplayName = "Clothing"),
-	EUT_Key UMETA(DisplayName = "Key")
+	EUT_Key UMETA(DisplayName = "Key"),
+	EUT_Building UMETA(DisplayName = "Building")
 };
 
 UENUM(BlueprintType)

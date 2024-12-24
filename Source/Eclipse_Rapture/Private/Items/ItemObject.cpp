@@ -16,9 +16,9 @@ void UItemObject::Rotate_Implementation()
 {
 }
 
-FInventoryDimensions UItemObject::GetInventoryDimensions_Implementation()
+FInventorySpaceRequirements UItemObject::GetInventorySpaceRequirements_Implementation()
 {
-	return InventoryDimensions;
+	return InventorySpaceRequired;
 }
 
 void UItemObject::SetIsRotated(bool bNewIsRotated)

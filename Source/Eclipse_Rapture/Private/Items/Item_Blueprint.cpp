@@ -11,20 +11,11 @@ AItem_Blueprint::AItem_Blueprint()
 
 void AItem_Blueprint::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
-    if (Character && Character == OverlappingCharacter)
+    if (Character)
     {
-        UBuildingComponent* BuildingComp = Character->FindComponentByClass<UBuildingComponent>();
-        if (BuildingComp)
-        {
-            IBuilderInterface::Execute_SetHasBuildingBlueprint(BuildingComp, true);
-            UE_LOG(LogTemp, Warning, TEXT("Player picked up building blueprint. bHasBuildingBlueprint: %s"), Character->bHasBuildingBlueprint ? TEXT("true") : TEXT("false"));
-            Destroy();
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("BuildingComponent not found!"));
-        }
+        Super::Execute_Interact(this, Character);
     }
+    
 }
 
 

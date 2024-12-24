@@ -59,18 +59,37 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
     int32 Columns = 15;
 
-#pragma region Inventory Interface Implementations
+#pragma region New Inventory Functions
 
-    virtual bool TryAddItem_Implementation(UItemObject* ItemObject) override;
-    virtual bool IsRoomAvailable_Implementation(UItemObject* ItemObject, int32 TopLeftTileIndex) override;
-    virtual bool TryRemoveItem_Implementation(UItemObject* ItemObject) override;
-    virtual void IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements) override;
-    virtual bool IsTileValid_Implementation(FInventorySpaceRequirements Tiling) override;
-    virtual bool GetItemAtIndex_Implementation(int32 Index, UItemObject*& ItemObject) override;
-    virtual int32 TileToIndex_Implementation(FInventorySpaceRequirements Tiling) override;
-    virtual void AddItemAt_Implementation(UItemObject* ItemObject, int32 TopLeftIndex) override;
-    virtual void ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements, const FSimpleDelegate& OnCompleted) override;
-    virtual void GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems) override;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool TryAddItem(UItemObject* ItemObject);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool IsRoomAvailable(UItemObject* ItemObject, int32 TopLeftTileIndex);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool TryRemoveItem(UItemObject* ItemObject);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    void IndexToTile(int32 Index, FInventorySpaceRequirements& Requirements);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    bool IsTileValid(FInventorySpaceRequirements Tiling);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool GetItemAtIndex(int32 Index, UItemObject*& ItemObject);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    int32 TileToIndex(FInventorySpaceRequirements Tiling);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    void AddItemAt(UItemObject* ItemObject, int32 TopLeftIndex);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    void ForEachIndex(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    void GetAllItems(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems);
 #pragma endregion
 
     // Add a single item
