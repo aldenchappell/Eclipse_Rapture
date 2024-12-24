@@ -23,7 +23,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space", meta = (ExposeOnSpawn = "true"))
 	TSubclassOf<class AItem> ItemClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space")
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space", meta = (ExposeOnSpawn = "true"))
 	FInventorySpaceRequirements InventorySpaceRequired;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
@@ -34,11 +34,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
 	ESecondaryItemUseDescriptionType SecondaryItemUseDescriptionType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties", meta = (ExposeOnSpawn = "true"))
-	FInventoryDimensions InventoryDimensions;
-
-
 
 #pragma region UI Implements
 	//Text for using item(Equip, Consume, etc)
@@ -86,11 +81,8 @@ public:
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	FText GetItemDisplayName() const { return ItemDisplayName; }
 
-	UFUNCTION(BlueprintPure, Blueprintcallable)
-	FInventorySpaceRequirements GetInventorySpaceRequirements() const { return InventorySpaceRequired; }
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable)
-	FInventoryDimensions GetInventoryDimensions();
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable)
+	FInventorySpaceRequirements GetInventorySpaceRequirements();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable)
 	class UMaterialInterface* GetItemIcon() const;
@@ -130,9 +122,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Item Properties")
 	UStaticMesh* GetPickupMesh() const { return PickupMesh; }
-
-	UFUNCTION(BlueprintCallable, Category = "Item Properties")
-	FInventorySpaceRequirements GetInventorySpaceRequired() const { return InventorySpaceRequired; }
 
 	UFUNCTION(BlueprintCallable, Category = "Item Properties")
 	TSubclassOf<AItem> GetItemClass() const { return ItemClass; }

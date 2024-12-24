@@ -14,11 +14,12 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 	if (Character)
 	{
 		Character->SpawnItem(WeaponToSpawn);
-
-		if (Character->InventoryComponent)
+		UInventoryComponent* Inventory = Character->GetInventoryComponent();
+		if (Inventory)
 		{
 			//Character->InventoryComponent->AddItemAmount(GetClass(), 1);
-			Character->InventoryComponent->OnInventoryUpdated.Broadcast();
+			Inventory->TryAddItem(ItemObject);
+			Inventory->OnInventoryUpdated.Broadcast();
 		}
 		
 		Destroy();
