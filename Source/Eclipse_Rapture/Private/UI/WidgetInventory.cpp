@@ -1,5 +1,5 @@
 #include "UI/WidgetInventory.h"
-#include "UI/WidgetInventorySlot.h"
+#include "UI/WidgetInventoryGrid.h"
 #include "Components/UniformGridPanel.h"
 #include "Components/UniformGridSlot.h"
 #include "Character/InventoryComponent.h"

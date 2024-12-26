@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "WidgetInventorySlot.generated.h"
+#include "WidgetInventoryGrid.generated.h"
 
 class UImage;
 class UTextBlock;
@@ -13,7 +13,7 @@ class USizeBox;
  * Inventory Slot UI Widget
  */
 UCLASS()
-class ECLIPSE_RAPTURE_API UWidgetInventorySlot : public UUserWidget
+class ECLIPSE_RAPTURE_API UWidgetInventoryGrid : public UUserWidget
 {
     GENERATED_BODY()
 
