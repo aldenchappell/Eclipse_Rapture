@@ -18,6 +18,7 @@ class ECLIPSE_RAPTURE_API UItemObject : public UObject
 	
 public:
 	UItemObject();
+
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Space", meta = (ExposeOnSpawn = "true"))
@@ -71,13 +72,30 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Pickup Properties")
 	FText ItemInteractionPrompt;
 
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Pickup Properties")
+	int32 MinItemDropAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Pickup Properties")
+	int32 MaxItemDropAmount;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item Pickup Properties")
+	void InitializeItemAmount();
+
 #pragma endregion
 
 private:
 
 	UPROPERTY()
 	bool bRotated;
+
+	UPROPERTY()
+	int32 ItemAmount;
+
+	
 public:
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	int32 GetItemAmount() const { return ItemAmount; }
+
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	FText GetItemDisplayName() const { return ItemDisplayName; }
 

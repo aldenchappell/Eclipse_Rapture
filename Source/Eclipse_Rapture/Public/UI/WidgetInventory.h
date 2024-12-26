@@ -5,7 +5,7 @@
 #include "WidgetInventory.generated.h"
 
 class UUniformGridPanel;
-class UWidgetInventorySlot;
+class UWidgetInventoryGrid;
 class UInventoryComponent;
 class AItem;
 
@@ -22,7 +22,7 @@ public:
     void RefreshInventory(UInventoryComponent* PlayerInventory);*/
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))//, meta = (ExposeOnSpawn = "true")))
-    TObjectPtr<class UWidgetInventorySlot> InventorySlot;
+    TObjectPtr<class UWidgetInventoryGrid> InventorySlot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory UI", meta = (ExposeOnSpawn = "true"))
     float TileSize;
