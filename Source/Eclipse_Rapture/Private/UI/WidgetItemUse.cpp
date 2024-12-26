@@ -2,7 +2,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Items/Item.h"
-
+#include "Items/ItemObject.h"
 void UWidgetItemUse::SetItemUseDetails(AItem* Item)
 {
     if (!Item)
@@ -14,9 +14,9 @@ void UWidgetItemUse::SetItemUseDetails(AItem* Item)
     // Set the thumbnail
     if (UseThumbnail)
     {
-        if (Item->ItemUseIcon)
+        if (Item->GetItemObject()->GetItemUseIcon())
         {
-            UseThumbnail->SetBrushFromTexture(Item->ItemUseIcon);
+            UseThumbnail->SetBrushFromTexture(Item->GetItemObject()->GetItemUseIcon());
         }
         else if (DebugPlaceholderTexture)
         {
@@ -27,14 +27,14 @@ void UWidgetItemUse::SetItemUseDetails(AItem* Item)
     // Set the main item use description
     if (ItemUseText)
     {
-        FString MainDescription = UEnum::GetDisplayValueAsText(Item->MainItemUseDescriptionType).ToString();
+        FString MainDescription = UEnum::GetDisplayValueAsText(Item->GetItemObject()->GetMainItemUseDescriptionType()).ToString();
         ItemUseText->SetText(FText::FromString(MainDescription));
     }
 
     // Set the main impact type
     if (ItemImpactText)
     {
-        FString ImpactDescription = UEnum::GetDisplayValueAsText(Item->UseImpactType).ToString();
+        FString ImpactDescription = UEnum::GetDisplayValueAsText(Item->GetItemObject()->GetUseImpactType()).ToString();
         ItemImpactText->SetText(FText::FromString(ImpactDescription));
     }
 }

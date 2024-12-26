@@ -2,7 +2,7 @@
 #include "Components/TextBlock.h"
 #include "Items/Item.h"
 #include "UI/WidgetItemUse.h"
-
+#include "Items/ItemObject.h"
 void UWidgetItemTooltip::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -32,9 +32,9 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 	// Update tooltip text with item details
 	if (ItemNameText)
 	{
-		if (!Item->ItemDisplayName.IsEmpty())
+		if (!Item->GetItemObject()->GetItemDisplayName().IsEmpty())
 		{
-			ItemNameText->SetText(Item->GetItemDisplayName());
+			ItemNameText->SetText(Item->GetItemObject()->GetItemDisplayName());
 		}
 		else
 		{
@@ -44,9 +44,9 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 
 	if (ItemDescriptionText)
 	{
-		if (!Item->ItemDescription.IsEmpty())
+		if (!Item->GetItemObject()->GetItemDescription().IsEmpty())
 		{
-			ItemDescriptionText->SetText(Item->ItemDescription);
+			ItemDescriptionText->SetText(Item->GetItemObject()->GetItemDescription());
 		}
 		else
 		{
@@ -56,9 +56,9 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 
 	if (ItemWeightText)
 	{
-		if (Item->ItemWeight > 0.0f)
+		if (Item->GetItemObject()->GetItemWeight() > 0.0f)
 		{
-			FString WeightString = FString::Printf(TEXT("Weight: %.2f"), Item->ItemWeight);
+			FString WeightString = FString::Printf(TEXT("Weight: %.2f"), Item->GetItemObject()->GetItemWeight());
 			ItemWeightText->SetText(FText::FromString(WeightString));
 		}
 		else

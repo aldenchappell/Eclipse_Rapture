@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Interfaces/IPhysicsComponent.h"
 #include "Character/PlayerMain.h"
+#include "Items/ItemObject.h"
 
 AItem::AItem()
 {
@@ -26,9 +27,7 @@ AItem::AItem()
 	ItemSkeleton = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeleton"));
 	ItemSkeleton->SetupAttachment(ItemMesh);
 
-	ItemWeight = 1.f;
-	ItemDisplayName = FText::FromString("Item");
-	UseActionText = FText::FromString("Use");
+	
 }
 
 void AItem::BeginPlay()
@@ -69,6 +68,8 @@ void AItem::Use(AEclipseRaptureCharacter* Character)
 	if (!bCanBeUsed) return;
 }
 
+
+
 void AItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	APlayerMain* Character = Cast<APlayerMain>(OtherActor);
@@ -87,9 +88,12 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	}
 }
 
-UMaterialInterface* AItem::GetItemIcon() const
+void AItem::SetItemObject(UItemObject* NewItemObject)
 {
-	if (!ItemIcon || !ItemIconRotated) return nullptr;
+	ItemObject = NewItemObject;
+}
 
-	return bRotated ? ItemIconRotated : ItemIcon;
+UItemObject* AItem::GetItemObject_Implementation() const
+{
+	return nullptr;
 }

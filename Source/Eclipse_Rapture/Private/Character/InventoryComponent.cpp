@@ -3,7 +3,7 @@
 #include "UI/WidgetInventory.h" // Include for communication with the widget
 #include "Engine/World.h"
 #include "Kismet/KismetArrayLibrary.h"
-
+#include "Items/ItemObject.h"
 UInventoryComponent::UInventoryComponent()
 {
     Capacity = 20; // Capacity is no longer enforced directly
@@ -12,65 +12,65 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
-
-    // Ensure the InventoryItems array matches the grid size
-    InventoryItems.Init(nullptr, Rows * Columns);
-
-    // Ensure we have a valid owner
-    AActor* Owner = GetOwner();
-    if (!Owner)
-    {
-        UE_LOG(LogTemp, Error, TEXT("InventoryComponent has no owner!"));
-        return;
-    }
-
-    InventoryItems.SetNum(Rows * Columns);
-
-    // Populate items
-    PopulateDefaultItems();
-
-    OnInventoryUpdated.Broadcast(); // Notify the UI
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    if (bIsDirty)
-    {
-		bIsDirty = false;
-		OnInventoryUpdated.Broadcast();
-    }
 }
 
+#pragma region New Inventory Functions and Variables
 
 
-void UInventoryComponent::PopulateDefaultItems()
+bool UInventoryComponent::TryAddItem_Implementation(UItemObject* ItemObject)
 {
-    for (const FDefaultItem& DefaultItem : DefaultItems)
-    {
-        if (DefaultItem.Item)
-        {
-            for (int32 i = 0; i < DefaultItem.Quantity; ++i)
-            {
-                // Spawn an instance of the item
-                AItem* SpawnedItem = GetWorld()->SpawnActor<AItem>(DefaultItem.Item);
-                if (SpawnedItem)
-                {
-                    bool bSuccess = TryAddItem(SpawnedItem);
-                    if (!bSuccess)
-                    {
-                        UE_LOG(LogTemp, Error, TEXT("Failed to add default item: %s"), *DefaultItem.Item->GetName());
-                        SpawnedItem->Destroy(); // Clean up if not added
-                    }
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("Failed to spawn default item: %s"), *DefaultItem.Item->GetName());
-                }
-            }
-        }
-    }
+    return false;
 }
+
+bool UInventoryComponent::IsRoomAvailable_Implementation(UItemObject* ItemObject, int32 TopLeftTileIndex)
+{
+    return false;
+}
+
+bool UInventoryComponent::TryRemoveItem_Implementation(UItemObject* ItemObject)
+{
+    return false;
+}
+
+void UInventoryComponent::IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements)
+{
+}
+
+bool UInventoryComponent::IsTileValid_Implementation(FInventorySpaceRequirements Tiling)
+{
+    return false;
+}
+
+bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, UItemObject*& Item)
+{
+    return false;
+}
+
+int32 UInventoryComponent::TileToIndex_Implementation(FInventorySpaceRequirements Tiling)
+{
+    return int32();
+}
+
+void UInventoryComponent::AddItemAt_Implementation(UItemObject* ItemObject, int32 TopLeftIndex)
+{
+}
+
+void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
+{
+}
+void UInventoryComponent::GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems)
+{
+}
+
+#pragma endregion
+
+#pragma region Old Inventory System
+
 
 
 bool UInventoryComponent::AddItem(TSubclassOf<AItem> ItemClass)
@@ -93,7 +93,7 @@ bool UInventoryComponent::AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amou
         return false;
     }
 
-    int32 MaxStackSize = DefaultItem->MaxStackSize;
+    int32 MaxStackSize = DefaultItem->GetItemObject()->GetMaxStackSize();
     int32* ExistingCount = Items.Find(ItemClass);
 
     if (ExistingCount)
@@ -198,7 +198,7 @@ int32 UInventoryComponent::GetMaxStackSize(TSubclassOf<AItem> ItemClass) const
     if (ItemClass)
     {
         AItem* DefaultItem = ItemClass->GetDefaultObject<AItem>();
-        return DefaultItem ? DefaultItem->MaxStackSize : 1;
+        return DefaultItem ? DefaultItem->GetItemObject()->GetMaxStackSize() : 1;
     }
     return 1;
 }
@@ -211,48 +211,3 @@ bool UInventoryComponent::CheckForItem(TSubclassOf<AItem> ItemClass)
 
 #pragma endregion
 
-bool UInventoryComponent::TryAddItem_Implementation(AItem* Item)
-{
-    return false;
-}
-
-bool UInventoryComponent::IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex)
-{
-    return false;
-}
-
-bool UInventoryComponent::TryRemoveItem_Implementation(AItem* Item)
-{
-    return false;
-}
-
-void UInventoryComponent::IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements)
-{
-}
-
-bool UInventoryComponent::IsTileValid_Implementation(FInventorySpaceRequirements Tiling)
-{
-    return false;
-}
-
-bool UInventoryComponent::GetItemAtIndex_Implementation(int32 Index, AItem*& Item)
-{
-    return false;
-}
-
-int32 UInventoryComponent::TileToIndex_Implementation(FInventorySpaceRequirements Tiling)
-{
-    return int32();
-}
-
-void UInventoryComponent::AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex)
-{
-}
-
-void UInventoryComponent::ForEachIndex_Implementation(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
-{
-}
-
-void UInventoryComponent::GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems)
-{
-}

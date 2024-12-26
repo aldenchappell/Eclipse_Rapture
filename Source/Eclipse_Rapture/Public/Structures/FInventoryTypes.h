@@ -27,15 +27,3 @@ struct FInventoryTile
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
     FVector2D YTiling;
 };
-
-USTRUCT(BlueprintType)
-struct FInventoryDimensions
-{
-    GENERATED_BODY()
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
-    int32 DimensionsX;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
-    int32 DimensionsY;
-};

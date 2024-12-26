@@ -39,17 +39,19 @@ class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent, public I
 public:
     UInventoryComponent();
     virtual void BeginPlay() override;
-
-    
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 #pragma region New Inventory Functions and Variables
+
+    // Items the player starts with, including specified quantities
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
+    TArray<FDefaultItem> DefaultItems;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
     bool bIsDirty = false;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
-	TArray<AItem*> InventoryItems;
+	TArray<UItemObject*> InventoryItems;
 
     UPROPERTY(EditAnywhere,BlueprintReadonly, Category = "New Inventory")
     int32 Rows = 6;
@@ -57,18 +59,37 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
     int32 Columns = 15;
 
-#pragma region Inventory Interface Implementations
+#pragma region New Inventory Functions
 
-    virtual bool TryAddItem_Implementation(AItem* Item) override;
-    virtual bool IsRoomAvailable_Implementation(AItem* Item, int32 TopLeftTileIndex) override;
-    virtual bool TryRemoveItem_Implementation(AItem* Item) override;
-    virtual void IndexToTile_Implementation(int32 Index, FInventorySpaceRequirements& Requirements) override;
-    virtual bool IsTileValid_Implementation(FInventorySpaceRequirements Tiling) override;
-    virtual bool GetItemAtIndex_Implementation(int32 Index, AItem*& Item) override;
-    virtual int32 TileToIndex_Implementation(FInventorySpaceRequirements Tiling) override;
-    virtual void AddItemAt_Implementation(AItem* Item, int32 TopLeftIndex) override;
-    virtual void ForEachIndex_Implementation(class AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements) override;
-    virtual void GetAllItems_Implementation(TMap<AItem*, FInventorySpaceRequirements>& AllItems) override;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool TryAddItem(UItemObject* ItemObject);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool IsRoomAvailable(UItemObject* ItemObject, int32 TopLeftTileIndex);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool TryRemoveItem(UItemObject* ItemObject);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    void IndexToTile(int32 Index, FInventorySpaceRequirements& Requirements);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    bool IsTileValid(FInventorySpaceRequirements Tiling);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool GetItemAtIndex(int32 Index, UItemObject*& ItemObject);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    int32 TileToIndex(FInventorySpaceRequirements Tiling);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    void AddItemAt(UItemObject* ItemObject, int32 TopLeftIndex);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    void ForEachIndex(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    void GetAllItems(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems);
 #pragma endregion
 
     // Add a single item
@@ -87,9 +108,7 @@ public:
     UFUNCTION(BlueprintCallable)
     bool RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
 
-    // Items the player starts with, including specified quantities
-    UPROPERTY(EditDefaultsOnly, Category = "Inventory")
-    TArray<FDefaultItem> DefaultItems;
+   
 
     // Inventory capacity (maximum number of item types)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
@@ -122,8 +141,5 @@ public:
 private:
     // Helper function to get max stack size of an item type
     int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
-
-    UFUNCTION()
-    void PopulateDefaultItems();
     
 };

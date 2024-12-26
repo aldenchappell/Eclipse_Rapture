@@ -20,7 +20,8 @@ enum class EUsecaseType : uint8
 	EUT_Hunger UMETA(DisplayName = "Hunger"),
 	EUT_Weapon UMETA(DisplayName = "Weapon"),
 	EUT_Clothing UMETA(DisplayName = "Clothing"),
-	EUT_Key UMETA(DisplayName = "Key")
+	EUT_Key UMETA(DisplayName = "Key"),
+	EUT_Building UMETA(DisplayName = "Building")
 };
 
 UENUM(BlueprintType)
@@ -39,7 +40,10 @@ enum class EMainItemUseDescriptionType : uint8
 	EMDT_Health UMETA(DisplayName = "Health Restoration"),
 	EMDT_Ammo UMETA(DisplayName = "Ammo Restoration"),
 	EMDT_Weapon UMETA(DisplayName = "Combat"),
-	EMDT_Key UMETA(DisplayName = "Key")
+	EMDT_Key UMETA(DisplayName = "Key"),
+	EMDT_Resource UMETA(DisplayName = "Resource"),
+	EMDT_Building UMETA(DisplayName = "Building"),
+	EMDT_Clothing UMETA(DisplayName = "Clothing")
 };
 
 UENUM(BlueprintType)
@@ -47,5 +51,6 @@ enum class ESecondaryItemUseDescriptionType : uint8
 {
 	ESMDT_None UMETA(DisplayName = "None"),
 	ESMDT_Bleeding UMETA(DisplayName = "Reduce Bleeding"),
-	ESMDT_BulletDamage UMETA(DisplayName = "Inflicts Bullet Damage")
+	ESMDT_BulletDamage UMETA(DisplayName = "Inflicts Bullet Damage"),
+	ESMDT_BulletProtection UMETA(DisplayName = "Provides Bullet Damage Protection")
 };
