@@ -63,9 +63,6 @@ void UInventoryComponent::AddItemAt_Implementation(UItemObject* ItemObject, int3
 void UInventoryComponent::ForEachIndex_Implementation(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements)
 {
 }
-void UInventoryComponent::GetAllItems_Implementation(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems)
-{
-}
 
 #pragma endregion
 

@@ -25,5 +25,9 @@ class ECLIPSE_RAPTURE_API IInventoryInterface
 
 public:
 
-	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+	void GetAllItems(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+	void GetAmountOfItem(UItemObject* ItemObject, int32& Amount);
 };
