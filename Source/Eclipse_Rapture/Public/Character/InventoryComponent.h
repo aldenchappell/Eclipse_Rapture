@@ -88,8 +88,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
     void ForEachIndex(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
 
-    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
-    void GetAllItems(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems);
+   
 #pragma endregion
 
     // Add a single item

@@ -36,7 +36,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Private", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<class UItemObject> ItemObject;
-
-	UPROPERTY(BlueprintReadonly, Category = "Private | UI", meta = (BindWidget))
-	TObjectPtr<class UTextBlock> ItemCountText;
 };
