@@ -1,4 +1,4 @@
-#include "UI/WidgetInventoryGrid.h"
+#include "UI/WidgetInventorySlot.h"
 #include "UI/WidgetItemTooltip.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -9,15 +9,15 @@
 #include "Items/ItemObject.h"
 
 
-void UWidgetInventoryGrid::CreateGridSegments_Implementation()
+void UWidgetInventorySlot::CreateGridSegments_Implementation()
 {
 }
 
-void UWidgetInventoryGrid::InitializeSlot_Implementation(UInventoryComponent* Inventory, float TileSize)
+void UWidgetInventorySlot::InitializeSlot_Implementation(UInventoryComponent* Inventory, float TileSize)
 {
 }
 
-void UWidgetInventoryGrid::SetItemDetails(AItem* Item, int32 Quantity)
+void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
 {
     if (!Item) //|| !ItemThumbnail)
     {
@@ -41,13 +41,13 @@ void UWidgetInventoryGrid::SetItemDetails(AItem* Item, int32 Quantity)
     OccupyingItem = Item;
 }
 
-void UWidgetInventoryGrid::Refresh_Implementation()
+void UWidgetInventorySlot::Refresh_Implementation()
 {
 }
 
  
 
- void UWidgetInventoryGrid::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+ void UWidgetInventorySlot::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
     if (!bIsOccupied)
     {
@@ -56,7 +56,7 @@ void UWidgetInventoryGrid::Refresh_Implementation()
     }
 }
 
- void UWidgetInventoryGrid::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+ void UWidgetInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (OccupyingItem && TooltipClass)
     {
@@ -71,7 +71,7 @@ void UWidgetInventoryGrid::Refresh_Implementation()
     }
 }
 
-void UWidgetInventoryGrid::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+void UWidgetInventorySlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
     if (TooltipInstance)
     {
@@ -81,7 +81,7 @@ void UWidgetInventoryGrid::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
     }
 }
 
-FReply UWidgetInventoryGrid::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+FReply UWidgetInventorySlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
     if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton) && OccupyingItem)
     {
@@ -90,7 +90,7 @@ FReply UWidgetInventoryGrid::NativeOnMouseButtonDown(const FGeometry& InGeometry
     return FReply::Unhandled();
 }
 
-void UWidgetInventoryGrid::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+void UWidgetInventorySlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
     if (OccupyingItem)
     {
@@ -104,11 +104,11 @@ void UWidgetInventoryGrid::NativeOnDragDetected(const FGeometry& InGeometry, con
     }
 }
 
-bool UWidgetInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+bool UWidgetInventorySlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
     if (InOperation && InOperation->Payload)
     {
-        UWidgetInventoryGrid* DraggedSlot = Cast<UWidgetInventoryGrid>(InOperation->Payload);
+        UWidgetInventorySlot* DraggedSlot = Cast<UWidgetInventorySlot>(InOperation->Payload);
         if (DraggedSlot && DraggedSlot->OccupyingItem)
         {
             SetItemDetails(DraggedSlot->OccupyingItem, 1);
@@ -119,7 +119,7 @@ bool UWidgetInventoryGrid::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 }
 
 
-void UWidgetInventoryGrid::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+void UWidgetInventorySlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
     // Reset the color or visual feedback for the slot
    /* if (ItemThumbnail)
@@ -128,7 +128,7 @@ void UWidgetInventoryGrid::NativeOnDragLeave(const FDragDropEvent& InDragDropEve
     }*/
 }
 
-void UWidgetInventoryGrid::ResetCreatedTooltips()
+void UWidgetInventorySlot::ResetCreatedTooltips()
 {
     if (CreatedTooltips.Num() <= 0) return;
 

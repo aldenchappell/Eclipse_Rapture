@@ -22,7 +22,7 @@ public:
     void RefreshInventory(UInventoryComponent* PlayerInventory);*/
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))//, meta = (ExposeOnSpawn = "true")))
-    TObjectPtr<class UWidgetInventoryGrid> InventorySlot;
+    TObjectPtr<class UWidgetInventorySlot> InventorySlot;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory UI", meta = (ExposeOnSpawn = "true"))
     float TileSize;
