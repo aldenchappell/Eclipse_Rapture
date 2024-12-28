@@ -60,14 +60,15 @@ void AInteractableDoor::Unlock_Implementation(UInventoryComponent* CharacterInve
 
 	if (RequiredItemToOpen)
 	{
-		if (CharacterInventory->CheckForItem(RequiredItemToOpen))
+		//TODO: Come back here and fix for new inventory system.
+		/*if (CharacterInventory->CheckForItem(RequiredItemToOpen))
 		{
 			bIsLocked = false;
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("You need a key to unlock this door"));
-		}
+		}*/
 	}
 	
 }

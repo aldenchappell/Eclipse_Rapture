@@ -53,11 +53,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
 	TArray<UItemObject*> InventoryItems;
 
-    UPROPERTY(EditAnywhere,BlueprintReadonly, Category = "New Inventory")
-    int32 Rows = 6;
+    UPROPERTY(BlueprintReadWrite, Category = "Inventory")
+    TMap<TSubclassOf<UItemObject>, int32> ItemCounts;
 
-    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
-    int32 Columns = 15;
 
 #pragma region New Inventory Functions
 
@@ -88,54 +86,24 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
     void ForEachIndex(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "New Inventory")
+    int32 Rows = 6;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "New Inventory")
+    int32 Columns = 15;
    
 #pragma endregion
-
-    // Add a single item
-    UFUNCTION(BlueprintCallable)
-    bool AddItem(TSubclassOf<AItem> ItemClass);
-
-    // Add a specified amount of an item
-    UFUNCTION(BlueprintCallable)
-    bool AddItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
-
-    // Remove a single item
-    UFUNCTION(BlueprintCallable)
-    bool RemoveItem(TSubclassOf<AItem> ItemClass);
-
-    // Remove multiple items
-    UFUNCTION(BlueprintCallable)
-    bool RemoveItemAmount(TSubclassOf<AItem> ItemClass, int32 Amount);
-
-   
-
-    // Inventory capacity (maximum number of item types)
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory | Inventory Properties")
-    int32 Capacity;
 
     // Delegate for inventory updates
     UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
     FOnInventoryUpdated OnInventoryUpdated;
 
-    // Map of item types and their quantities
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory | Inventory Properties")
-    TMap<TSubclassOf<AItem>, int32> Items;
-
-    // Array to store actual item instances
-    UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory | Inventory Properties")
-    TArray<AItem*> ItemInstances;
-
-    // Check if the player has at least one of the specified item
-    UFUNCTION(BlueprintPure)
-    bool CheckForItem(TSubclassOf<AItem> ItemClass);
-
-    // Get the quantity of a specific item type in the inventory
-    UFUNCTION(BlueprintPure)
-    int32 GetItemAmount(TSubclassOf<AItem> ItemClass);
-
     // Get an instance of a specific item type
-    UFUNCTION(BlueprintPure)
+    UFUNCTION(BlueprintPure, BlueprintCallable)
     AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	int32 GetTotalInventorySlots() const { return Rows * Columns; }
 
 private:
     // Helper function to get max stack size of an item type

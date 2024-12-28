@@ -29,6 +29,16 @@ void UItemObject::InitializeItemAmount_Implementation()
 	ItemAmount = FMath::RandRange(MinItemDropAmount, MaxItemDropAmount);
 }
 
+void UItemObject::SetItemAmount(int32 NewAmount)
+{
+	ItemAmount = NewAmount;
+}
+
+void UItemObject::SetItemCount(int32 NewCount)
+{
+	ItemCount = NewCount;
+}
+
 void UItemObject::SetIsRotated(bool bNewIsRotated)
 {
 	bRotated = bNewIsRotated;

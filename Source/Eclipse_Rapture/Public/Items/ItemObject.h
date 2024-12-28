@@ -11,6 +11,8 @@
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnItemCountIncrease);
 UCLASS(Blueprintable)
 class ECLIPSE_RAPTURE_API UItemObject : public UObject
 {
@@ -18,6 +20,9 @@ class ECLIPSE_RAPTURE_API UItemObject : public UObject
 	
 public:
 	UItemObject();
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Item Properties")
+	FOnItemCountIncrease OnItemCountIncrease;
 
 protected:
 
@@ -81,6 +86,14 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item Pickup Properties")
 	void InitializeItemAmount();
 
+	//TODO: MOVE THESE VARIABLES TO PRIVATE!!
+	//how many of this object is rewarded to the player/is in this stack of item(s)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 ItemAmount;
+
+	//how many items are in this stack
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	int32 ItemCount;
 #pragma endregion
 
 private:
@@ -88,13 +101,21 @@ private:
 	UPROPERTY()
 	bool bRotated;
 
-	UPROPERTY()
-	int32 ItemAmount;
+	
 
 	
 public:
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	int32 GetItemAmount() const { return ItemAmount; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemAmount(int32 NewAmount);
+
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	int32 GetItemCount() const { return ItemCount; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetItemCount(int32 NewCount);
 
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	FText GetItemDisplayName() const { return ItemDisplayName; }
