@@ -115,7 +115,8 @@ void AEclipseRaptureBuildingItem::DeductInventoryItems(FUpgradeRequirements& Req
         TSubclassOf<AItem> ItemClass = Requirements.RequiredItems[Index];
         int32 QuantityToRemove = Requirements.RequiredQuantities[Index];
 
-        UpgradeInfo.UpgraderInventory->RemoveItemAmount(ItemClass, QuantityToRemove);
+        //TODO: Come back here and fix for new inventory system.
+        //UpgradeInfo.UpgraderInventory->RemoveItemAmount(ItemClass, QuantityToRemove);
         FString RemovedItemMessage = FString::Printf(
             TEXT("Removed %d of item: %s"),
             QuantityToRemove,
@@ -152,35 +153,36 @@ void AEclipseRaptureBuildingItem::CheckInventory(FUpgradeRequirements& Requireme
         TSubclassOf<AItem> ItemClass = Requirements.RequiredItems[Index];
         int32 RequiredQuantity = Requirements.RequiredQuantities[Index];
 
+        //TODO: Come back here and fix for new inventory system.
         // Check if the inventory contains enough of the required item
-        if (!UpgradeInfo.UpgraderInventory->CheckForItem(ItemClass) ||
-            UpgradeInfo.UpgraderInventory->GetItemAmount(ItemClass) < RequiredQuantity)
-        {
-            // Get the item display name
-            FString ItemDisplayName = "Unknown Item";
-            if (ItemClass)
-            {
-                // Create a default instance of the item to access its display name
-                AItem* Item = Cast<AItem>(ItemClass->GetDefaultObject());
-                if (Item)
-                {
-                    ItemDisplayName = Item->GetItemObject()->GetItemDisplayName().ToString();
-                }
-            }
+        //if (!UpgradeInfo.UpgraderInventory->CheckForItem(ItemClass) ||
+        //    UpgradeInfo.UpgraderInventory->GetItemAmount(ItemClass) < RequiredQuantity)
+        //{
+        //    // Get the item display name
+        //    FString ItemDisplayName = "Unknown Item";
+        //    if (ItemClass)
+        //    {
+        //        // Create a default instance of the item to access its display name
+        //        AItem* Item = Cast<AItem>(ItemClass->GetDefaultObject());
+        //        if (Item)
+        //        {
+        //            ItemDisplayName = Item->GetItemObject()->GetItemDisplayName().ToString();
+        //        }
+        //    }
 
-            // Create the error message
-            FString MissingItemMessage = FString::Printf(
-                TEXT("Missing %d of item: %s"),
-                RequiredQuantity,
-                *ItemDisplayName
-            );
+        //    // Create the error message
+        //    FString MissingItemMessage = FString::Printf(
+        //        TEXT("Missing %d of item: %s"),
+        //        RequiredQuantity,
+        //        *ItemDisplayName
+        //    );
 
-            // Log and update the result
-            UE_LOG(LogTemp, Warning, TEXT("%s"), *MissingItemMessage);
-            Result.bUpgradeSuccessful = false;
-            Result.UpgradeResultMessage = FText::FromString(MissingItemMessage);
-            return;
-        }
+        //    // Log and update the result
+        //    UE_LOG(LogTemp, Warning, TEXT("%s"), *MissingItemMessage);
+        //    Result.bUpgradeSuccessful = false;
+        //    Result.UpgradeResultMessage = FText::FromString(MissingItemMessage);
+        //    return;
+        //}
     }
 }
 
