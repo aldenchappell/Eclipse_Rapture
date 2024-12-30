@@ -32,10 +32,10 @@ void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
 
    //     AdjustSlotSize(Item->InventorySpaceRequired.RowsRequired, Item->InventorySpaceRequired.ColumnsRequired);
 
-        UE_LOG(LogTemp, Log, TEXT("Item set: %s, Quantity: %d, Rows: %d, Columns: %d"),
-               *Item->GetName(), Quantity,
-               Item->GetItemObject()->GetInventorySpaceRequirements().RowsRequired,
-               Item->GetItemObject()->GetInventorySpaceRequirements().ColumnsRequired);
+       /* UE_LOG(LogTemp, Log, TEXT("Item set: %s, Quantity: %d, Rows: %d, Columns: %d"),
+               *Item->GetDisplayName(), Quantity,
+               Item->GetInventorySpaceRequirements().RowsRequired,
+               ItemGetInventorySpaceRequirements().ColumnsRequired);*/
 
     bIsOccupied = true;
     OccupyingItem = Item;

@@ -3,3 +3,7 @@
 
 #include "UI/WidgetItem.h"
 
+void UWidgetItem::SetItem(AItem* NewItem)
+{
+	Item = NewItem;
+}
