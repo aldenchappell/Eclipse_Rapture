@@ -9,7 +9,7 @@
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemoved, class UItemObject*, ItemObject);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRemoved, class AItem*, Item);
 UCLASS()
 class ECLIPSE_RAPTURE_API UWidgetItem : public UUserWidget
 {
@@ -23,6 +23,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<class UImage> ItemImage;
 
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ItemCountText;
+
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Private")
 	FOnRemoved OnRemoved;
 
@@ -34,6 +37,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private | Design")
 	FVector2D Size;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Private", meta = (ExposeOnSpawn = "true"))
-	TObjectPtr<class UItemObject> ItemObject;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private", meta = (ExposeOnSpawn = "true"))
+	TObjectPtr<class AItem> Item;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Private", meta = (ExposeOnSpawn = "true"))
+	int32 ItemCount;
+
+public:
+
+	UFUNCTION(BlueprintCallable)
+	void SetItem(class AItem* NewItem);
 };

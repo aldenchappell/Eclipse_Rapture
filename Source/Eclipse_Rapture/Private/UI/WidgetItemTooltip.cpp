@@ -32,9 +32,9 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 	// Update tooltip text with item details
 	if (ItemNameText)
 	{
-		if (!Item->GetItemObject()->GetItemDisplayName().IsEmpty())
+		if (!Item->GetItemDisplayName().IsEmpty())
 		{
-			ItemNameText->SetText(Item->GetItemObject()->GetItemDisplayName());
+			ItemNameText->SetText(Item->GetItemDisplayName());
 		}
 		else
 		{
@@ -44,9 +44,9 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 
 	if (ItemDescriptionText)
 	{
-		if (!Item->GetItemObject()->GetItemDescription().IsEmpty())
+		if (!Item->GetItemDescription().IsEmpty())
 		{
-			ItemDescriptionText->SetText(Item->GetItemObject()->GetItemDescription());
+			ItemDescriptionText->SetText(Item->GetItemDescription());
 		}
 		else
 		{
@@ -56,9 +56,9 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 
 	if (ItemWeightText)
 	{
-		if (Item->GetItemObject()->GetItemWeight() > 0.0f)
+		if (Item->GetItemWeight() > 0.0f)
 		{
-			FString WeightString = FString::Printf(TEXT("Weight: %.2f"), Item->GetItemObject()->GetItemWeight());
+			FString WeightString = FString::Printf(TEXT("Weight: %.2f"), Item->GetItemWeight());
 			ItemWeightText->SetText(FText::FromString(WeightString));
 		}
 		else

@@ -141,7 +141,7 @@ UMaterialInterface* AWeaponBase::GetThumbnailTexture()
         const AWeaponPickup* PickupDefault = PickupClass->GetDefaultObject<AWeaponPickup>();
         if (PickupDefault)
         {
-            return PickupDefault->GetItemObject()->GetItemIcon();
+            return PickupDefault->GetItemIcon();
         }
     }
     return nullptr;

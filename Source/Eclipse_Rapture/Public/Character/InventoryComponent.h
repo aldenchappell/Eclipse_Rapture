@@ -51,22 +51,22 @@ public:
     bool bIsDirty = false;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
-	TArray<UItemObject*> InventoryItems;
+	TArray<AItem*> InventoryItems;
 
     UPROPERTY(BlueprintReadWrite, Category = "Inventory")
-    TMap<TSubclassOf<UItemObject>, int32> ItemCounts;
+    TMap<TSubclassOf<AItem>, int32> ItemCounts;
 
 
 #pragma region New Inventory Functions
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool TryAddItem(UItemObject* ItemObject);
+    bool TryAddItem(AItem* Item);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool IsRoomAvailable(UItemObject* ItemObject, int32 TopLeftTileIndex);
+    bool IsRoomAvailable(AItem* Item, int32 TopLeftTileIndex);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool TryRemoveItem(UItemObject* ItemObject);
+    bool TryRemoveItem(AItem* Item);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
     void IndexToTile(int32 Index, FInventorySpaceRequirements& Requirements);
@@ -75,16 +75,16 @@ public:
     bool IsTileValid(FInventorySpaceRequirements Tiling);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool GetItemAtIndex(int32 Index, UItemObject*& ItemObject);
+    bool GetItemAtIndex(int32 Index, AItem*& Item);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
     int32 TileToIndex(FInventorySpaceRequirements Tiling);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    void AddItemAt(UItemObject* ItemObject, int32 TopLeftIndex);
+    void AddItemAt(AItem* Item, int32 TopLeftIndex);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    void ForEachIndex(UItemObject* ItemObject, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
+    void ForEachIndex(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "New Inventory")
     int32 Rows = 6;
@@ -98,15 +98,16 @@ public:
     UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
     FOnInventoryUpdated OnInventoryUpdated;
 
-    // Get an instance of a specific item type
-    UFUNCTION(BlueprintPure, BlueprintCallable)
-    AItem* GetItemInstance(TSubclassOf<AItem> ItemClass);
-
     UFUNCTION(BlueprintPure, BlueprintCallable)
 	int32 GetTotalInventorySlots() const { return Rows * Columns; }
 
-private:
     // Helper function to get max stack size of an item type
     int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable)
+	int32 FindTotalAmountOfItem(TSubclassOf<AItem> ItemClass, bool& ItemFound) const;
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	bool IsItemInInventory(TSubclassOf<AItem> ItemClass) const;
     
 };
