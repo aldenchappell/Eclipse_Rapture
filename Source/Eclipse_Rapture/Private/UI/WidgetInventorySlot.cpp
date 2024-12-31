@@ -13,7 +13,7 @@ void UWidgetInventorySlot::CreateGridSegments_Implementation()
 {
 }
 
-void UWidgetInventorySlot::InitializeSlot_Implementation(UInventoryComponent* Inventory, float TileSize)
+void UWidgetInventorySlot::InitializeSlot_Implementation(UInventoryComponent* Inventory, float NewTileSize)
 {
 }
 
@@ -55,6 +55,10 @@ void UWidgetInventorySlot::Refresh_Implementation()
         //ItemThumbnail->SetColorAndOpacity(FLinearColor::Green);
     }
 }
+
+ void UWidgetInventorySlot::OnItemRemoved_Implementation(AItem* Item)
+ {
+ }
 
  void UWidgetInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {

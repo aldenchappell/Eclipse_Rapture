@@ -42,12 +42,18 @@ protected:
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
-    void InitializeSlot(UInventoryComponent* Inventory, float TileSize);
+    void InitializeSlot(UInventoryComponent* Inventory, float NewTileSize);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
     void CreateGridSegments();
 
-//private:
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
+    void OnItemRemoved(AItem* Item);
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory Properties")
+    float TileSize;
+
+private:
     /** State of the slot */
     bool bIsOccupied = false;
 
@@ -58,4 +64,8 @@ protected:
     UWidgetItemTooltip* TooltipInstance = nullptr;
 	TArray<UWidgetItemTooltip*> CreatedTooltips;
 
+public:
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	float GetTileSize() const { return TileSize; }
 };
