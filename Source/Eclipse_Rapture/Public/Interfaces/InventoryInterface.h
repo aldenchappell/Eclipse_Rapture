@@ -7,6 +7,7 @@
 #include "UObject/Interface.h"
 #include "InventoryInterface.generated.h"
 
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UInventoryInterface : public UInterface
@@ -26,8 +27,8 @@ class ECLIPSE_RAPTURE_API IInventoryInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-	void GetAllItems(TMap<UItemObject*, FInventorySpaceRequirements>& AllItems);
+	void GetAllItems(TMap<AItem*, FInventorySpaceRequirements>& AllItems);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-	void GetAmountOfItem(UItemObject* ItemObject, int32& Amount);
+	void GetAmountOfItem(TSubclassOf<AItem> ItemClass, int32& Amount);
 };

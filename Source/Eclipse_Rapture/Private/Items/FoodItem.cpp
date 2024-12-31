@@ -24,9 +24,10 @@ void AFoodItem::Use(AEclipseRaptureCharacter* Character)
 		if (Character->GetHealthComponent()->GetCurrentSatiety()
 			< Character->GetHealthComponent()->MaxSatiety)
 		{
+			//TODO: Come back here and fix for new inventory system.
 			if (OwningInventory)
 			{
-				OwningInventory->RemoveItem(GetClass());
+				OwningInventory->TryRemoveItem(this);
 			}
 			Character->GetHealthComponent()->HealSatiety(FoodSatietyHealAmount);
 		}

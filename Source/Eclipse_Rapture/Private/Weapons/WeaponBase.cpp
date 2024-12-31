@@ -47,23 +47,26 @@ void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
 {
     if (!PlayerInventory || !RequiredAmmo) return;
 
+    //TODO: Come back here and fix for new inventory system.
     // Get the current amount of ammo available in the player's inventory
-    int32 InventoryAmmo = PlayerInventory->GetItemAmount(RequiredAmmo);
+    //int32 InventoryAmmo = PlayerInventory->GetItemAmount(RequiredAmmo);
 
     // Calculate the remaining space in the magazine
     int32 AmmoNeeded = MaxMagazineSize - CurrentAmmo;
 
+    //TODO: Come back here and fix for new inventory system.
     // Determine the actual amount of ammo to load (minimum of needed ammo and available inventory ammo)
-    int32 AmmoToLoad = FMath::Min(AmmoNeeded, InventoryAmmo);
+   // int32 AmmoToLoad = FMath::Min(AmmoNeeded, InventoryAmmo);
 
     // If there is ammo to load, add it to the current magazine and update the inventory
-    if (AmmoToLoad > 0)
-    {
-        CurrentAmmo += AmmoToLoad;
+    //if (AmmoToLoad > 0)
+    //{
+    //    CurrentAmmo += AmmoToLoad;
 
-        // Remove the used ammo from the player's inventory
-        PlayerInventory->RemoveItemAmount(RequiredAmmo, AmmoToLoad);
-    }
+    //    //TODO: Come back here and fix for new inventory system.
+    //    // Remove the used ammo from the player's inventory
+    //    //PlayerInventory->RemoveItemAmount(RequiredAmmo, AmmoToLoad);
+    //}
 
     // Ensure the weapon is ready to fire if there's any ammo in the magazine
     SetCanFire(true);
@@ -138,7 +141,7 @@ UMaterialInterface* AWeaponBase::GetThumbnailTexture()
         const AWeaponPickup* PickupDefault = PickupClass->GetDefaultObject<AWeaponPickup>();
         if (PickupDefault)
         {
-            return PickupDefault->GetItemObject()->GetItemIcon();
+            return PickupDefault->GetItemIcon();
         }
     }
     return nullptr;

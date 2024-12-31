@@ -14,9 +14,9 @@ void UWidgetItemUse::SetItemUseDetails(AItem* Item)
     // Set the thumbnail
     if (UseThumbnail)
     {
-        if (Item->GetItemObject()->GetItemUseIcon())
+        if (Item->GetItemUseIcon())
         {
-            UseThumbnail->SetBrushFromTexture(Item->GetItemObject()->GetItemUseIcon());
+            UseThumbnail->SetBrushFromTexture(Item->GetItemUseIcon());
         }
         else if (DebugPlaceholderTexture)
         {
@@ -27,14 +27,14 @@ void UWidgetItemUse::SetItemUseDetails(AItem* Item)
     // Set the main item use description
     if (ItemUseText)
     {
-        FString MainDescription = UEnum::GetDisplayValueAsText(Item->GetItemObject()->GetMainItemUseDescriptionType()).ToString();
+        FString MainDescription = UEnum::GetDisplayValueAsText(Item->GetMainItemUseDescriptionType()).ToString();
         ItemUseText->SetText(FText::FromString(MainDescription));
     }
 
     // Set the main impact type
     if (ItemImpactText)
     {
-        FString ImpactDescription = UEnum::GetDisplayValueAsText(Item->GetItemObject()->GetUseImpactType()).ToString();
+        FString ImpactDescription = UEnum::GetDisplayValueAsText(Item->GetUseImpactType()).ToString();
         ItemImpactText->SetText(FText::FromString(ImpactDescription));
     }
 }

@@ -18,7 +18,7 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 		if (Inventory)
 		{
 			//Character->InventoryComponent->AddItemAmount(GetClass(), 1);
-			Inventory->TryAddItem(ItemObject);
+			Inventory->TryAddItem(this);
 			Inventory->OnInventoryUpdated.Broadcast();
 		}
 		

@@ -27,6 +27,7 @@ void AAmmoItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 
 void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
+	//TODO: Come back here and fix for new inventory system.
 	//if (PlayerReference)
 	//{
 	//	if (OwningInventory)

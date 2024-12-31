@@ -23,9 +23,10 @@ void AHealthItem::Use(AEclipseRaptureCharacter* Character)
 		if (Character->GetHealthComponent()->GetCurrentHealth()
 			< Character->GetHealthComponent()->MaxHealth)
 		{
+			//TODO: Come back here and fix for new inventory system.
 			if (OwningInventory)
 			{
-				OwningInventory->RemoveItem(GetClass());
+				OwningInventory->TryRemoveItem(this);
 			}
 			Character->GetHealthComponent()->HealHealth(HealingAmount);
 		}

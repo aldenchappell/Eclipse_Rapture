@@ -13,7 +13,7 @@ void UWidgetInventorySlot::CreateGridSegments_Implementation()
 {
 }
 
-void UWidgetInventorySlot::InitializeSlot_Implementation(UInventoryComponent* Inventory, float TileSize)
+void UWidgetInventorySlot::InitializeSlot_Implementation(UInventoryComponent* Inventory, float NewTileSize)
 {
 }
 
@@ -32,10 +32,10 @@ void UWidgetInventorySlot::SetItemDetails(AItem* Item, int32 Quantity)
 
    //     AdjustSlotSize(Item->InventorySpaceRequired.RowsRequired, Item->InventorySpaceRequired.ColumnsRequired);
 
-        UE_LOG(LogTemp, Log, TEXT("Item set: %s, Quantity: %d, Rows: %d, Columns: %d"),
-               *Item->GetName(), Quantity,
-               Item->GetItemObject()->GetInventorySpaceRequirements().RowsRequired,
-               Item->GetItemObject()->GetInventorySpaceRequirements().ColumnsRequired);
+       /* UE_LOG(LogTemp, Log, TEXT("Item set: %s, Quantity: %d, Rows: %d, Columns: %d"),
+               *Item->GetDisplayName(), Quantity,
+               Item->GetInventorySpaceRequirements().RowsRequired,
+               ItemGetInventorySpaceRequirements().ColumnsRequired);*/
 
     bIsOccupied = true;
     OccupyingItem = Item;
@@ -55,6 +55,10 @@ void UWidgetInventorySlot::Refresh_Implementation()
         //ItemThumbnail->SetColorAndOpacity(FLinearColor::Green);
     }
 }
+
+ void UWidgetInventorySlot::OnItemRemoved_Implementation(AItem* Item)
+ {
+ }
 
  void UWidgetInventorySlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {

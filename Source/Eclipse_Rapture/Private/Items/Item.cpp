@@ -24,18 +24,16 @@ AItem::AItem()
 	SphereCollision->SetupAttachment(ItemMesh);
 	SphereCollision->SetSphereRadius(125.f);
 
-	ItemSkeleton = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("ItemSkeleton"));
-	ItemSkeleton->SetupAttachment(ItemMesh);
-
-	
+	ItemWeight = 1.f;
+	ItemDisplayName = FText::FromString("Item");
+	UseActionText = FText::FromString("Use");
 }
 
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-	ItemClass = GetClass();
-	// Get the player character reference
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+;	// Get the player character reference
+	/*APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
 		APawn* PlayerPawn = PlayerController->GetPawn();
@@ -45,11 +43,15 @@ void AItem::BeginPlay()
 	if (!PlayerReference)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PlayerReference is NULL in AItem::BeginPlay."));
-	}
+	}*/
 
 	// Bind overlap events
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 	SphereCollision->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
+}
+
+void AItem::InitializeItemAmount_Implementation()
+{
 }
 
 void AItem::Tick(float DeltaTime)
@@ -88,12 +90,34 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	}
 }
 
+
+void AItem::SetItemAmount(int32 NewItemAmount)
+{
+	ItemAmount = NewItemAmount;
+}
+
 void AItem::SetItemObject(UItemObject* NewItemObject)
 {
 	ItemObject = NewItemObject;
 }
 
-UItemObject* AItem::GetItemObject_Implementation() const
+UMaterialInterface* AItem::GetItemIcon_Implementation() const
 {
 	return nullptr;
+}
+
+
+
+void AItem::Rotate_Implementation()
+{
+}
+
+FInventorySpaceRequirements AItem::GetInventorySpaceRequirements_Implementation()
+{
+	return InventorySpaceRequired;
+}
+
+void AItem::SetIsRotated(bool bNewIsRotated)
+{
+	bItemIconRotated = bNewIsRotated;
 }

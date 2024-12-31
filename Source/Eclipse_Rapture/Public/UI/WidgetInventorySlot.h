@@ -25,39 +25,6 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Slot")
     void Refresh();
 
-    ///** Clear the slot */
-    //UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
-    //void SetSlotEmpty();
-
-    ///** Set debug placeholder for empty or invalid items */
-    //void SetDebugSlot();
-
-    ///** Set this slot as occupied by an item */
-    //void SetOccupied(AItem* Item);
-
-    ///** Check if the slot is occupied */
-    //UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
-    //bool IsOccupied() const;
-
-    ///** Clear the slot and mark it as empty */
-    //void ClearSlot();
-
-    ///** Mark this slot as part of a multi-slot item */
-    //void MarkAsPartOfMultiSlot();
-
-    ///** Check if this slot is part of a multi-slot item */
-    //bool IsPartOfMultiSlot() const;
-
-    ///** Adjust slot size for multi-slot items */
-    //void AdjustSlotSize(int32 RowSpan, int32 ColumnSpan);
-
-    ///** Dynamically set slot size */
-    //UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
-    //void SetSlotSize(float Width, float Height);
-
-    //UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
-    //void HandleButtonClicked();
-
     UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
     void ResetCreatedTooltips();
 
@@ -70,41 +37,26 @@ protected:
     virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
-    //UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Slot | UI Settings")
-    //float DefaultColumnSize = 50.f;  // Default width for one column
-
-    //UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Inventory Slot | UI Settings")
-    //float DefaultRowSize = 50.f;     // Default height for one row
-
-
-    ///** UI Elements */
-    //UPROPERTY(meta = (BindWidget))
-    //class UButton* UseItemButton;
-
-   /* UPROPERTY(meta = (BindWidget))
-    UImage* ItemThumbnail;
-
-    UPROPERTY(meta = (BindWidget))
-    UTextBlock* ItemQuantityText;*/
-
-    //UPROPERTY(meta = (BindWidget))
-    //USizeBox* SizeBox;
-
-    ///** Debug placeholder image for invalid items */
-    //UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
-    //UTexture2D* DebugPlaceholderTexture;
-
     /** Tooltip class for displaying item details */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
-    void InitializeSlot(UInventoryComponent* Inventory, float TileSize);
+    void InitializeSlot(UInventoryComponent* Inventory, float NewTileSize);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
     void CreateGridSegments();
 
-//private:
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
+    void OnItemRemoved(AItem* Item);
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory Properties")
+    float TileSize;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Inventory Properties", meta = (BindWidget))
+	TObjectPtr<class UCanvasPanel> GridCanvasPanel;
+
+private:
     /** State of the slot */
     bool bIsOccupied = false;
 
@@ -114,7 +66,12 @@ protected:
     /** Tooltip widget instance */
     UWidgetItemTooltip* TooltipInstance = nullptr;
 	TArray<UWidgetItemTooltip*> CreatedTooltips;
-//
-//    /** Whether this slot is part of a multi-slot item */
-//    bool bIsPartOfMultiSlot = false;
+
+public:
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	float GetTileSize() const { return TileSize; }
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	class UCanvasPanel* GetGrid() const { return GridCanvasPanel; }
 };

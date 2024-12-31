@@ -247,27 +247,28 @@ void APlayerMain::UseItem(TSubclassOf<AItem> ItemClassToUse)
 {
     if (!ItemClassToUse) return;
 
+    //TODO: Come back here and fix for new inventory system.
     // Check if the inventory contains the item class
-    if (InventoryComponent && InventoryComponent->Items.Contains(ItemClassToUse))
-    {
-        // Retrieve the instance of the item
-        AItem* ItemInstance = InventoryComponent->GetItemInstance(ItemClassToUse);
+    //if (InventoryComponent && InventoryComponent->InventoryItems.Contains(ItemClassToUse))
+    //{
+    //    // Retrieve the instance of the item
+    //    AItem* ItemInstance = InventoryComponent->GetItemInstance(ItemClassToUse);
 
-        if (ItemInstance)
-        {
-            // Call the C++ and Blueprint `Use` functions on the item instance
-            ItemInstance->Use(this); // C++ version
-            ItemInstance->OnUse(this); // Blueprint version
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("No instance of the specified item class found in the inventory."));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Item class not found in inventory."));
-    }
+    //    if (ItemInstance)
+    //    {
+    //        // Call the C++ and Blueprint `Use` functions on the item instance
+    //        ItemInstance->Use(this); // C++ version
+    //        ItemInstance->OnUse(this); // Blueprint version
+    //    }
+    //    else
+    //    {
+    //        UE_LOG(LogTemp, Warning, TEXT("No instance of the specified item class found in the inventory."));
+    //    }
+    //}
+    //else
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("Item class not found in inventory."));
+    //}
 }
 
 
