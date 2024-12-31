@@ -134,12 +134,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Pickup Properties")
 	FText ItemInteractionPrompt;
 #pragma endregion
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
+	FItemData ItemData;
 private:
 
 	UPROPERTY()
 	bool bItemIconRotated;
 
 public:	//Getters and Setters
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	FItemData GetItemData() const { return ItemData; }
+
 	UFUNCTION(BlueprintPure, Blueprintcallable)
 	int32 GetItemAmount() const { return ItemAmount; }
 

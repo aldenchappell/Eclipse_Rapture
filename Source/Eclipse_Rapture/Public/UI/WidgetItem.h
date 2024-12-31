@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetItem.generated.h"
@@ -28,6 +29,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Private")
 	FOnRemoved OnRemoved;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Item Data")
+	FItemData ItemData;
 
 protected:
 

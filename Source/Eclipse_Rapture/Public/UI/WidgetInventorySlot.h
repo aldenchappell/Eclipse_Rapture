@@ -53,6 +53,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory Properties")
     float TileSize;
 
+	UPROPERTY(BlueprintReadWrite, Category = "Inventory Properties", meta = (BindWidget))
+	TObjectPtr<class UCanvasPanel> GridCanvasPanel;
+
 private:
     /** State of the slot */
     bool bIsOccupied = false;
@@ -68,4 +71,7 @@ public:
 
     UFUNCTION(BlueprintPure, BlueprintCallable)
 	float GetTileSize() const { return TileSize; }
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	class UCanvasPanel* GetGrid() const { return GridCanvasPanel; }
 };
