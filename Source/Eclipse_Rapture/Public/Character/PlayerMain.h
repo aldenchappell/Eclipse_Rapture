@@ -181,7 +181,7 @@ protected:
 	TObjectPtr<class UTexture2D> CrosshairTexture2D;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
-	TObjectPtr<class UUserWidget> PlayerMainUI;
+	TObjectPtr<class UWidgetEclipseRaptureCharacter> PlayerMainUI;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
 	TObjectPtr<class UWidgetEclipseRaptureCharacter> BasePlayerUI;

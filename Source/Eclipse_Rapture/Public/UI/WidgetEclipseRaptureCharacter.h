@@ -36,9 +36,6 @@ public:
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
     TObjectPtr<class UThirstBar> ThirstBar;
 
-    UPROPERTY(BlueprintReadonly)
-    TObjectPtr<class UWidgetInventoryGrid> WidgetInventoryGrid;
-
 protected:
     // Called when the widget is constructed
     virtual void NativeConstruct() override;
