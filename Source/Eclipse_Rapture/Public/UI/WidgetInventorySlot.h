@@ -41,10 +41,10 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
-    UPROPERTY(BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
     FName ItemID;
 
-    UPROPERTY(BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
     int32 Quantity;
 
     UPROPERTY(BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
