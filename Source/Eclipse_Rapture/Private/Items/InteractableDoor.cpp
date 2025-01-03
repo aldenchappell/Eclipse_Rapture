@@ -6,7 +6,6 @@
 
 AInteractableDoor::AInteractableDoor()
 {
-	ItemType = EItemType::EIT_Interactable;
 	bIsOpen = false;
 
 	ItemMesh->SetSimulatePhysics(false);
