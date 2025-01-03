@@ -5,53 +5,28 @@
 #include "Components/SphereComponent.h"
 #include "Interfaces/IPhysicsComponent.h"
 #include "Character/PlayerMain.h"
-#include "Items/ItemObject.h"
-
+#include "Items/Components/ItemDataComponent.h"
 AItem::AItem()
 {
-	PrimaryActorTick.bCanEverTick = false;
-	
+	PrimaryActorTick.bCanEverTick = true;
 
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
-	ItemMesh->SetupAttachment(GetRootComponent());
-
-	ItemMesh->SetSimulatePhysics(true);
-	ItemMesh->SetMassOverrideInKg(NAME_None, 60.f);
-	ItemMesh->SetLinearDamping(.25f);
-	ItemMesh->SetAngularDamping(.25f);
+	SetRootComponent(ItemMesh);
 
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SphereCollision->SetupAttachment(ItemMesh);
 	SphereCollision->SetSphereRadius(125.f);
 
-	ItemWeight = 1.f;
-	ItemDisplayName = FText::FromString("Item");
-	UseActionText = FText::FromString("Use");
+	DataComponent = CreateDefaultSubobject<UItemDataComponent>(TEXT("Data Component"));
 }
 
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-;	// Get the player character reference
-	/*APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController)
-	{
-		APawn* PlayerPawn = PlayerController->GetPawn();
-		PlayerReference = Cast<AEclipseRaptureCharacter>(PlayerPawn);
-	}
-
-	if (!PlayerReference)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerReference is NULL in AItem::BeginPlay."));
-	}*/
 
 	// Bind overlap events
 	SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereOverlap);
 	SphereCollision->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
-}
-
-void AItem::InitializeItemAmount_Implementation()
-{
 }
 
 void AItem::Tick(float DeltaTime)
@@ -88,36 +63,4 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		Character->SetCurrentlyOverlappingItem(nullptr);
 	}
-}
-
-
-void AItem::SetItemAmount(int32 NewItemAmount)
-{
-	ItemAmount = NewItemAmount;
-}
-
-void AItem::SetItemObject(UItemObject* NewItemObject)
-{
-	ItemObject = NewItemObject;
-}
-
-UMaterialInterface* AItem::GetItemIcon_Implementation() const
-{
-	return nullptr;
-}
-
-
-
-void AItem::Rotate_Implementation()
-{
-}
-
-FInventorySpaceRequirements AItem::GetInventorySpaceRequirements_Implementation()
-{
-	return InventorySpaceRequired;
-}
-
-void AItem::SetIsRotated(bool bNewIsRotated)
-{
-	bItemIconRotated = bNewIsRotated;
 }

@@ -29,57 +29,58 @@ void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
 		return;
 	}
 
-	// Update tooltip text with item details
-	if (ItemNameText)
-	{
-		if (!Item->GetItemDisplayName().IsEmpty())
-		{
-			ItemNameText->SetText(Item->GetItemDisplayName());
-		}
-		else
-		{
-			ItemNameText->SetText(FText::FromString("No Item"));
-		}
-	}
+	//TODO: Come back and fix for new inventory system.
+	//// Update tooltip text with item details
+	//if (ItemNameText)
+	//{
+	//	if (!Item->GetItemData().ItemDisplayName.IsEmpty())
+	//	{
+	//		ItemNameText->SetText(Item->GetItemData().ItemDisplayName);
+	//	}
+	//	else
+	//	{
+	//		ItemNameText->SetText(FText::FromString("No Item"));
+	//	}
+	//}
 
-	if (ItemDescriptionText)
-	{
-		if (!Item->GetItemDescription().IsEmpty())
-		{
-			ItemDescriptionText->SetText(Item->GetItemDescription());
-		}
-		else
-		{
-			ItemDescriptionText->SetText(FText::FromString("No description available."));
-		}
-	}
+	//if (ItemDescriptionText)
+	//{
+	//	if (!Item->GetItemData().ItemDescription.IsEmpty())
+	//	{
+	//		ItemDescriptionText->SetText(Item->GetItemData().ItemDescription);
+	//	}
+	//	else
+	//	{
+	//		ItemDescriptionText->SetText(FText::FromString("No description available."));
+	//	}
+	//}
 
-	if (ItemWeightText)
-	{
-		if (Item->GetItemWeight() > 0.0f)
-		{
-			FString WeightString = FString::Printf(TEXT("Weight: %.2f"), Item->GetItemWeight());
-			ItemWeightText->SetText(FText::FromString(WeightString));
-		}
-		else
-		{
-			ItemWeightText->SetText(FText::FromString("Weight: Unknown"));
-		}
-	}
+	//if (ItemWeightText)
+	//{
+	//	if (Item->GetItemData().ItemWeight > 0.0f)
+	//	{
+	//		FString WeightString = FString::Printf(TEXT("Weight: %.2f"), Item->GetItemData().ItemWeight);
+	//		ItemWeightText->SetText(FText::FromString(WeightString));
+	//	}
+	//	else
+	//	{
+	//		ItemWeightText->SetText(FText::FromString("Weight: Unknown"));
+	//	}
+	//}
 
-	if (ItemTypeText)
-	{
-		if (Item->GetUsecaseType() != EUsecaseType::EUT_None) // Example condition, adjust as needed
-		{
-			FString ItemTypeString = FString::Printf(TEXT("Type: %s"),
-													 *UEnum::GetDisplayValueAsText(Item->GetUsecaseType()).ToString());
-			ItemTypeText->SetText(FText::FromString(ItemTypeString));
-		}
-		else
-		{
-			ItemTypeText->SetText(FText::FromString("Type: Unknown"));
-		}
-	}
+	//if (ItemTypeText)
+	//{
+	//	if (Item->GetItemData().UsecaseType != EUsecaseType::EUT_None) // Example condition, adjust as needed
+	//	{
+	//		FString ItemTypeString = FString::Printf(TEXT("Type: %s"),
+	//												 *UEnum::GetDisplayValueAsText(Item->GetItemData().UsecaseType).ToString());
+	//		ItemTypeText->SetText(FText::FromString(ItemTypeString));
+	//	}
+	//	else
+	//	{
+	//		ItemTypeText->SetText(FText::FromString("Type: Unknown"));
+	//	}
+	//}
 
 	// Optional Widgets
 	if (ItemUseWidget)
