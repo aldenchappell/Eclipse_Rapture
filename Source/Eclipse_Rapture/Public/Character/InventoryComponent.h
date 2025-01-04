@@ -12,25 +12,6 @@ class AItem;
 // Blueprint multicast delegate to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
-USTRUCT(BlueprintType)
-struct FDefaultItem
-{
-    GENERATED_BODY()
-
-    // The item class
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-    TSubclassOf<AItem> Item;
-
-    // The quantity of the item
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-    int32 Quantity;
-
-    FDefaultItem()
-        : Item(nullptr), Quantity(1)
-    {
-    }  // Default quantity is 1
-};
-
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent, public IInventoryInterface
 {
@@ -45,7 +26,7 @@ public:
 
     // Items the player starts with, including specified quantities
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
-    TArray<FDefaultItem> DefaultItems;
+    TArray<FInventorySlotData> DefaultItems;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
 	TArray<FInventorySlotData> InventoryItems;

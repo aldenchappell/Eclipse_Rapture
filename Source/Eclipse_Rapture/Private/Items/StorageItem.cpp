@@ -2,7 +2,7 @@
 
 
 #include "Items/StorageItem.h"
-#include "StorageItem.h"
+#include "Character/InventoryComponent.h"
 
 AStorageItem::AStorageItem()
 {
