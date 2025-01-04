@@ -56,3 +56,7 @@ bool UInventoryComponent::AddToInventory_Implementation(FName ItemID, int32 Quan
 {
     return false;
 }
+
+void UInventoryComponent::TransferSlots_Implementation(int32 SourceIndex, UInventoryComponent* SourceInventory, int32 DestinationIndex)
+{
+}
