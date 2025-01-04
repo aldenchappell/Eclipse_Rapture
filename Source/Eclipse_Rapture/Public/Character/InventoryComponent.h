@@ -77,6 +77,9 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
 	bool CreateNewStack(FName ItemID, int32 Quantity);
 
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+	void TransferSlots(int32 SourceIndex, UInventoryComponent* SourceInventory, int32 DestinationIndex);
+
 #pragma endregion
 
     // Delegate for inventory updates
