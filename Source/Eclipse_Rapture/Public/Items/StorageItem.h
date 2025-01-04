@@ -27,4 +27,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
+	bool bOpened = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI Components")
+	TObjectPtr<class UWidgetStorageItem> StorageWidget;
 };
