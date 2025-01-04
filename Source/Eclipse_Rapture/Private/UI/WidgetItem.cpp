@@ -7,8 +7,3 @@ void UWidgetItem::SetItem(AItem* NewItem)
 {
 	Item = NewItem;
 }
-
-void UWidgetItem::SetItemData(FItemData Data)
-{
-	ItemData = Data;
-}

@@ -27,6 +27,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 
+	
+
 protected:
 	virtual void BeginPlay() override;
 	void Move(const FInputActionValue& Value);
@@ -181,18 +183,15 @@ protected:
 	TObjectPtr<class UTexture2D> CrosshairTexture2D;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
-	TObjectPtr<class UWidgetEclipseRaptureCharacter> PlayerMainUI;
+	TObjectPtr<class UUserWidget> PlayerMainUI;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
 	TObjectPtr<class UWidgetEclipseRaptureCharacter> BasePlayerUI;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
-	TObjectPtr<class UWidgetInventoryGrid> InventoryGrid;
-
 	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
 	void SetCrosshairTexture(UTexture2D* Texture);
 
-	
+
 
 #pragma endregion
 

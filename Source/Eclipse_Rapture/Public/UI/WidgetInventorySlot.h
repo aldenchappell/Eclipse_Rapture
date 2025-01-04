@@ -7,8 +7,6 @@
 class UImage;
 class UTextBlock;
 class AItem;
-class UButton;
-class UBorder;
 class UWidgetItemTooltip;
 class USizeBox;
 /**
@@ -20,14 +18,17 @@ class ECLIPSE_RAPTURE_API UWidgetInventorySlot : public UUserWidget
     GENERATED_BODY()
 
 public:
+    /** Set item details in the slot */
+    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
+    void SetItemDetails(AItem* Item, int32 Quantity);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Slot")
+    void Refresh();
 
     UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
     void ResetCreatedTooltips();
 
-    
 protected:
-
-#pragma region Mouse Events
     virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
     virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
     virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -36,54 +37,31 @@ protected:
     virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
-#pragma endregion
-
+    /** Tooltip class for displaying item details */
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
-    FName ItemID;
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
+    void InitializeSlot(UInventoryComponent* Inventory, float NewTileSize);
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
-    int32 Quantity;
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
+    void CreateGridSegments();
 
-    UPROPERTY(BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
-    TObjectPtr<class UInventoryComponent> InventoryComponent;
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory Properties")
+    void OnItemRemoved(AItem* Item);
 
-    UPROPERTY(BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
-    int32 SlotIndex;
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory Properties")
+    float TileSize;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<USizeBox> SlotSizeBox;
+	UPROPERTY(BlueprintReadWrite, Category = "Inventory Properties", meta = (BindWidget))
+	TObjectPtr<class UCanvasPanel> GridCanvasPanel;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<UButton> UseButton;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<UBorder> UseButtonOuterBorder;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<UBorder> UseButtonInnerBorder;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-	TObjectPtr<class UOverlay> ContentsOverlay;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<USizeBox> QuantitySizeBox;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<UBorder> QuantityOuterBorder;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<UBorder> QuantityInnerBorder;
-
-    //Exposed Pointers
-    UPROPERTY(BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-    TObjectPtr<UImage> ItemThumbnail;
-
-    UPROPERTY(BlueprintReadonly, Category = "UI Elements", meta = (BindWidget))
-	TObjectPtr<UTextBlock> QuantityText;
 private:
+    /** State of the slot */
+    bool bIsOccupied = false;
+
+    /** Reference to the item occupying the slot */
+    AItem* OccupyingItem = nullptr;
 
     /** Tooltip widget instance */
     UWidgetItemTooltip* TooltipInstance = nullptr;
@@ -91,4 +69,9 @@ private:
 
 public:
 
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	float GetTileSize() const { return TileSize; }
+
+    UFUNCTION(BlueprintPure, BlueprintCallable)
+	class UCanvasPanel* GetGrid() const { return GridCanvasPanel; }
 };

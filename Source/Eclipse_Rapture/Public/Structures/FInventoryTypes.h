@@ -4,28 +4,46 @@
 #include "CoreMinimal.h"
 #include "FInventoryTypes.generated.h"
 
+
+
 USTRUCT(BlueprintType)
-struct FInventorySlotData
+struct FInventorySpaceRequirements
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Display Properties")
-    FName ItemID;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Display Properties")
-	int32 Quantity;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
+    int32 RowsRequired;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Space")
+    int32 ColumnsRequired;
+};
+
+
+USTRUCT(BlueprintType)
+struct FInventoryTile
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
+    FVector2D XTiling;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory Tile")
+    FVector2D YTiling;
 };
 
 USTRUCT(BlueprintType)
-struct FItemData: public FTableRowBase
+struct FItemData
 {
     GENERATED_BODY()
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	TSubclassOf<class AItem> ItemClass;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     EItemType ItemType;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     EUsecaseType UsecaseType;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     bool bDestroyOnPickup;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+    FInventorySpaceRequirements InventorySpaceRequired;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     EUseImpactType UseImpactType;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
@@ -35,9 +53,9 @@ struct FItemData: public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     FText UseActionText;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-    UTexture2D* ItemIcon;
+    UMaterialInterface* ItemIcon;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-    UTexture2D* ItemIconRotated;
+    UMaterialInterface* ItemIconRotated;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     FText ItemDisplayName;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")

@@ -16,9 +16,11 @@ class ECLIPSE_RAPTURE_API UWidgetInventory : public UUserWidget
 
 public:
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
     TObjectPtr<class UWidgetInventorySlot> InventorySlot;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory UI", meta = (ExposeOnSpawn = "true"))
+    float TileSize;
 
 protected:
     virtual void NativeConstruct() override;

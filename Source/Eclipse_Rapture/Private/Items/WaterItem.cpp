@@ -24,12 +24,11 @@ void AWaterItem::Use(AEclipseRaptureCharacter* Character)
 		if (Character->GetHealthComponent()->GetCurrentThirst()
 			< Character->GetHealthComponent()->MaxThirst)
 		{
-			//TODO: Come back to this to remove from inventory
 			//TODO: Come back here and fix for new inventory system.
-			/*if (OwningInventory)
+			if (OwningInventory)
 			{
 				OwningInventory->TryRemoveItem(this);
-			}*/
+			}
 			Character->GetHealthComponent()->HealThirst(ThirstHealAmount);
 		}
 	}

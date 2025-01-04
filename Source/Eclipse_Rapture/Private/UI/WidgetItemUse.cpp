@@ -11,32 +11,30 @@ void UWidgetItemUse::SetItemUseDetails(AItem* Item)
         return;
     }
 
-    //TODO: Come back and add item use icon to itemdata struct
     // Set the thumbnail
-   /* if (UseThumbnail)
+    if (UseThumbnail)
     {
-        if (Item->ItemUseIcon)
+        if (Item->GetItemUseIcon())
         {
-            UseThumbnail->SetBrushFromTexture(Item->ItemUseIcon);
+            UseThumbnail->SetBrushFromTexture(Item->GetItemUseIcon());
         }
         else if (DebugPlaceholderTexture)
         {
             UseThumbnail->SetBrushFromTexture(DebugPlaceholderTexture);
         }
-    }*/
+    }
 
-    //TODO: Come back and add item use icon to itemdata struct
     // Set the main item use description
-    //if (ItemUseText)
-    //{
-    //    FString MainDescription = UEnum::GetDisplayValueAsText(Item->GetItemData().MainItemUseDescriptionType).ToString();
-    //    ItemUseText->SetText(FText::FromString(MainDescription));
-    //}
+    if (ItemUseText)
+    {
+        FString MainDescription = UEnum::GetDisplayValueAsText(Item->GetMainItemUseDescriptionType()).ToString();
+        ItemUseText->SetText(FText::FromString(MainDescription));
+    }
 
-    //// Set the main impact type
-    //if (ItemImpactText)
-    //{
-    //    FString ImpactDescription = UEnum::GetDisplayValueAsText(Item->GetItemData().UseImpactType).ToString();
-    //    ItemImpactText->SetText(FText::FromString(ImpactDescription));
-    //}
+    // Set the main impact type
+    if (ItemImpactText)
+    {
+        FString ImpactDescription = UEnum::GetDisplayValueAsText(Item->GetUseImpactType()).ToString();
+        ItemImpactText->SetText(FText::FromString(ImpactDescription));
+    }
 }
