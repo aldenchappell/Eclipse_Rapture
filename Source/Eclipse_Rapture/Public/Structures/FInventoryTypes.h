@@ -33,11 +33,7 @@ struct FItemData: public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     ESecondaryItemUseDescriptionType SecondaryItemUseDescriptionType;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-    FText UseActionText;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     UTexture2D* ItemIcon;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-    UTexture2D* ItemIconRotated;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     FText ItemDisplayName;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
