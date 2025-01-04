@@ -17,7 +17,6 @@ class ECLIPSE_RAPTURE_API UWidgetEclipseRaptureCharacter : public UUserWidget
     GENERATED_BODY()
 
 public:
-    
 
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
     TObjectPtr<UTextBlock> AmmoCounterText;
@@ -36,6 +35,9 @@ public:
 
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
     TObjectPtr<class UThirstBar> ThirstBar;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "UI Functions")
+	bool ShowContainer(class UInventoryComponent* StorageItemInventory);
 protected:
     // Called when the widget is constructed
     virtual void NativeConstruct() override;

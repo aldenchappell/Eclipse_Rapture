@@ -12,25 +12,6 @@ class AItem;
 // Blueprint multicast delegate to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
 
-USTRUCT(BlueprintType)
-struct FDefaultItem
-{
-    GENERATED_BODY()
-
-    // The item class
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-    TSubclassOf<AItem> Item;
-
-    // The quantity of the item
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
-    int32 Quantity;
-
-    FDefaultItem()
-        : Item(nullptr), Quantity(1)
-    {
-    }  // Default quantity is 1
-};
-
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent, public IInventoryInterface
 {
@@ -45,69 +26,44 @@ public:
 
     // Items the player starts with, including specified quantities
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
-    TArray<FDefaultItem> DefaultItems;
+    TArray<FInventorySlotData> DefaultItems;
 
 	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
-    bool bIsDirty = false;
+	TArray<FInventorySlotData> InventoryItems;
 
-	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
-	TArray<AItem*> InventoryItems;
-
-    UPROPERTY(BlueprintReadWrite, Category = "Inventory")
-    TMap<TSubclassOf<AItem>, int32> ItemCounts;
-
-
-#pragma region New Inventory Functions
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
+    int32 InventorySlots;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool TryAddItem(AItem* Item);
+    void FindSlot(FName ItemID);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool IsRoomAvailable(AItem* Item, int32 TopLeftTileIndex);
+	bool AddToInventory(FName ItemID, int32 Quantity, int32& QuantityRemaining);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool TryRemoveItem(AItem* Item);
+	bool RemoveFromInventory(FName ItemID, int32 Quantity, int32& QuantityRemaining);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
-    void IndexToTile(int32 Index, FInventorySpaceRequirements& Requirements);
+	int32 GetMaxStackSize(FName ItemID);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
-    bool IsTileValid(FInventorySpaceRequirements Tiling);
+	bool FindInventorySlot(FName ItemID, int32& SlotIndex);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool GetItemAtIndex(int32 Index, AItem*& Item);
+    void AddToExistingStack(int32 Index, int32 Quantity);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
-    int32 TileToIndex(FInventorySpaceRequirements Tiling);
+	bool IsEmptySlotAvailable(int32& EmptyIndex);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    void AddItemAt(AItem* Item, int32 TopLeftIndex);
+	bool CreateNewStack(FName ItemID, int32 Quantity);
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    void ForEachIndex(AItem* Item, int32 TopLeftInventoryIndex, FInventorySpaceRequirements& Requirements);
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+	void TransferSlots(int32 SourceIndex, UInventoryComponent* SourceInventory, int32 DestinationIndex);
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "New Inventory")
-    int32 Rows = 6;
-
-    UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "New Inventory")
-    int32 Columns = 15;
-   
 #pragma endregion
 
     // Delegate for inventory updates
     UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
     FOnInventoryUpdated OnInventoryUpdated;
-
-    UFUNCTION(BlueprintPure, BlueprintCallable)
-	int32 GetTotalInventorySlots() const { return Rows * Columns; }
-
-    // Helper function to get max stack size of an item type
-    int32 GetMaxStackSize(TSubclassOf<AItem> ItemClass) const;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable)
-	int32 FindTotalAmountOfItem(TSubclassOf<AItem> ItemClass, bool& ItemFound) const;
-
-    UFUNCTION(BlueprintPure, BlueprintCallable)
-	bool IsItemInInventory(TSubclassOf<AItem> ItemClass) const;
-    
 };

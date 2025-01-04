@@ -134,20 +134,6 @@ void AWeaponBase::Reload(UInventoryComponent* PlayerInventory)
 //    }
 //}
 
-UMaterialInterface* AWeaponBase::GetThumbnailTexture()
-{
-    if (PickupClass)
-    {
-        const AWeaponPickup* PickupDefault = PickupClass->GetDefaultObject<AWeaponPickup>();
-        if (PickupDefault)
-        {
-            return PickupDefault->GetItemIcon();
-        }
-    }
-    return nullptr;
-}
-
-
 /// <summary>
 /// Implements the fire function for the weapon(Line trace("raycast") is handled in blueprint.
 /// </summary>

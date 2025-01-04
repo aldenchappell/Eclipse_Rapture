@@ -3,6 +3,11 @@
 
 #include "UI/WidgetEclipseRaptureCharacter.h"
 
+bool UWidgetEclipseRaptureCharacter::ShowContainer_Implementation(UInventoryComponent* StorageItemInventory)
+{
+    return false;
+}
+
 void UWidgetEclipseRaptureCharacter::NativeConstruct()
 {
 
