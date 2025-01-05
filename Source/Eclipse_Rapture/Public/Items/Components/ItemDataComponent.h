@@ -29,8 +29,4 @@ protected:
 	int32 MinItemPickupQuantity;
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Pickup Properties")
 	int32 MaxItemPickupQuantity;
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Item Pickup Properties")
-	void InitializeItemQuantity();
-
 };
