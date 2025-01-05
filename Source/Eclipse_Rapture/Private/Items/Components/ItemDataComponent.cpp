@@ -2,7 +2,7 @@
 
 
 #include "Items/Components/ItemDataComponent.h"
-
+#include "Structures/FInventoryTypes.h"
 UItemDataComponent::UItemDataComponent()
 {
 
@@ -12,8 +12,4 @@ void UItemDataComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void UItemDataComponent::InitializeItemQuantity_Implementation()
-{
 }
