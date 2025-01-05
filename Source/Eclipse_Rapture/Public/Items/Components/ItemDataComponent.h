@@ -13,17 +13,17 @@ class ECLIPSE_RAPTURE_API UItemDataComponent : public UActorComponent
 
 public:	
 	UItemDataComponent();
+	//Item ID Data Table Value
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties | Data")
+	FDataTableRowHandle ItemID;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties | Data")
+	int32 ItemQuantity;
 protected:
 	
 	virtual void BeginPlay() override;
 
-	//Item ID Data Table Value
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Properties | Data")
-	FDataTableRowHandle ItemID;
-		
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties | Data")
-	int32 ItemQuantity;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Pickup Properties")
 	int32 MinItemPickupQuantity;
