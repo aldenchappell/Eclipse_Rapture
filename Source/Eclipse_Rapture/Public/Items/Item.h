@@ -58,7 +58,7 @@ protected:
 	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Collision")
-	TObjectPtr<USphereComponent> SphereCollision;
+	TObjectPtr<USphereComponent> SphereCollision;	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Item Properties")
 	TObjectPtr<UTexture2D> ItemUseIcon;

@@ -26,6 +26,9 @@ struct FItemData: public FTableRowBase
     EUsecaseType UsecaseType;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     bool bDestroyOnPickup;
+    //when this item is spawned, should the amount given to the player once picked up be random within a range or should it be a set amount defined on the item?
+    UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Item Data")
+    bool bEnableRandomPickupQuantity = false;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     EUseImpactType UseImpactType;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
