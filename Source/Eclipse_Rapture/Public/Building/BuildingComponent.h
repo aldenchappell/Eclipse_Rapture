@@ -21,7 +21,6 @@ protected:
 
     virtual bool HasBuildingBlueprint_Implementation() override;
     virtual bool GetHasBuildingBlueprintEquipped_Implementation() override;
-    virtual void SetHasBuildingBlueprint_Implementation(bool NewHasBlueprint) override;
     virtual void BuildingBlueprintLineTrace_Implementation() override;
     virtual void SetBuildingItemBeingLookedAt_Implementation(AEclipseRaptureBuildingItem* BuildingItem) override;
 	virtual AEclipseRaptureBuildingItem* GetBuildingItemBeingLookedAt_Implementation() override;
@@ -32,12 +31,20 @@ protected:
     FHitResult GetBuildingBlueprintHitResult();
     virtual FHitResult GetBuildingBlueprintHitResult_Implementation();
 
+    UFUNCTION(BlueprintCallable, Category = "Building")
+    void SetHasBuildingBlueprint(bool NewHasBuildlingBlueprint);
+
     UPROPERTY(BlueprintReadWrite)
     class AEclipseRaptureCharacter* OwningCharacter;
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Building | Testing")
     bool bDisableInteractionOnMaxUpgrade = false;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Building | Building Properties")
+	bool bHasBuildingBlueprint = false;
+
+    UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
+    bool bBuildingBlueprintEquipped;
 private:
     UPROPERTY()
     FHitResult LastHitResult;

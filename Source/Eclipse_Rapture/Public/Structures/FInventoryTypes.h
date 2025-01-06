@@ -47,4 +47,6 @@ struct FItemData: public FTableRowBase
     int32 MaxStackSize;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     FText ItemInteractionPrompt;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+    bool bCanBeRemovedFromInventory;
 };

@@ -13,6 +13,11 @@ AItem::AItem()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
 	SetRootComponent(ItemMesh);
 
+	ItemMesh->SetSimulatePhysics(true);
+	ItemMesh->SetMassOverrideInKg(NAME_None, 60.f);
+	ItemMesh->SetLinearDamping(.25f);
+	ItemMesh->SetAngularDamping(.25f);
+
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SphereCollision->SetupAttachment(ItemMesh);
 	SphereCollision->SetSphereRadius(125.f);
