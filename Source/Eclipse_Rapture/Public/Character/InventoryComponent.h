@@ -28,7 +28,7 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
     TArray<FInventorySlotData> DefaultItems;
 
-	UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "New Inventory")
 	TArray<FInventorySlotData> InventoryItems;
 
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "New Inventory")
