@@ -256,4 +256,10 @@ public:
 
 	UFUNCTION(Blueprintcallable)
 	class UInputMappingContext* GetCharacterMappingContext() const { return EclipseRaptureMapping; }
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Building")
+	UBuildingComponent* GetBuildingComponent() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Building")
+	UStaticMeshComponent* GetBuildingBlueprintStaticMesh() const;
 };

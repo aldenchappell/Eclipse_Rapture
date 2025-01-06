@@ -216,6 +216,15 @@ bool APlayerMain::CanSprint()
         CurrentMovementState != ECharacterMovementState::ECMS_Mantling &&
         !bIsCrouching && !bIsProning && !bIsAiming;
 }
+UBuildingComponent* APlayerMain::GetBuildingComponent_Implementation() const
+{
+    return nullptr;
+}
+UStaticMeshComponent* APlayerMain::GetBuildingBlueprintStaticMesh_Implementation() const
+{
+    return nullptr;
+}
+
 #pragma endregion
 
 #pragma region Combat
