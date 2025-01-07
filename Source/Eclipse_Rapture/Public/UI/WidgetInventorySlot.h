@@ -41,6 +41,9 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Inventory Slot")
     TSubclassOf<UWidgetItemTooltip> TooltipClass;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory Slot")
+	TObjectPtr<class UItemActionMenu> ActionMenu;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data", meta = (ExposeOnSpawn = "true"))
     FName ItemID;
 
