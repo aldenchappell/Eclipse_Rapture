@@ -24,7 +24,7 @@ public:
 	bool bIsLocked = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction Logic")
-	TSubclassOf<class AItem> RequiredItemToOpen;
+	FName RequiredItemIDToUnlock;
 protected:
 	void BeginPlay() override;
 
