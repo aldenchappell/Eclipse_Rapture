@@ -41,7 +41,7 @@ public:
 	bool AddToInventory(FName ItemID, int32 Quantity, int32& QuantityRemaining);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-	bool RemoveFromInventory(FName ItemID, int32 Quantity, int32& QuantityRemaining);
+	bool RemoveFromInventory(int32 Index, bool RemoveWholeStack, bool IsConsumed);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
 	int32 GetMaxStackSize(FName ItemID);
@@ -60,6 +60,22 @@ public:
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
 	void TransferSlots(int32 SourceIndex, UInventoryComponent* SourceInventory, int32 DestinationIndex);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+	void DropItem(FName ItemID, int32 Quantity);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    bool ConsumeItem(int32 Index);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    FItemData GetItemData(FName ItemID);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+	FVector GetDropLocation();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+	bool QueryInventory(FName ItemID, int32 Quantity, int32& FoundQuantity, int32& IndexFound);
+
 
 #pragma endregion
 
