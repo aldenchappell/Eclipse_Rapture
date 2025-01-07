@@ -11,6 +11,9 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
+    //Load inventory add add a listern to listen to the saveinventory function.
+    LoadInventory();
+	OnInventoryUpdated.AddDynamic(this, &UInventoryComponent::SaveInventory);
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -83,4 +86,17 @@ bool UInventoryComponent::ConsumeItem_Implementation(int32 Index)
 bool UInventoryComponent::QueryInventory_Implementation(FName ItemID, int32 Quantity, int32& FoundQuantity, int32& IndexFound)
 {
     return false;
+}
+
+void UInventoryComponent::SaveInventory_Implementation()
+{
+}
+
+void UInventoryComponent::LoadInventory_Implementation()
+{
+}
+
+int32 UInventoryComponent::GetQuantityOfItem_Implementation()
+{
+    return int32();
 }
