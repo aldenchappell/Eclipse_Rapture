@@ -47,11 +47,6 @@ int32 UInventoryComponent::GetMaxStackSize_Implementation(FName ItemID)
     return int32();
 }
 
-bool UInventoryComponent::RemoveFromInventory_Implementation(FName ItemID, int32 Quantity, int32& QuantityRemaining)
-{
-    return false;
-}
-
 bool UInventoryComponent::AddToInventory_Implementation(FName ItemID, int32 Quantity, int32& QuantityRemaining)
 {
     return false;
@@ -59,4 +54,33 @@ bool UInventoryComponent::AddToInventory_Implementation(FName ItemID, int32 Quan
 
 void UInventoryComponent::TransferSlots_Implementation(int32 SourceIndex, UInventoryComponent* SourceInventory, int32 DestinationIndex)
 {
+}
+
+bool UInventoryComponent::RemoveFromInventory_Implementation(int32 Index, bool RemoveWholeStack, bool IsConsumed)
+{
+    return false;
+}
+
+void UInventoryComponent::DropItem_Implementation(FName ItemID, int32 Quantity)
+{
+}
+
+FItemData UInventoryComponent::GetItemData_Implementation(FName ItemID)
+{
+    return FItemData();
+}
+
+FVector UInventoryComponent::GetDropLocation_Implementation()
+{
+    return FVector();
+}
+
+bool UInventoryComponent::ConsumeItem_Implementation(int32 Index)
+{
+    return false;
+}
+
+bool UInventoryComponent::QueryInventory_Implementation(FName ItemID, int32 Quantity, int32& FoundQuantity, int32& IndexFound)
+{
+    return false;
 }
