@@ -76,6 +76,14 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
 	bool QueryInventory(FName ItemID, int32 Quantity, int32& FoundQuantity, int32& IndexFound);
 
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
+    int32 GetQuantityOfItem();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    void SaveInventory();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
+    void LoadInventory();
 
 #pragma endregion
 
