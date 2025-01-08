@@ -6,6 +6,8 @@
 #include "Interfaces/IPhysicsComponent.h"
 #include "Character/PlayerMain.h"
 #include "Items/Components/ItemDataComponent.h"
+
+
 AItem::AItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -47,7 +49,7 @@ void AItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 
 void AItem::Use(AEclipseRaptureCharacter* Character)
 {
-	if (!bCanBeUsed) return;
+	//if (!bCanBeUsed) return;
 }
 
 

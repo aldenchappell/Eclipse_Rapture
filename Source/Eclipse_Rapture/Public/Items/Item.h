@@ -26,9 +26,6 @@ public:
 	UPROPERTY(Transient)
 	class UWorld* World;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeUsed = true;
-
 	UFUNCTION()
 	virtual void Use(class AEclipseRaptureCharacter* Character);
 
