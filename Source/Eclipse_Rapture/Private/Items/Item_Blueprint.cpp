@@ -6,7 +6,7 @@
 
 AItem_Blueprint::AItem_Blueprint()
 {
-    bCanBeUsed = false;
+    
 }
 
 void AItem_Blueprint::Interact_Implementation(AEclipseRaptureCharacter* Character)

@@ -49,4 +49,6 @@ struct FItemData: public FTableRowBase
     FText ItemInteractionPrompt;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     bool bCanBeRemovedFromInventory;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+    bool bCanBeUsed = true;
 };
