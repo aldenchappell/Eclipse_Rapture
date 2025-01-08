@@ -42,6 +42,8 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
 
+	
+
 	UPROPERTY(BlueprintReadonly)
 	TObjectPtr<class AEclipseRaptureCharacter> OverlappingCharacter;
 

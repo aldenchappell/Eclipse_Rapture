@@ -52,12 +52,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Interactable Door")
 	FRotator OriginalRotation;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interactable Door")
-	TObjectPtr<UAnimMontage> OpenDoorMontage;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Interactable Door")
-	TObjectPtr<UAnimMontage> CloseDoorMontage;
-
 private:
 
 	UAnimInstance* AnimInstance;
