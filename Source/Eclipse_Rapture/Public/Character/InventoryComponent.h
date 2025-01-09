@@ -67,7 +67,7 @@ public:
 	void DropItem(FName ItemID, int32 Quantity);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-    bool ConsumeItem(int32 Index);
+    bool UseItem(int32 Index);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
     FItemData GetItemData(FName ItemID);
