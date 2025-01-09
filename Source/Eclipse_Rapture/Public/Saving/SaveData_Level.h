@@ -23,4 +23,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Saved Data")
 	TMap <TSoftObjectPtr<class UInventoryComponent> , FStorageItemStruct> StorageItemsAdded;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Saved Data")
+	TArray<FVector> ActorScales;
 };

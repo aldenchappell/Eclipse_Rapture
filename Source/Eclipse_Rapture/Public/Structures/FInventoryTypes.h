@@ -52,3 +52,12 @@ struct FItemData: public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     bool bCanBeUsed = true;
 };
+
+UENUM(BlueprintType)
+enum class EInventoryUpdateTypes : uint8
+{
+	EIUT_Added UMETA(DisplayName = "Added"),
+	EIUT_Removed UMETA(DisplayName = "Removed")
+};
+
+

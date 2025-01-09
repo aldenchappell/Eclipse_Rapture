@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetInventoryUpdatedMessage.generated.h"
@@ -16,7 +17,17 @@ class ECLIPSE_RAPTURE_API UWidgetInventoryUpdatedMessage : public UUserWidget
 public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
-	FText UpdateMessage;
+	FText DisplayName;
+
+	//This is the operator that will be displayed in the message - Example + or - for adding or removing items
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	FText DisplayOperator;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	int32 Quantity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	EInventoryUpdateTypes LastUpdateType;
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI Elements", meta = (BindWidget))
