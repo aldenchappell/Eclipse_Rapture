@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetInventoryUpdatedMessage.generated.h"
@@ -24,6 +25,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
 	int32 Quantity;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	EInventoryUpdateTypes LastUpdateType;
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI Elements", meta = (BindWidget))
