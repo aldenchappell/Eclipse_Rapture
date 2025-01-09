@@ -11,6 +11,8 @@ class AItem;
 
 // Blueprint multicast delegate to notify UI updates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryUpdated);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnItemAdded, FName, ItemID, int32, QuantityAdded, EInventoryUpdateTypes, UpdateType);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnItemRemoved, FName, ItemID, int32, QuantityRemoved, EInventoryUpdateTypes, UpdateType);
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UInventoryComponent : public UActorComponent, public IInventoryInterface
@@ -87,7 +89,15 @@ public:
 
 #pragma endregion
 
-    // Delegate for inventory updates
+#pragma region Inventory Delegates
     UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
     FOnInventoryUpdated OnInventoryUpdated;
+
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
+    FOnItemAdded OnItemAdded;
+
+    UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Inventory | Inventory Delegates")
+    FOnItemRemoved OnItemRemoved;
+
+#pragma endregion
 };
