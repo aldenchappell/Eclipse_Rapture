@@ -78,7 +78,7 @@ FVector UInventoryComponent::GetDropLocation_Implementation()
     return FVector();
 }
 
-bool UInventoryComponent::ConsumeItem_Implementation(int32 Index)
+bool UInventoryComponent::UseItem_Implementation(int32 Index)
 {
     return false;
 }
