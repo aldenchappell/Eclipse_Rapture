@@ -38,12 +38,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
 	ECharacterType CharacterType;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
-	bool bHasBuildingBlueprint;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Building | Building Properties")
-	bool bBuildingBlueprintEquipped;
 #pragma endregion
 
 	//For ui mostly

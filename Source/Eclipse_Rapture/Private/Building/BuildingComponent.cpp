@@ -22,7 +22,7 @@ bool UBuildingComponent::HasBuildingBlueprint_Implementation()
 {
     if (OwningCharacter)
     {
-        return OwningCharacter->bHasBuildingBlueprint;
+        return bHasBuildingBlueprint;
     }
     return false;
 }
@@ -31,17 +31,9 @@ bool UBuildingComponent::GetHasBuildingBlueprintEquipped_Implementation()
 {
     if (OwningCharacter)
     {
-        return OwningCharacter->bBuildingBlueprintEquipped;
+        return bBuildingBlueprintEquipped;
     }
     return false;
-}
-
-void UBuildingComponent::SetHasBuildingBlueprint_Implementation(bool NewHasBlueprint)
-{
-    if (OwningCharacter)
-    {
-        OwningCharacter->bHasBuildingBlueprint = NewHasBlueprint;
-    }
 }
 
 void UBuildingComponent::BuildingBlueprintLineTrace_Implementation()
@@ -138,4 +130,9 @@ FVector UBuildingComponent::GetBuildingHitLocation_Implementation()
 FHitResult UBuildingComponent::GetBuildingBlueprintHitResult_Implementation()
 {
     return LastHitResult;
+}
+
+void UBuildingComponent::SetHasBuildingBlueprint(bool NewHasBuildlingBlueprint)
+{
+	bHasBuildingBlueprint = NewHasBuildlingBlueprint;
 }

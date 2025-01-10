@@ -26,9 +26,6 @@ public:
 	UPROPERTY(Transient)
 	class UWorld* World;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties")
-	bool bCanBeUsed = true;
-
 	UFUNCTION()
 	virtual void Use(class AEclipseRaptureCharacter* Character);
 
@@ -44,6 +41,8 @@ public:
 protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void BeginPlay() override;
+
+	
 
 	UPROPERTY(BlueprintReadonly)
 	TObjectPtr<class AEclipseRaptureCharacter> OverlappingCharacter;

@@ -38,7 +38,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private | Design")
 	FVector2D Size;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private"/*, meta = (ExposeOnSpawn = "true")*/)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private")
 	TObjectPtr<class AItem> Item;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Private", meta = (ExposeOnSpawn = "true"))

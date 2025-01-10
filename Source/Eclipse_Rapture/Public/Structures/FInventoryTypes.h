@@ -47,4 +47,17 @@ struct FItemData: public FTableRowBase
     int32 MaxStackSize;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     FText ItemInteractionPrompt;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+    bool bCanBeRemovedFromInventory;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+    bool bCanBeUsed = true;
 };
+
+UENUM(BlueprintType)
+enum class EInventoryUpdateTypes : uint8
+{
+	EIUT_Added UMETA(DisplayName = "Added"),
+	EIUT_Removed UMETA(DisplayName = "Removed")
+};
+
+

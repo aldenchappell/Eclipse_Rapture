@@ -18,8 +18,8 @@ public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
     bool HasBuildingBlueprint();
 
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
-    void SetHasBuildingBlueprint(bool NewHasBlueprint);
+   /* UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
+    void SetHasBuildingBlueprint(bool NewHasBlueprint);*/
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
     bool GetHasBuildingBlueprintEquipped();

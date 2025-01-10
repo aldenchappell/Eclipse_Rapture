@@ -11,6 +11,9 @@ UInventoryComponent::UInventoryComponent()
 void UInventoryComponent::BeginPlay()
 {
     Super::BeginPlay();
+    //Load inventory add add a listern to listen to the saveinventory function.
+    LoadInventory();
+	OnInventoryUpdated.AddDynamic(this, &UInventoryComponent::SaveInventory);
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -47,11 +50,6 @@ int32 UInventoryComponent::GetMaxStackSize_Implementation(FName ItemID)
     return int32();
 }
 
-bool UInventoryComponent::RemoveFromInventory_Implementation(FName ItemID, int32 Quantity, int32& QuantityRemaining)
-{
-    return false;
-}
-
 bool UInventoryComponent::AddToInventory_Implementation(FName ItemID, int32 Quantity, int32& QuantityRemaining)
 {
     return false;
@@ -59,4 +57,46 @@ bool UInventoryComponent::AddToInventory_Implementation(FName ItemID, int32 Quan
 
 void UInventoryComponent::TransferSlots_Implementation(int32 SourceIndex, UInventoryComponent* SourceInventory, int32 DestinationIndex)
 {
+}
+
+bool UInventoryComponent::RemoveFromInventory_Implementation(int32 Index, bool RemoveWholeStack, bool IsConsumed)
+{
+    return false;
+}
+
+void UInventoryComponent::DropItem_Implementation(FName ItemID, int32 Quantity)
+{
+}
+
+FItemData UInventoryComponent::GetItemData_Implementation(FName ItemID)
+{
+    return FItemData();
+}
+
+FVector UInventoryComponent::GetDropLocation_Implementation()
+{
+    return FVector();
+}
+
+bool UInventoryComponent::UseItem_Implementation(int32 Index)
+{
+    return false;
+}
+
+bool UInventoryComponent::QueryInventory_Implementation(FName ItemID, int32 Quantity, int32& FoundQuantity, int32& IndexFound)
+{
+    return false;
+}
+
+void UInventoryComponent::SaveInventory_Implementation()
+{
+}
+
+void UInventoryComponent::LoadInventory_Implementation()
+{
+}
+
+int32 UInventoryComponent::GetQuantityOfItem_Implementation()
+{
+    return int32();
 }
