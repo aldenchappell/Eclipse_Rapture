@@ -16,14 +16,14 @@ class ECLIPSE_RAPTURE_API UWidgetInventoryUpdatedMessage : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties", meta = (ExposeOnSpawn = "true"))
 	FText DisplayName;
 
 	//This is the operator that will be displayed in the message - Example + or - for adding or removing items
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties", meta = (ExposeOnSpawn = "true"))
 	FText DisplayOperator;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties", meta = (ExposeOnSpawn = "true"))
 	int32 Quantity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Properties")
