@@ -304,7 +304,7 @@ public:
 	UFUNCTION(Blueprintcallable)
 	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable)
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Inventory | Getters")
 	class UInventoryComponent* GetInventoryComponent();
 
 	UFUNCTION(Blueprintcallable)

@@ -35,6 +35,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI Elements", meta = (BindWidget))
 	class UBorder* UpdateBorder;
-
-	
 };
