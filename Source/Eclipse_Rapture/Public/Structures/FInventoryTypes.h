@@ -56,6 +56,7 @@ struct FItemData: public FTableRowBase
 UENUM(BlueprintType)
 enum class EInventoryUpdateTypes : uint8
 {
+	EIUT_None UMETA(DisplayName = "None"),
 	EIUT_Added UMETA(DisplayName = "Added"),
 	EIUT_Removed UMETA(DisplayName = "Removed")
 };

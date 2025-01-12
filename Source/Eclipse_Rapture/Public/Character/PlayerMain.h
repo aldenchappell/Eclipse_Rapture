@@ -189,8 +189,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
 	TObjectPtr<class UWidgetInventoryGrid> InventoryGrid;
 
-	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
-	void SetCrosshairTexture(UTexture2D* Texture);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
+	TObjectPtr<class UWidgetInventoryWheel> QuickAccessWheel;
+
+	
 
 	
 
@@ -262,4 +264,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Building")
 	UStaticMeshComponent* GetBuildingBlueprintStaticMesh() const;
+
+	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
+	void SetCrosshairTexture(UTexture2D* Texture);
 };
