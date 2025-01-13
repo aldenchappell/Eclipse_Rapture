@@ -24,15 +24,6 @@ APlayerMain::APlayerMain()
 
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
-
-    //setup flashlight
-    FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
-    FlashlightComponent->FlashlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlashlightMesh"));
-    FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-    FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
-    FlashlightComponent->SetHasFlashlight(false);
-
-	//BuildingComponent->BlueprintMesh->SetupAttachment(GetMesh(), FName("TempBPSocket"));
 }
 
 void APlayerMain::BeginPlay()
@@ -44,7 +35,7 @@ void APlayerMain::BeginPlay()
         InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
     }
 
-    if (FlashlightComponent)
+    /*if (FlashlightComponent)
     {
         if (FlashlightComponent->GetHasFlashlight() && PlayerBodyMesh)
         {
@@ -55,7 +46,7 @@ void APlayerMain::BeginPlay()
         {
             FlashlightComponent->Disable();
         }
-    }
+    }*/
 }
 
 void APlayerMain::Tick(float DeltaTime)

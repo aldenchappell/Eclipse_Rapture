@@ -198,11 +198,10 @@ protected:
 
 #pragma endregion
 
-#pragma region Static Attached Objects
+#pragma region Flashlight
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Static Attached Objects")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Components")
 	TObjectPtr<class UFlashlightComponent> FlashlightComponent;
-
 #pragma endregion
 
 #pragma region Weapon Properties

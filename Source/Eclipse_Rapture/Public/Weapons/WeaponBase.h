@@ -217,6 +217,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Properties", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBoxComponent> WeaponBox;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UTexture2D> WeaponTexture;
+
 public: //Getters and Setters
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }

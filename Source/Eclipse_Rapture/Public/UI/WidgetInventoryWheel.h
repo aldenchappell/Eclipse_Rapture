@@ -9,6 +9,8 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuickAccessWheelOpen);
+
 UCLASS()
 class ECLIPSE_RAPTURE_API UWidgetInventoryWheel : public UUserWidget
 {
@@ -16,9 +18,20 @@ class ECLIPSE_RAPTURE_API UWidgetInventoryWheel : public UUserWidget
 	
 public:
 
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Wheel | Events")
+	FOnQuickAccessWheelOpen OnQuickAccessWheelOpen;
+
 protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Inventory", meta = (ExposeOnSpawn = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wheel | Components", meta = (ExposeOnSpawn = "true"))
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Wheel | Widget Bindings", meta = (BindWidget))
+	TObjectPtr<class UImage> QuickAccessWheel;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wheel | Properties")
+	int32 WheelSectionCount = 4;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Wheel | Properties")
+	int32 WheelSectionSize;
 };
