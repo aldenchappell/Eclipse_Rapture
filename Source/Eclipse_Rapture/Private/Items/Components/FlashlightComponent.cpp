@@ -19,22 +19,9 @@ void UFlashlightComponent::Attach(USkeletalMeshComponent* Mesh, FName SocketName
 	}
 }
 
-void UFlashlightComponent::Enable()
-{
-	if (!bHasFlashlight) return;
 
-	if (FlashlightMesh && Flashlight)
-	{
-		FlashlightMesh->SetVisibility(true);
-		Flashlight->SetVisibility(true);
-	}
-}
-
-void UFlashlightComponent::Disable()
-{
-	FlashlightMesh->SetVisibility(false);
-	Flashlight->SetVisibility(false);
-}
+void UFlashlightComponent::EnableFlashlight_Implementation() {}
+void UFlashlightComponent::DisableFlashlight_Implementation() {}
 	
 void UFlashlightComponent::BeginPlay()
 {

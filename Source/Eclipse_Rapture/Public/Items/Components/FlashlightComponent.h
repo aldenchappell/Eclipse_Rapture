@@ -7,7 +7,7 @@
 #include "FlashlightComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ECLIPSE_RAPTURE_API UFlashlightComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -15,20 +15,20 @@ class ECLIPSE_RAPTURE_API UFlashlightComponent : public UActorComponent
 public:	
 	UFlashlightComponent();
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Flashlight | Flashlight Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Flashlight | Flashlight Properties")
 	TObjectPtr<class USpotLightComponent> Flashlight;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Flashlight | Flashlight Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Flashlight | Flashlight Properties")
 	TObjectPtr<class UStaticMeshComponent> FlashlightMesh;
 
 	UFUNCTION(BlueprintCallable)
 	void Attach(USkeletalMeshComponent* Mesh, FName SocketName);
 
-	UFUNCTION(BlueprintCallable)
-	void Enable();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void EnableFlashlight();
 
-	UFUNCTION(BlueprintCallable)
-	void Disable();
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DisableFlashlight();
 protected:
 	virtual void BeginPlay() override;
 
@@ -43,7 +43,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool GetHasFlashlight() const { return bHasFlashlight; }
-
-	UFUNCTION(Blueprintcallable)
-	bool GetIsEnabled() const { return FlashlightMesh->IsVisible(); }
 };
