@@ -18,8 +18,6 @@ public:
 	AAmmoItem();
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
 
-	virtual void Use(class AEclipseRaptureCharacter* Character) override;
-
 protected:
 
 	virtual void BeginPlay() override;
@@ -33,7 +31,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Drop Properties")
 	int32 MaxAmount = 25;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadonly, Category = "Drop Properties")
 	int32 AmmoDropAmount;
 
 	UFUNCTION()
