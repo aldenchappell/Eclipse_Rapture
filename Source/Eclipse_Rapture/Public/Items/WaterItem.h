@@ -19,7 +19,7 @@ public:
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
 
 protected:
-	virtual void Use(class AEclipseRaptureCharacter* Character) override;
+
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Healing")

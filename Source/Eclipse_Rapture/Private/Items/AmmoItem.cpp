@@ -39,10 +39,7 @@ void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 	//}
 }
 
-void AAmmoItem::Use(AEclipseRaptureCharacter* Character)
-{
 
-}
 
 void AAmmoItem::InitializeAmmoDrop()
 {

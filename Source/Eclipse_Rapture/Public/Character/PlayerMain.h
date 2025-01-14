@@ -21,9 +21,6 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(Blueprintcallable, Category = "Inventory | Items")
-	void UseItem(TSubclassOf<AItem> ItemToUse);
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 

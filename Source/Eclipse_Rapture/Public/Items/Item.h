@@ -26,12 +26,6 @@ public:
 	UPROPERTY(Transient)
 	class UWorld* World;
 
-	UFUNCTION()
-	virtual void Use(class AEclipseRaptureCharacter* Character);
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnUse(class AEclipseRaptureCharacter* Character);
-
 	UPROPERTY(BlueprintReadWrite, Category = "References")
 	TObjectPtr<class UInventoryComponent> OwningInventory;
 

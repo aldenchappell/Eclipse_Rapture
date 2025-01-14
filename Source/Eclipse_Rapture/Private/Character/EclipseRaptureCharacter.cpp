@@ -322,19 +322,19 @@ void AEclipseRaptureCharacter::SetSwapTimer()
     GetWorld()->GetTimerManager().SetTimer(WeaponSwapTimerHandle, this, &AEclipseRaptureCharacter::ResetSwap, WeaponSwapCooldown, false);
 }
 
-void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
+void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo_Implementation()
 {
-    if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
+    /*if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
     {
         switch (CurrentWeaponName)
         {
-        case EWeaponName::EWN_Pistol_A:
+        case EWeaponName::EWN_M1911:
             SecondaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Pistol_B:
+        case EWeaponName::EWN_Glock:
             SecondaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Rifle_A:
+        case EWeaponName::EWN_AR15:
             PrimaryAmmo = CurrentWeaponAmmo;
             break;
         case EWeaponName::EWN_Rifle_B:
@@ -347,7 +347,7 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
             }
             break;
         }
-    }
+    }*/
 }
 
 
