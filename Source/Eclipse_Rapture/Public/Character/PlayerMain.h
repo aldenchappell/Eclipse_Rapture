@@ -2,9 +2,11 @@
 
 #pragma once
 
+#include "Weapons/MeleeWeaponBase.h"
 #include "CoreMinimal.h"
 #include "Character/EclipseRaptureCharacter.h"
 #include "PlayerMain.generated.h"
+
 
 class UInputMappingContext;
 class UInputAction;
@@ -22,7 +24,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
-	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+	TSubclassOf<AMeleeWeaponBase> MeleeWeaponClass;
 
 protected:
 	virtual void BeginPlay() override;
