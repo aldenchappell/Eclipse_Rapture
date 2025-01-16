@@ -9,32 +9,24 @@
 #include "DrawDebugHelpers.h" 
 #include "Items/WeaponPickup.h"
 #include "Items/Components/ItemDataComponent.h"
+#include "Weapons/Components/WeaponDataComponent.h"
+
 #define TraceChannel ETraceTypeQuery_
 AWeaponBase::AWeaponBase()
 {
     PrimaryActorTick.bCanEverTick = true;
 
     WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-   /* WeaponMesh->SetupAttachment(GetRootComponent());*/
 	SetRootComponent(WeaponMesh);
 
-	
+	WeaponDataComponent = CreateDefaultSubobject<UWeaponDataComponent>(TEXT("Weapon Data"));
 }
 
 
 void AWeaponBase::BeginPlay()
 {
     Super::BeginPlay();
-    
-    ////should only be true on melee weapons. false by default
-    //if (bShouldDoBoxOverlapCheck)
-    //{
-    //    WeaponBox->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnBoxOverlap);
-    //}
 }
-
-
-
 
 void AWeaponBase::Fire_Implementation()
 {

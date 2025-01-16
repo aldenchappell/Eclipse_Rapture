@@ -46,10 +46,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnEquip();
 
-	
-
-
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Components")
+	TObjectPtr<class UWeaponDataComponent> WeaponDataComponent;
 protected:
 	virtual void BeginPlay() override;
 
@@ -131,9 +129,6 @@ public: //Getters and Setters
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-
-	UPROPERTY()
-	TSubclassOf<AWeaponBase> MeleeWeaponClass{ this->GetClass() };
 
 	UFUNCTION(BlueprintPure)
 	FORCEINLINE FName GetAttachName() const { return SocketName; }
