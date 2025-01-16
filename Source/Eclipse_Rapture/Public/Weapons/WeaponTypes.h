@@ -16,6 +16,7 @@ enum class EWeaponFireMode : uint8
 	EWFM_SemiAuto UMETA(DisplayName = "Semi-Auto"),
 	EWFM_Automatic UMETA(DisplayName = "Automatic"),
 	EWFM_BurstFire UMETA(DisplayName = "Burst Fire"),
+	EWFM_BoltAction UMETA(DisplayName = "Bolt Action")
 };
 
 UENUM(BlueprintType)
