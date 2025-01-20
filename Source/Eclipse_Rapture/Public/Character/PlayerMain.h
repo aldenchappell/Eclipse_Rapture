@@ -204,6 +204,10 @@ protected:
 #pragma endregion
 
 #pragma region Weapon Properties
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<class AWeaponBase> CurrentEquippedWeapon;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<AWeaponBase> MeleeWeapon;
 

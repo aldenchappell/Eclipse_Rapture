@@ -14,6 +14,12 @@ struct FWeaponData : public FTableRowBase
 	TSubclassOf<class AWeaponPickup> PickupClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
+	EAmmoType AmmoType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
+	TSubclassOf<class AAmmoItem> RequiredAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
 	TArray<EWeaponFireMode> FireModes;
 
 	GENERATED_BODY()
@@ -49,6 +55,7 @@ struct FWeaponData : public FTableRowBase
 
 #pragma endregion
 
+#pragma region Types
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
 	EWeaponType WeaponSlotType = EWeaponType::EWT_Unarmed;
 
@@ -60,4 +67,6 @@ struct FWeaponData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
 	FName SocketName;
+
+#pragma endregion
 };

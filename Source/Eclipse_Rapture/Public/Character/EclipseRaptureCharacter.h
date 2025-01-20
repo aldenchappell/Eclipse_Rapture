@@ -95,7 +95,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<AWeaponBase> CurrentWeapon;
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
+	UFUNCTION(BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void OnWeaponUpdateSetAmmo();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
