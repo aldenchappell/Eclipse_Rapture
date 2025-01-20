@@ -7,12 +7,6 @@
 
 AAmmoItem::AAmmoItem()
 {
-	
-}
-
-void AAmmoItem::BeginPlay()
-{
-	InitializeAmmoDrop();
 }
 
 void AAmmoItem::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -37,13 +31,4 @@ void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 	//	}
 	//	Destroy();
 	//}
-}
-
-
-
-void AAmmoItem::InitializeAmmoDrop()
-{
-	AmmoDropAmount = FMath::RandRange(MinAmount, MaxAmount);
-
-	UE_LOG(LogTemp, Warning, TEXT("Ammo Amount: %d"), AmmoDropAmount);
 }

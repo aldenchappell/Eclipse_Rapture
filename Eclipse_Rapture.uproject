@@ -84,6 +84,10 @@
 		{
 			"Name": "SkeletalMeshModelingTools",
 			"Enabled": true
+		},
+		{
+			"Name": "LudusAI",
+			"Enabled": true
 		}
 	]
 }

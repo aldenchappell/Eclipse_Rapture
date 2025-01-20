@@ -6,9 +6,8 @@
 #include "Weapons/WeaponBase.h"
 #include "RangedWeaponBase.generated.h"
 
-/**
- * 
- */
+class AAmmoItem;
+
 UCLASS()
 class ECLIPSE_RAPTURE_API ARangedWeaponBase : public AWeaponBase
 {
@@ -20,7 +19,7 @@ public:
 	EAmmoType AmmoType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Weapon Properties")
-	TSubclassOf<class AAmmoItem> RequiredAmmo;
+	TSubclassOf<AAmmoItem> RequiredAmmo;
 
 #pragma region Recoil Properties
 
@@ -43,8 +42,8 @@ public:
 
 #pragma region Reloading
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon | Ammo")
-	void Reload(UInventoryComponent* PlayerInventory);
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Ammo")
+	bool Reload(UInventoryComponent* PlayerInventory);
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon | Ammo")
 	float ReloadTime = 2.f;
