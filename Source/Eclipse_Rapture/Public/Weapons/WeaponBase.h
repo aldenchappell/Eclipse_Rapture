@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Weapons/WeaponData.h"
 #include "WeaponTypes.h"
 #include "Interfaces/Fire.h"
 #include "WeaponTypes.h"
@@ -60,7 +61,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	int32 WeaponIndex;
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Weapon | Weapon Data")
+	FDataTableRowHandle GetWeaponID();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Weapon | Weapon Data")
+	FWeaponData GetWeaponData();
 
 #pragma region WeaponStats
 
