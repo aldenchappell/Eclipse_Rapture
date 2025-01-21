@@ -220,6 +220,7 @@ void AEclipseRaptureCharacter::EquipUnarmed()
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
     CurrentWeaponType = EWeaponType::EWT_Unarmed;
     CurrentWeaponName = EWeaponName::EWN_Unarmed;
+	CurrentWeapon = nullptr;
 
     UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
 }
