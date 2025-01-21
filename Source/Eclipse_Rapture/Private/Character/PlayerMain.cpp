@@ -24,15 +24,6 @@ APlayerMain::APlayerMain()
 
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
-
-    //setup flashlight
-    FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
-    FlashlightComponent->FlashlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlashlightMesh"));
-    FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-    FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
-    FlashlightComponent->SetHasFlashlight(false);
-
-	//BuildingComponent->BlueprintMesh->SetupAttachment(GetMesh(), FName("TempBPSocket"));
 }
 
 void APlayerMain::BeginPlay()
@@ -44,7 +35,7 @@ void APlayerMain::BeginPlay()
         InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
     }
 
-    if (FlashlightComponent)
+    /*if (FlashlightComponent)
     {
         if (FlashlightComponent->GetHasFlashlight() && PlayerBodyMesh)
         {
@@ -55,7 +46,7 @@ void APlayerMain::BeginPlay()
         {
             FlashlightComponent->Disable();
         }
-    }
+    }*/
 }
 
 void APlayerMain::Tick(float DeltaTime)
@@ -227,17 +218,6 @@ UStaticMeshComponent* APlayerMain::GetBuildingBlueprintStaticMesh_Implementation
 
 #pragma endregion
 
-#pragma region Combat
-
-
-
-
-
-
-
-
-#pragma endregion
-
 #pragma region UI
 void APlayerMain::SetCrosshairTexture(UTexture2D* Texture)
 {
@@ -246,39 +226,5 @@ void APlayerMain::SetCrosshairTexture(UTexture2D* Texture)
         CrosshairTexture2D = Texture;
     }
 }
-
-#pragma endregion
-
-
-#pragma region Inventory
-
-void APlayerMain::UseItem(TSubclassOf<AItem> ItemClassToUse)
-{
-    if (!ItemClassToUse) return;
-
-    //TODO: Come back here and fix for new inventory system.
-    // Check if the inventory contains the item class
-    //if (InventoryComponent && InventoryComponent->InventoryItems.Contains(ItemClassToUse))
-    //{
-    //    // Retrieve the instance of the item
-    //    AItem* ItemInstance = InventoryComponent->GetItemInstance(ItemClassToUse);
-
-    //    if (ItemInstance)
-    //    {
-    //        // Call the C++ and Blueprint `Use` functions on the item instance
-    //        ItemInstance->Use(this); // C++ version
-    //        ItemInstance->OnUse(this); // Blueprint version
-    //    }
-    //    else
-    //    {
-    //        UE_LOG(LogTemp, Warning, TEXT("No instance of the specified item class found in the inventory."));
-    //    }
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("Item class not found in inventory."));
-    //}
-}
-
 
 #pragma endregion

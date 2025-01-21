@@ -309,6 +309,10 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
     UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
 }
 
+void AEclipseRaptureCharacter::EquipMeleeWeapon()
+{
+}
+
 
 void AEclipseRaptureCharacter::ResetSwap()
 {
@@ -326,27 +330,51 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 {
     if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
     {
-        switch (CurrentWeaponName)
+        /*switch (CurrentWeaponName)
         {
-        case EWeaponName::EWN_Pistol_A:
+		case EWeaponName::EWN_Unarmed:
+			break;
+		case EWeaponName::EWN_CombatKnife:
+			break;
+		case EWeaponName::EWN_Bat:
+			break;
+		case EWeaponName::EWN_Baton:
+			break;
+        case EWeaponName::EWN_M1911:
             SecondaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Pistol_B:
+        case EWeaponName::EWN_Glock:
             SecondaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Rifle_A:
+		case EWeaponName::EWN_Magnum:
+			SecondaryAmmo = CurrentWeaponAmmo;
+			break;
+        case EWeaponName::EWN_AR15:
             PrimaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Rifle_B:
+        case EWeaponName::EWN_M4A1:
             PrimaryAmmo = CurrentWeaponAmmo;
             break;
-        default:
-            if (GEngine)
-            {
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
-            }
+		case EWeaponName::EWN_AK47:
+			PrimaryAmmo = CurrentWeaponAmmo;
+			break;
+		case EWeaponName::EWN_Remington:
+			PrimaryAmmo = CurrentWeaponAmmo;
             break;
-        }
+		case EWeaponName::EWN_BenelliM4:
+			PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+		case EWeaponName::EWN_HuntingRifle:
+			PrimaryAmmo = CurrentWeaponAmmo;
+			break;*/
+
+        //default:
+        //    if (GEngine)
+        //    {
+        //        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
+        //    }
+        //    break;
+        //}
     }
 }
 

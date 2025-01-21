@@ -2,9 +2,11 @@
 
 #pragma once
 
+#include "Weapons/MeleeWeaponBase.h"
 #include "CoreMinimal.h"
 #include "Character/EclipseRaptureCharacter.h"
 #include "PlayerMain.generated.h"
+
 
 class UInputMappingContext;
 class UInputAction;
@@ -21,11 +23,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(Blueprintcallable, Category = "Inventory | Items")
-	void UseItem(TSubclassOf<AItem> ItemToUse);
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Weapon Properties")
-	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+	TSubclassOf<AMeleeWeaponBase> MeleeWeaponClass;
 
 protected:
 	virtual void BeginPlay() override;
@@ -189,21 +188,26 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
 	TObjectPtr<class UWidgetInventoryGrid> InventoryGrid;
 
-	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
-	void SetCrosshairTexture(UTexture2D* Texture);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "UI | UI Properties")
+	TObjectPtr<class UWidgetInventoryWheel> QuickAccessWheel;
+
+	
 
 	
 
 #pragma endregion
 
-#pragma region Static Attached Objects
+#pragma region Flashlight
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Character | Static Attached Objects")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character | Components")
 	TObjectPtr<class UFlashlightComponent> FlashlightComponent;
-
 #pragma endregion
 
 #pragma region Weapon Properties
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<class AWeaponBase> CurrentEquippedWeapon;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<AWeaponBase> MeleeWeapon;
 
@@ -262,4 +266,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Building")
 	UStaticMeshComponent* GetBuildingBlueprintStaticMesh() const;
+
+	UFUNCTION(Blueprintcallable, Category = "UI | UI Properties")
+	void SetCrosshairTexture(UTexture2D* Texture);
 };

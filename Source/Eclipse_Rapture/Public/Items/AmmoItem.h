@@ -18,11 +18,7 @@ public:
 	AAmmoItem();
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
 
-	virtual void Use(class AEclipseRaptureCharacter* Character) override;
-
 protected:
-
-	virtual void BeginPlay() override;
 
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
@@ -33,11 +29,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Drop Properties")
 	int32 MaxAmount = 25;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite, Category = "Drop Properties")
 	int32 AmmoDropAmount;
 
-	UFUNCTION()
-	void InitializeAmmoDrop();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Properties")
+	bool bEnableRandomDropAmount = true;
 
 
 };

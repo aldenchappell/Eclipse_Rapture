@@ -9,7 +9,6 @@ class UTextBlock;
 class AItem;
 class UButton;
 class UBorder;
-class UWidgetItemTooltip;
 class USizeBox;
 /**
  * Inventory Slot UI Widget
@@ -21,8 +20,7 @@ class ECLIPSE_RAPTURE_API UWidgetInventorySlot : public UUserWidget
 
 public:
 
-    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
-    void ResetCreatedTooltips();
+    
 
     
 protected:
@@ -88,9 +86,7 @@ protected:
 	TObjectPtr<UTextBlock> QuantityText;
 private:
 
-    /** Tooltip widget instance */
-    UWidgetItemTooltip* TooltipInstance = nullptr;
-	TArray<UWidgetItemTooltip*> CreatedTooltips;
+    
 
 public:
 

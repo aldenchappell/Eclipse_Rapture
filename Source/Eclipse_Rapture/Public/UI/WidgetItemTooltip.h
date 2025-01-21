@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Items/ItemTypes.h"
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "WidgetItemTooltip.generated.h"
@@ -22,26 +23,46 @@ public:
 
 protected:
 	/** UI Elements */
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* ItemNameText;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* ItemDescriptionText;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* ItemWeightText;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UTextBlock* ItemTypeText;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly)
 	TSubclassOf<class UWidgetItemUse> ItemUseWidgetClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UWidgetItemUse* ItemUseWidget;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UWidgetItemUse* OptionalSecondItemUseWidget;
 
 	virtual void NativeConstruct() override;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tooltip", meta = (ExposeOnSpawn = "true"))
+	EUseImpactType UseImpactType;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tooltip", meta = (ExposeOnSpawn = "true"))
+	EMainItemUseDescriptionType MainItemUseDescriptionType;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tooltip", meta = (ExposeOnSpawn = "true"))
+	ESecondaryItemUseDescriptionType SecondaryItemUseDescriptionType;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tooltip", meta = (ExposeOnSpawn = "true"))
+	FText ItemDisplayName;
+
+	
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tooltip", meta = (ExposeOnSpawn = "true"))
+	FText ItemDescription;
+
+	UPROPERTY(BlueprintReadWrite, Category = "Tooltip", meta = (ExposeOnSpawn = "true"))
+	float ItemWeight;
 };

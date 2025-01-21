@@ -21,7 +21,6 @@ public:
 	
 	
 protected:
-	virtual void Use(class AEclipseRaptureCharacter* Character) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Healing")
 	float HealingAmount;

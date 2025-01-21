@@ -19,8 +19,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TObjectPtr<class UWidgetInventorySlot> InventorySlot;
 
+    UFUNCTION(BlueprintCallable, Category = "Inventory Slot")
+    void ResetCreatedTooltips();
 
 protected:
     virtual void NativeConstruct() override;
 
+    /** Tooltip widget instance */
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory Slot")
+    TArray<class UWidgetItemTooltip*> CreatedTooltips;
 };

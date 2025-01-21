@@ -8,7 +8,7 @@ void UWidgetItemTooltip::NativeConstruct()
 	Super::NativeConstruct();
 
 	// Initialize with empty values to avoid displaying stale data
-	if (ItemNameText)
+	/*if (ItemNameText)
 		ItemNameText->SetText(FText::FromString("No Item"));
 
 	if (ItemDescriptionText)
@@ -18,7 +18,7 @@ void UWidgetItemTooltip::NativeConstruct()
 		ItemWeightText->SetText(FText::FromString("Weight: 0"));
 
 	if (ItemTypeText)
-		ItemTypeText->SetText(FText::FromString("Type: Unknown"));
+		ItemTypeText->SetText(FText::FromString("Type: Unknown"));*/
 }
 
 void UWidgetItemTooltip::InitializeTooltip(AItem* Item)
