@@ -241,9 +241,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	TObjectPtr<class AMeleeWeaponBase> MeleeWeapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AWeaponBase> CurrentWeaponBase;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
 
