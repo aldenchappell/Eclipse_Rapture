@@ -39,6 +39,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
 	ECharacterType CharacterType;
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipUnarmed();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipPrimaryWeapon();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipSecondaryWeapon();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipMeleeWeapon();
 #pragma endregion
 
 	//For ui mostly
@@ -49,7 +61,7 @@ public:
 	FVector PlayerADSOffset;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
-	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
+	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
@@ -102,17 +114,7 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void EquipWeapon(AWeaponBase* Weapon);
 
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipUnarmed();
-
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipPrimaryWeapon();
 	
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipSecondaryWeapon();
-
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipMeleeWeapon();
 
 	void SetSwapTimer();
 
