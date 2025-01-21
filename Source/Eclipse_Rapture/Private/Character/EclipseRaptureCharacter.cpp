@@ -309,6 +309,10 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
     UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
 }
 
+void AEclipseRaptureCharacter::EquipMeleeWeapon()
+{
+}
+
 
 void AEclipseRaptureCharacter::ResetSwap()
 {

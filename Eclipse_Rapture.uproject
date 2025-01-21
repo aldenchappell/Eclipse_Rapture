@@ -88,6 +88,13 @@
 		{
 			"Name": "LudusAI",
 			"Enabled": true
+		},
+		{
+			"Name": "Postshot",
+			"Enabled": false,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
 		}
 	]
 }

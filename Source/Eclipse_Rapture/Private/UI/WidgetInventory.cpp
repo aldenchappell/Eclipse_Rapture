@@ -1,9 +1,21 @@
 #include "UI/WidgetInventory.h"
-#include "UI/WidgetInventorySlot.h"
-#include "Components/UniformGridPanel.h"
-#include "Components/UniformGridSlot.h"
-#include "Character/InventoryComponent.h"
-#include "Items/Item.h"
+#include "UI/WidgetItemTooltip.h"
+
+
+void UWidgetInventory::ResetCreatedTooltips()
+{
+	if (CreatedTooltips.Num() <= 0) return;
+
+	for (UWidgetItemTooltip* Tooltip : CreatedTooltips)
+	{
+		if (Tooltip)
+		{
+			Tooltip->RemoveFromParent();
+			Tooltip = nullptr;
+            CreatedTooltips.Empty();
+		}
+	}
+}
 
 void UWidgetInventory::NativeConstruct()
 {
