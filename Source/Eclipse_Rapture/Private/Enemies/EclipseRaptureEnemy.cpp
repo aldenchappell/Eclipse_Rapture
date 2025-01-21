@@ -3,6 +3,8 @@
 #include "Global/Components/HealthComponent.h"
 #include "Character/InventoryComponent.h"
 #include "Enemies/EnemyAITypes.h"
+#include "Weapons/RangedWeaponBase.h"
+#include "Weapons/MeleeWeaponBase.h"
 
 AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 {
@@ -59,23 +61,28 @@ bool AEclipseRaptureEnemy::IsValidWeaponConfiguration() const
 void AEclipseRaptureEnemy::EquipStartingWeapon()
 {
     // Ensure the CurrentWeapons map is populated
-    if (CurrentWeapons.Num() == 0)
+    if (!PrimaryWeapon)
     {
         UE_LOG(LogTemp, Warning, TEXT("%s has no weapons in the CurrentWeapons map."), *GetName());
         return;
     }
 
-    // Equip the primary weapon if available
-    if (CurrentWeapons.Contains(EWeaponClass::EWC_Primary) && CurrentWeapons[EWeaponClass::EWC_Primary])
+    if (PrimaryWeapon)
     {
-        EquipWeapon(CurrentWeapons[EWeaponClass::EWC_Primary]);
+        EquipWeapon(PrimaryWeapon);
+        return;
+    }
+    
+    // Equip the secondary weapon if no primary is available
+    if (SecondaryWeapon)
+    {
+        EquipWeapon(SecondaryWeapon);
         return;
     }
 
-    // Equip the secondary weapon if no primary is available
-    if (CurrentWeapons.Contains(EWeaponClass::EWC_Secondary) && CurrentWeapons[EWeaponClass::EWC_Secondary])
+    if (MeleeWeapon)
     {
-        EquipWeapon(CurrentWeapons[EWeaponClass::EWC_Secondary]);
+        EquipWeapon(MeleeWeapon);
         return;
     }
 
@@ -109,8 +116,7 @@ void AEclipseRaptureEnemy::AddWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeap
         // Initialize weapon properties
         SpawnedWeapon->OwningCharacter = this;
 
-        // Add to CurrentWeapons map
-        CurrentWeapons.Add(WeaponSlot, SpawnedWeapon);
+        CurrentWeapon = SpawnedWeapon;
         OnEquipWeapon.Broadcast();
         UE_LOG(LogTemp, Log, TEXT("%s added weapon %s to slot %d."), *GetName(), *SpawnedWeapon->GetName(), static_cast<int32>(WeaponSlot));
     }

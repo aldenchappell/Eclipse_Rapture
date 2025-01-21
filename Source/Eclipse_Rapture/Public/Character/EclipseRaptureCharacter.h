@@ -20,6 +20,7 @@ class AWeaponBase;
 class AItem;
 class USkeletalMeshComponent;
 class UCameraShakeBase;
+class ARangedWeaponBase;
 
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter :
@@ -70,7 +71,7 @@ public:
 #pragma region Damageable Implementations
 	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
 
-	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
+	//virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
 
 	virtual float GetMaxHealth_Implementation() override;
 	virtual float GetCurrentHealth_Implementation() override;
@@ -88,8 +89,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SwapWeapon(EWeaponClass NewWeaponClass);
 
-	UFUNCTION(BlueprintCallable)
-	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
+	//UFUNCTION(BlueprintCallable)
+	//AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
 
 	//for weapon swapping
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
@@ -109,6 +110,9 @@ protected:
 	
 	UFUNCTION(Blueprintcallable)
 	virtual void EquipSecondaryWeapon();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipMeleeWeapon();
 
 	void SetSwapTimer();
 
@@ -229,10 +233,13 @@ protected:
 	float WeaponSwapCooldown = 2.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+	TObjectPtr<ARangedWeaponBase> PrimaryWeapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AWeaponBase> CurrentWeaponBase;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<ARangedWeaponBase> SecondaryWeapon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<class AMeleeWeaponBase> MeleeWeapon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
