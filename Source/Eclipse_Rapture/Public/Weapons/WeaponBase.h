@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Weapons/WeaponData.h"
 #include "WeaponTypes.h"
 #include "Interfaces/Fire.h"
 #include "WeaponTypes.h"
@@ -60,7 +61,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	int32 WeaponIndex;
 
-
+	
 
 #pragma region WeaponStats
 
@@ -106,6 +107,13 @@ private:
 	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 
 public: //Getters and Setters
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Weapon | Weapon Data")
+	FORCEINLINE FDataTableRowHandle GetWeaponID();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Weapon | Weapon Data")
+	FORCEINLINE FWeaponData GetWeaponData();
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 

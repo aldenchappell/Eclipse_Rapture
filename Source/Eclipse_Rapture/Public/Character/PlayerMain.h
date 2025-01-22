@@ -122,9 +122,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<UInputAction> SecondaryAction;
 
+	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<UInputAction>MeleeWeaponAction;
+
 #pragma endregion
 	
 #pragma region Input Functions
+	UFUNCTION(BlueprintCallable, Category = "Character | Weapons")
 	void Melee();
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent, Category = "Character | Movement | Sprinting")
@@ -204,12 +208,6 @@ protected:
 #pragma endregion
 
 #pragma region Weapon Properties
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<class AWeaponBase> CurrentEquippedWeapon;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AWeaponBase> MeleeWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	bool bCanMelee = true;
