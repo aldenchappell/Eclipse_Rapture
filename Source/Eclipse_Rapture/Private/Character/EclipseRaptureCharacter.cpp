@@ -412,7 +412,7 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 }
 
 
-UInventoryComponent* AEclipseRaptureCharacter::GetInventoryComponent_Implementation()
+UInventoryComponent* AEclipseRaptureCharacter::GetInventoryComponentRef_Implementation()
 {
     return nullptr;
 }
