@@ -314,7 +314,7 @@ public:
 	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Inventory | Getters")
-	class UInventoryComponent* GetInventoryComponent();
+	class UInventoryComponent* GetInventoryComponentRef();
 
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }

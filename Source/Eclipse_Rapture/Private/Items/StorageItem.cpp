@@ -9,7 +9,7 @@ AStorageItem::AStorageItem()
 	LidMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Lid Mesh"));
 	LidMesh->SetupAttachment(ItemMesh);
 
-	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
+	//InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory Component"));
 }
 
 void AStorageItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
