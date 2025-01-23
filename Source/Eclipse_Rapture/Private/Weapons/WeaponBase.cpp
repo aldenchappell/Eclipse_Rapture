@@ -29,6 +29,11 @@ void AWeaponBase::BeginPlay()
     Super::BeginPlay();
 }
 
+FItemData AWeaponBase::GetPickupItemData_Implementation()
+{
+    return FItemData();
+}
+
 FDataTableRowHandle AWeaponBase::GetWeaponID_Implementation()
 {
     return FDataTableRowHandle();
