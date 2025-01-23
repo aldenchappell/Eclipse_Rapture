@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Character/InventoryComponent.h"
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "CharacterData.generated.h"
@@ -28,4 +29,7 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapons")
 	bool HasWeaponEquipped() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
+	class UInventoryComponent* GetInventoryComponent() const;
 };

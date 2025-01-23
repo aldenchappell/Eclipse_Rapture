@@ -114,6 +114,9 @@ public: //Getters and Setters
 	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Weapon | Weapon Data")
 	FORCEINLINE FWeaponData GetWeaponData();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Weapon | Weapon Data")
+	FORCEINLINE FItemData GetPickupItemData();
+
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
 
