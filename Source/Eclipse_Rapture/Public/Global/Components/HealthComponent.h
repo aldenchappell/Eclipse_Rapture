@@ -78,6 +78,13 @@ public:
     UPROPERTY(BlueprintReadWrite, Category = "Health")
     bool bIsInCriticalHealth = false;
 
+#pragma region CHEATS
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Cheats")
+    bool bEnableGodmode = false;
+
+#pragma endregion
+
 protected:
     virtual void BeginPlay() override;
 
