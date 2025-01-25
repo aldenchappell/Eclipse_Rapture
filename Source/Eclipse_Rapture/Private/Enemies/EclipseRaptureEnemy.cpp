@@ -139,13 +139,14 @@ void AEclipseRaptureEnemy::SpawnStartingWeapons()
 
 bool AEclipseRaptureEnemy::CanFire()
 {
-    if (AmmoCount <= 0) return false;
+   /* if (AmmoCount <= 0) return false;
 
     float HitChance = FMath::FRandRange(0.0f, 100.0f);
     bool bFirstShot = (CurrentAIState != EEnemyAIState::EEAS_InCombat);
     if (bFirstShot) HitChance += FirstShotAccuracyBonus;
 
-    return HitChance <= Accuracy;
+    return HitChance <= Accuracy;*/
+    return false;
 }
 
 #if WITH_EDITOR
@@ -156,9 +157,10 @@ void AEclipseRaptureEnemy::PostEditChangeProperty(FPropertyChangedEvent& Propert
     if (PropertyChangedEvent.Property &&
         PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AEclipseRaptureEnemy, StartingWeapons))
     {
-        if (!IsValidWeaponConfiguration())
+        if (!IsValidWeaponConfiguration() && GEngine)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Invalid weapon configuration in editor: Only one Primary and one Secondary weapon allowed."));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid weapon configuration in editor: Only one Primary and one Secondary weapon allowed."));
+            //UE_LOG(LogTemp, Warning, TEXT("Invalid weapon configuration in editor: Only one Primary and one Secondary weapon allowed."));
         }
     }
 }

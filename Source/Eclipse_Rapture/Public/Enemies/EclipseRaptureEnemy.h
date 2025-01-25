@@ -23,10 +23,6 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Properties")
     EnemyAIType AIType = EnemyAIType::EAIT_Shooter;
 
-    // Current AI state (e.g., Idle, InCombat, InCover)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Properties")
-    EEnemyAIState CurrentAIState = EEnemyAIState::EEAS_Idle;
-
     UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnEquipWeapon OnEquipWeapon;
 
