@@ -19,10 +19,6 @@ public:
 
     virtual void Tick(float DeltaTime) override;
 
-    // Enemy AI type (e.g., Shooter, Melee, Boss)
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI | Properties")
-    EnemyAIType AIType = EnemyAIType::EAIT_Shooter;
-
     UPROPERTY(BlueprintCallable, BlueprintAssignable, Category = "Weapons | Delegates")
     FOnEquipWeapon OnEquipWeapon;
 
@@ -73,30 +69,6 @@ protected:
     // Spawns and equips weapons based on `StartingWeapons`
 	UFUNCTION(BlueprintCallable, Category = "Weapons")
     void SpawnStartingWeapons();
-
-    // Check whether the enemy can fire its weapon
-	UFUNCTION(BlueprintPure, Category = "Weapons")
-    bool CanFire();
-
-    // Drop items upon death
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character | Items")
-    TArray<TSubclassOf<class AItem>> ItemsToDrop;
-
-   
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons | Accuracy")
-    float FirstShotAccuracyBonus = 20.0f;
-
-    // Ammo management
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
-    float MinAmmoToHold;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
-    float MaxAmmoToHold;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Weapons")
-    float AmmoCount = 30.0f;
-    
 
 #if WITH_EDITOR
     // Editor validation: Ensure designers use valid weapon setups
