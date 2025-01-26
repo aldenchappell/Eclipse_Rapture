@@ -69,21 +69,16 @@ public:
 
 #pragma region Components
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Components | Health Component")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Health Component")
 	TObjectPtr<class UHealthComponent> HealthComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Inventory")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
-	//TObjectPtr<class UBuildingComponent> BuildingComponent;
-
 #pragma endregion
 	
 #pragma region Damageable Implementations
 	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
-
-	//virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
 
 	virtual float GetMaxHealth_Implementation() override;
 	virtual float GetCurrentHealth_Implementation() override;

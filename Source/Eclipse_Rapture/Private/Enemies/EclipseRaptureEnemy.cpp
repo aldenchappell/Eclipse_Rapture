@@ -18,18 +18,11 @@ void AEclipseRaptureEnemy::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Validate weapon configuration
     if (!IsValidWeaponConfiguration())
     {
         UE_LOG(LogTemp, Error, TEXT("Invalid weapon configuration for %s. No weapons will be assigned."), *GetName());
         return;
     }
-
-    // Spawn and equip starting weapons
-    //SpawnStartingWeapons();
-
-    //// Equip the starting weapon
-    //EquipStartingWeapon();
 }
 
 void AEclipseRaptureEnemy::Tick(float DeltaTime)
@@ -134,20 +127,6 @@ void AEclipseRaptureEnemy::SpawnStartingWeapons()
     }
 }
 
-
-
-
-bool AEclipseRaptureEnemy::CanFire()
-{
-   /* if (AmmoCount <= 0) return false;
-
-    float HitChance = FMath::FRandRange(0.0f, 100.0f);
-    bool bFirstShot = (CurrentAIState != EEnemyAIState::EEAS_InCombat);
-    if (bFirstShot) HitChance += FirstShotAccuracyBonus;
-
-    return HitChance <= Accuracy;*/
-    return false;
-}
 
 #if WITH_EDITOR
 void AEclipseRaptureEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
