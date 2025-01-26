@@ -15,7 +15,7 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 	
 	if (Character)
 	{
-		UInventoryComponent* Inventory = Character->GetInventoryComponent();
+		UInventoryComponent* Inventory = Character->GetInventoryComponentRef();
 		AWeaponBase* CurrentWeapon = Character->GetCurrentWeapon();
 
 		if (CurrentWeapon)
@@ -46,7 +46,13 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 		}
 
 		//should not be necessary. This is just for testing purposes.
-		Inventory->OnInventoryUpdated.Broadcast();
+		if (Inventory)
+		{
+			Inventory->OnInventoryUpdated.Broadcast();
+		}
+
+		Character->SetIsReloading(false);
+
 		Destroy();
 	}
 }
