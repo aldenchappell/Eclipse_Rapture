@@ -32,4 +32,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inventory")
 	class UInventoryComponent* GetInventoryComponent() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health")
+	class UHealthComponent* GetHealthComponent() const;
 };

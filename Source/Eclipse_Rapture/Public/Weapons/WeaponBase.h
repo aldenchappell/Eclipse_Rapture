@@ -30,19 +30,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Refs")
 	TObjectPtr<class AEclipseRaptureCharacter> OwningCharacter;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
-	TSubclassOf<class AWeaponPickup> PickupClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
-	FName SocketName;
 
 	virtual void Fire_Implementation() override;
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<AActor*> IgnoreActors;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
-	TObjectPtr<UAnimMontage> EquipMontage;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnEquip();
@@ -61,50 +53,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Properties")
 	int32 WeaponIndex;
 
-	
-
-#pragma region WeaponStats
-
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
-	float Damage;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
-	float Range;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | Weapon Stats")
-	float FireRate = 0.2f;
-
-	
-#pragma endregion
-
-
-
-#pragma region Sounds
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item | Sound")
-	TObjectPtr<USoundBase> HitSound;
-#pragma endregion
-
-#pragma region Animation
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon | Animation")
-	TObjectPtr<UAnimSequence> FireAnimation;
-	
-#pragma endregion
-
-
-
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	EWeaponType WeaponType = EWeaponType::EWT_Unarmed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	EWeaponFireMode WeaponFireMode = EWeaponFireMode::EWFM_SemiAuto;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EWeaponClass WeaponClass = EWeaponClass::EWC_Unarmed;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	EWeaponName WeaponName = EWeaponName::EWN_Unarmed;
 
 public: //Getters and Setters
 
@@ -118,19 +72,7 @@ public: //Getters and Setters
 	FORCEINLINE FItemData GetPickupItemData();
 
 	UFUNCTION(BlueprintCallable)
-	FORCEINLINE EWeaponType GetWeaponType() const { return WeaponType; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE EWeaponFireMode GetWeaponFireMode() const { return WeaponFireMode; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE EWeaponName GetWeaponName() const { return WeaponName; }
-
-	UFUNCTION(BlueprintCallable)
 	FORCEINLINE EWeaponClass GetWeaponClass() const { return WeaponClass; }
-
-	UFUNCTION(BlueprintCallable)
-	FORCEINLINE float GetFireRate() const { return FireRate; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE bool GetCanFire() const { return bCanFire; }
@@ -140,7 +82,4 @@ public: //Getters and Setters
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-
-	UFUNCTION(BlueprintPure)
-	FORCEINLINE FName GetAttachName() const { return SocketName; }
 };
