@@ -54,7 +54,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     bIsAiming = false;
 
 	//setup health component
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
     CharacterType = ECharacterType::ECT_Player;
 }
