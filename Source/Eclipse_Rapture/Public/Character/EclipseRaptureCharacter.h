@@ -69,7 +69,7 @@ public:
 
 #pragma region Components
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components | Health Component")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Health Component")
 	TObjectPtr<class UHealthComponent> HealthComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Inventory")

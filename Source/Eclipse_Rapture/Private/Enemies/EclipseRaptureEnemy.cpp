@@ -12,6 +12,8 @@ AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 
     // Set the character type to Enemy
     CharacterType = ECharacterType::ECT_Enemy;
+
+
 }
 
 void AEclipseRaptureEnemy::BeginPlay()
