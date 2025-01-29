@@ -88,7 +88,7 @@ struct FWeaponData : public FTableRowBase
 
 #pragma region Animation
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Data | Animation")
-	TObjectPtr<UAnimSequence> FireAnimation;
+	TObjectPtr<UAnimMontage> FireAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Data | Animation")
 	TObjectPtr<UAnimMontage> ReloadMontage;
