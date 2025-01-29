@@ -88,55 +88,57 @@ void APlayerMain::Melee()
 {
     if (!bCanMelee) return;
 
-   
-
-    UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
-    if (!AnimInstance)
+    USkeletalMeshComponent* CharacterMesh = GetMesh();
+    if (CharacterMesh)
     {
-        UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null."))
-            return;
-    }
-
-    if (!MeleeMontage)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Melee Montage is null."))
-            return;
-    }
-
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Melee)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Movement state already melee.."))
-            return;
-        
-    }
-
-    if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Starting melee attack."));
-        AnimInstance->Montage_Play(MeleeMontage);
-
-        const int32 RandomMeleeSection = FMath::RandRange(0, 1);
-        FName SectionName = FName();
-
-        switch (RandomMeleeSection)
+        UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+        if (!AnimInstance)
         {
-        case 0:
-            SectionName = FName("Melee_1");
-            break;
-        case 1:
-            SectionName = FName("Melee_2");
-            break;
-        default:
-            UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to play melee montage."));
-            SectionName = FName("Melee_1");
-            break;
+            UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null."))
+                return;
         }
-        AnimInstance->Montage_JumpToSection(SectionName, MeleeMontage);
-        CurrentMovementState = ECharacterMovementState::ECMS_Melee;
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to start melee attack."));
+
+        if (!MeleeMontage)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Melee Montage is null."))
+                return;
+        }
+
+        if (CurrentMovementState == ECharacterMovementState::ECMS_Melee)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Movement state already melee.."))
+                return;
+
+        }
+
+        if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Starting melee attack."));
+            AnimInstance->Montage_Play(MeleeMontage);
+
+            const int32 RandomMeleeSection = FMath::RandRange(0, 1);
+            FName SectionName = FName();
+
+            switch (RandomMeleeSection)
+            {
+            case 0:
+                SectionName = FName("Melee_1");
+                break;
+            case 1:
+                SectionName = FName("Melee_2");
+                break;
+            default:
+                UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to play melee montage."));
+                SectionName = FName("Melee_1");
+                break;
+            }
+            AnimInstance->Montage_JumpToSection(SectionName, MeleeMontage);
+            CurrentMovementState = ECharacterMovementState::ECMS_Melee;
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to start melee attack."));
+        }
     }
 }
 
