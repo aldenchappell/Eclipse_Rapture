@@ -305,10 +305,10 @@ public:
 	UFUNCTION(Blueprintcallable)
 	void SetIsReloading(bool Reloading) { bIsReloading = Reloading; }
 
-	UFUNCTION(Blueprintcallable)
-	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Character | Getters")
+	class UHealthComponent* GetHealthComponentRef();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Inventory | Getters")
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Character | Getters")
 	class UInventoryComponent* GetInventoryComponentRef();
 
 	UFUNCTION(Blueprintcallable)

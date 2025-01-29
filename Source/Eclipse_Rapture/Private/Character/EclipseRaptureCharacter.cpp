@@ -54,7 +54,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     bIsAiming = false;
 
 	//setup health component
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
     CharacterType = ECharacterType::ECT_Player;
 }
@@ -129,9 +129,9 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         OnWeaponUpdateSetAmmo();
 
         UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
-        if (AnimInstance && CurrentWeapon->EquipMontage)
+        if (AnimInstance && CurrentWeapon->GetWeaponData().EquipMontage)
         {
-            AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
+            AnimInstance->Montage_Play(CurrentWeapon->GetWeaponData().EquipMontage);
         }
 
         SetBuildingBlueprintVisibility(false);
@@ -152,7 +152,7 @@ void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
     }
 
     // Ensure the weapon is attached to the correct socket on the player's mesh
-    FName SocketName = Weapon->SocketName;
+    FName SocketName = Weapon->GetWeaponData().SocketName;
 
     switch (CharacterType)
     {
@@ -188,13 +188,6 @@ void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
     // Store the reference to the currently equipped weapon
     CurrentWeapon = Weapon;
 }
-
-//
-//AWeaponBase* AEclipseRaptureCharacter::GetCurrentWeaponByClass(EWeaponClass WeaponClass)
-//{
-//    // Retrieve the weapon instance from the CurrentWeapons map
-//    return CurrentWeapons.Contains(WeaponClass) ? CurrentWeapons[WeaponClass] : nullptr;
-//}
 
 void AEclipseRaptureCharacter::EquipUnarmed()
 {
@@ -256,7 +249,7 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
     //Update weapon states
     CurrentWeaponClass = EWeaponClass::EWC_Primary;
     CurrentWeaponType = EWeaponType::EWT_Primary;
-    CurrentWeaponName = PrimaryWeapon->GetWeaponName();
+	CurrentWeaponName = PrimaryWeapon->GetWeaponData().WeaponNameType;
 
 
     CurrentWeapon = PrimaryWeapon;
@@ -278,12 +271,6 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
         return;
     }
 
-    if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Secondary)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Secondary weapon already equipped!"));
-        return;
-    }
-
     SetSwapTimer();
 
     SwapWeapon(EWeaponClass::EWC_Secondary);
@@ -298,7 +285,7 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
     SecondaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Secondary;
     CurrentWeaponType = EWeaponType::EWT_Secondary;
-    CurrentWeaponName = SecondaryWeapon->GetWeaponName();
+    CurrentWeaponName = SecondaryWeapon->GetWeaponData().WeaponNameType;
 
     CurrentWeapon = SecondaryWeapon;
 
@@ -339,7 +326,7 @@ void AEclipseRaptureCharacter::EquipMeleeWeapon()
     MeleeWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Melee;
     CurrentWeaponType = EWeaponType::EWT_Melee;
-    CurrentWeaponName = MeleeWeapon->GetWeaponName();
+    CurrentWeaponName = MeleeWeapon->GetWeaponData().WeaponNameType;
 
     CurrentWeapon = MeleeWeapon;
 
@@ -413,6 +400,11 @@ void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 
 
 UInventoryComponent* AEclipseRaptureCharacter::GetInventoryComponentRef_Implementation()
+{
+    return nullptr;
+}
+
+UHealthComponent* AEclipseRaptureCharacter::GetHealthComponentRef_Implementation()
 {
     return nullptr;
 }

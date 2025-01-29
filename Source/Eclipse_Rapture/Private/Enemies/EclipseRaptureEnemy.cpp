@@ -12,6 +12,8 @@ AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 
     // Set the character type to Enemy
     CharacterType = ECharacterType::ECT_Enemy;
+
+
 }
 
 void AEclipseRaptureEnemy::BeginPlay()
@@ -100,7 +102,7 @@ void AEclipseRaptureEnemy::AddWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeap
     if (SpawnedWeapon)
     {
         // Attach to the skeletal mesh
-        FName SocketName = SpawnedWeapon->SocketName;
+        FName SocketName = SpawnedWeapon->GetWeaponData().SocketName;
         if (GetMesh()->DoesSocketExist(SocketName))
         {
             SpawnedWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);

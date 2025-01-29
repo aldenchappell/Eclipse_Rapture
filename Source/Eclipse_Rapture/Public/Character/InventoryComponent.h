@@ -30,7 +30,7 @@ public:
 #pragma region New Inventory Functions and Variables
 
     // Items the player starts with, including specified quantities
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
     TArray<FInventorySlotData> DefaultItems;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "New Inventory")
