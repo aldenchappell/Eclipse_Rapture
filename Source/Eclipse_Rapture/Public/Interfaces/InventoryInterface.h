@@ -30,7 +30,7 @@ public:
 	TArray<FInventorySlotData> GetAllItems();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-	void GetAmountOfItem(FInventorySlotData Data, int32& Amount);
+	void GetAmountOfItem(FInventorySlotData Data, int32& Amount);		
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
 	bool HasItemWithID(FName ItemID, int32& Amount);

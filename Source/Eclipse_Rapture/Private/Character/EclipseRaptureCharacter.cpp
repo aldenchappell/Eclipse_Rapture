@@ -15,7 +15,8 @@
 #include "Components/SpotLightComponent.h"
 #include "Interfaces/Unlockable.h"
 #include "Building/BuildingComponent.h"
-
+#include "Weapons/RangedWeaponBase.h"
+#include "Weapons/MeleeWeaponBase.h"
 
 AEclipseRaptureCharacter::AEclipseRaptureCharacter()
 {
@@ -53,7 +54,7 @@ AEclipseRaptureCharacter::AEclipseRaptureCharacter()
     bIsAiming = false;
 
 	//setup health component
-	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+	//HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 
     CharacterType = ECharacterType::ECT_Player;
 }
@@ -104,7 +105,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
     }
 
     // Check if the new weapon exists in the inventory
-    AWeaponBase* NewWeapon = CurrentWeapons.FindRef(NewWeaponClass);
+    AWeaponBase* NewWeapon = CurrentWeapon;
     if (NewWeapon)
     {
         // Safely detach the current weapon (if any)
@@ -127,11 +128,17 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
 
-        UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
-        if (AnimInstance && CurrentWeapon->EquipMontage)
+        USkeletalMeshComponent* CharacterMesh = GetMesh();
+
+        if (CharacterMesh)
         {
-            AnimInstance->Montage_Play(CurrentWeapon->EquipMontage);
+            UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+            if (AnimInstance && CurrentWeapon->GetWeaponData().EquipMontage)
+            {
+                AnimInstance->Montage_Play(CurrentWeapon->GetWeaponData().EquipMontage);
+            }
         }
+        
 
         SetBuildingBlueprintVisibility(false);
     }
@@ -151,70 +158,66 @@ void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
     }
 
     // Ensure the weapon is attached to the correct socket on the player's mesh
-    FName SocketName = Weapon->SocketName;
+    USkeletalMeshComponent* CharacterMesh = GetMesh();
+    FName SocketName = Weapon->GetWeaponData().SocketName;
 
-    switch (CharacterType)
+    if (CharacterMesh)
     {
-    case ECharacterType::ECT_Player:
-        if (PlayerBodyMesh->DoesSocketExist(SocketName))
+        switch (CharacterType)
         {
-            Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+        case ECharacterType::ECT_Player:
+            if (CharacterMesh->DoesSocketExist(SocketName))
+            {
+                Weapon->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+                UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
+            }
+            break;
+        case ECharacterType::ECT_Enemy:
+            if (CharacterMesh->DoesSocketExist(SocketName))
+            {
+                Weapon->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+                UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on enemy mesh!"), *SocketName.ToString());
+            }
+            break;
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
-        }
-        break;
-    case ECharacterType::ECT_Enemy:
-        if (GetMesh()->DoesSocketExist(SocketName))
-        {
-            Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on enemy mesh!"), *SocketName.ToString());
-        }
-        break;
+
+        // Ensure the weapon is visible and collision is enabled
+        Weapon->SetActorHiddenInGame(false);
+        Weapon->SetActorEnableCollision(true);
+        Weapon->GetWeaponMesh()->SetVisibility(true, true);  // Force visibility
+
+        // Store the reference to the currently equipped weapon
+        CurrentWeapon = Weapon;
     }
 
-    // Ensure the weapon is visible and collision is enabled
-    Weapon->SetActorHiddenInGame(false);
-    Weapon->SetActorEnableCollision(true);
-    Weapon->GetWeaponMesh()->SetVisibility(true, true);  // Force visibility
-
-    // Store the reference to the currently equipped weapon
-    CurrentWeapon = Weapon;
-}
-
-
-AWeaponBase* AEclipseRaptureCharacter::GetCurrentWeaponByClass(EWeaponClass WeaponClass)
-{
-    // Retrieve the weapon instance from the CurrentWeapons map
-    return CurrentWeapons.Contains(WeaponClass) ? CurrentWeapons[WeaponClass] : nullptr;
+   
 }
 
 void AEclipseRaptureCharacter::EquipUnarmed()
 {
     UE_LOG(LogTemp, Warning, TEXT("Equipping Unarmed."));
 
-    if (CurrentWeapons.FindRef(EWeaponClass::EWC_Primary))
+    if (PrimaryWeapon && PrimaryWeapon->GetWeaponMesh())
     {
-        USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary)->GetWeaponMesh();
-        if (WeaponMesh)
-        {
-            WeaponMesh->SetVisibility(false);
-        }
+        PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
-    if (CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary))
+    if (SecondaryWeapon && SecondaryWeapon->GetWeaponMesh())
     {
-        USkeletalMeshComponent* WeaponMesh = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary)->GetWeaponMesh();
-        if (WeaponMesh)
-        {
-            WeaponMesh->SetVisibility(false);
-        }
+        SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
+    }
+
+    if (MeleeWeapon && MeleeWeapon->GetWeaponMesh())
+    {
+        MeleeWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 	
     SetSwapTimer();
@@ -222,6 +225,7 @@ void AEclipseRaptureCharacter::EquipUnarmed()
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
     CurrentWeaponType = EWeaponType::EWT_Unarmed;
     CurrentWeaponName = EWeaponName::EWN_Unarmed;
+	CurrentWeapon = nullptr;
 
     UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
 }
@@ -234,8 +238,6 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
         return;
     }
 
-    //Check for primary weapon in player weapon inventory
-    AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
     if (!PrimaryWeapon)
     {
         UE_LOG(LogTemp, Warning, TEXT("No primary weapon found!"));
@@ -247,8 +249,6 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
     SwapWeapon(EWeaponClass::EWC_Primary);
     CurrentWeaponAmmo = PrimaryAmmo;
 
-    //Hide the secondary weapon if equipped
-    AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
     if (SecondaryWeapon)
     {
         SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
@@ -261,8 +261,10 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
     //Update weapon states
     CurrentWeaponClass = EWeaponClass::EWC_Primary;
     CurrentWeaponType = EWeaponType::EWT_Primary;
-    CurrentWeaponName = PrimaryWeapon->GetWeaponName();
-    CurrentWeaponBase = PrimaryWeapon;
+	CurrentWeaponName = PrimaryWeapon->GetWeaponData().WeaponNameType;
+
+
+    CurrentWeapon = PrimaryWeapon;
 
     UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
 }
@@ -275,16 +277,9 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
         return;
     }
 
-    AWeaponBase* SecondaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Secondary);
     if (!SecondaryWeapon)
     {
         UE_LOG(LogTemp, Warning, TEXT("No secondary weapon found! Cannot swap to secondary."));
-        return;
-    }
-
-    if (CurrentWeapon && CurrentWeapon->GetWeaponType() == EWeaponType::EWT_Secondary)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Secondary weapon already equipped!"));
         return;
     }
 
@@ -293,7 +288,7 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
     SwapWeapon(EWeaponClass::EWC_Secondary);
     CurrentWeaponAmmo = SecondaryAmmo;
 
-    AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);
+    /*AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);*/
     if (PrimaryWeapon)
     {
         PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
@@ -302,9 +297,50 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
     SecondaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Secondary;
     CurrentWeaponType = EWeaponType::EWT_Secondary;
-    CurrentWeaponName = SecondaryWeapon->GetWeaponName();
+    CurrentWeaponName = SecondaryWeapon->GetWeaponData().WeaponNameType;
 
-    CurrentWeaponBase = SecondaryWeapon;
+    CurrentWeapon = SecondaryWeapon;
+
+    UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
+}
+
+void AEclipseRaptureCharacter::EquipMeleeWeapon()
+{
+	if (!bCanSwapWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
+		return;
+	}
+
+	if (!MeleeWeapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No melee weapon found! Cannot swap to melee."));
+		return;
+	}
+
+    SetSwapTimer();
+
+    SwapWeapon(EWeaponClass::EWC_Melee);
+
+    CurrentWeaponAmmo = 0;
+
+    /*AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);*/
+    if (PrimaryWeapon)
+    {
+        PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
+    }
+
+    if (SecondaryWeapon)
+    {
+		SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
+    }
+
+    MeleeWeapon->GetWeaponMesh()->SetVisibility(true);
+    CurrentWeaponClass = EWeaponClass::EWC_Melee;
+    CurrentWeaponType = EWeaponType::EWT_Melee;
+    CurrentWeaponName = MeleeWeapon->GetWeaponData().WeaponNameType;
+
+    CurrentWeapon = MeleeWeapon;
 
     UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
 }
@@ -324,34 +360,63 @@ void AEclipseRaptureCharacter::SetSwapTimer()
 
 void AEclipseRaptureCharacter::OnWeaponUpdateSetAmmo()
 {
-    if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
-    {
-        switch (CurrentWeaponName)
+   /* if (CurrentWeapons.FindRef(CurrentWeaponClass) != nullptr)
+    {*/
+        /*switch (CurrentWeaponName)
         {
-        case EWeaponName::EWN_Pistol_A:
+		case EWeaponName::EWN_Unarmed:
+			break;
+		case EWeaponName::EWN_CombatKnife:
+			break;
+		case EWeaponName::EWN_Bat:
+			break;
+		case EWeaponName::EWN_Baton:
+			break;
+        case EWeaponName::EWN_M1911:
             SecondaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Pistol_B:
+        case EWeaponName::EWN_Glock:
             SecondaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Rifle_A:
+		case EWeaponName::EWN_Magnum:
+			SecondaryAmmo = CurrentWeaponAmmo;
+			break;
+        case EWeaponName::EWN_AR15:
             PrimaryAmmo = CurrentWeaponAmmo;
             break;
-        case EWeaponName::EWN_Rifle_B:
+        case EWeaponName::EWN_M4A1:
             PrimaryAmmo = CurrentWeaponAmmo;
             break;
-        default:
-            if (GEngine)
-            {
-                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
-            }
+		case EWeaponName::EWN_AK47:
+			PrimaryAmmo = CurrentWeaponAmmo;
+			break;
+		case EWeaponName::EWN_Remington:
+			PrimaryAmmo = CurrentWeaponAmmo;
             break;
-        }
-    }
+		case EWeaponName::EWN_BenelliM4:
+			PrimaryAmmo = CurrentWeaponAmmo;
+            break;
+		case EWeaponName::EWN_HuntingRifle:
+			PrimaryAmmo = CurrentWeaponAmmo;
+			break;*/
+
+        //default:
+        //    if (GEngine)
+        //    {
+        //        GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Error setting ammo."));
+        //    }
+        //    break;
+        //}
+    //}
 }
 
 
-UInventoryComponent* AEclipseRaptureCharacter::GetInventoryComponent_Implementation()
+UInventoryComponent* AEclipseRaptureCharacter::GetInventoryComponentRef_Implementation()
+{
+    return nullptr;
+}
+
+UHealthComponent* AEclipseRaptureCharacter::GetHealthComponentRef_Implementation()
 {
     return nullptr;
 }
@@ -401,26 +466,6 @@ void AEclipseRaptureCharacter::TakeDamage_Implementation(FDamageInfo DamageInfo)
             HealthComponent->OnDeathEvent.Broadcast();
             UE_LOG(LogTemp, Warning, TEXT("%s is now dead"), *GetOwner()->GetName());
         }
-    }
-}
-
-void AEclipseRaptureCharacter::DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems)
-{
-    if (!HealthComponent) return;
-    if (InventoryItems.Num() > 0)
-    {
-        //for (TSubclassOf<AItem> Item : InventoryItems)
-        //{
-        //	FActorSpawnParameters SpawnParams;
-        //	SpawnParams.Owner = GetOwner();
-        //	SpawnParams.Instigator = GetOwner()->GetInstigator();
-        //	FVector CharacterPosition = GetOwner()->GetActorLocation();
-  //          FVector BackpackSpawnOffset = FVector(CharacterPosition.X, CharacterPosition.Y, CharacterPosition.Z + 5.f);
-
-  //          //TODO:
-  //          //Once we have a backpack/storage system setup, switch to spawn a backpack with the inventory items specified.
-        //	GetWorld()->SpawnActor<AItem>(Item, BackpackSpawnOffset, GetOwner()->GetActorRotation(), SpawnParams);
-        //}
     }
 }
 

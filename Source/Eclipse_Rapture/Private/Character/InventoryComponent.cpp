@@ -14,6 +14,8 @@ void UInventoryComponent::BeginPlay()
     //Load inventory add add a listern to listen to the saveinventory function.
     LoadInventory();
 	OnInventoryUpdated.AddDynamic(this, &UInventoryComponent::SaveInventory);
+
+	OwningCharacter = Cast<AEclipseRaptureCharacter>(GetOwner());
 }
 
 void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

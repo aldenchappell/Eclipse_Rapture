@@ -24,10 +24,13 @@ public:
     virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+    UPROPERTY(BlueprintReadWrite, Category = "New Inventory")
+    TObjectPtr<class AEclipseRaptureCharacter> OwningCharacter;
+
 #pragma region New Inventory Functions and Variables
 
     // Items the player starts with, including specified quantities
-    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Inventory")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Inventory")
     TArray<FInventorySlotData> DefaultItems;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "New Inventory")

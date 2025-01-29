@@ -24,15 +24,6 @@ APlayerMain::APlayerMain()
 
     //fov
     AimFOV = DefaultFOV * AimFOVMultiplier;
-
-    //setup flashlight
-    FlashlightComponent = CreateDefaultSubobject<UFlashlightComponent>(TEXT("Flashlight Component"));
-    FlashlightComponent->FlashlightMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FlashlightMesh"));
-    FlashlightComponent->Flashlight = CreateDefaultSubobject<USpotLightComponent>(TEXT("Flashlight"));
-    FlashlightComponent->Flashlight->SetupAttachment(FlashlightComponent->FlashlightMesh);
-    FlashlightComponent->SetHasFlashlight(false);
-
-	//BuildingComponent->BlueprintMesh->SetupAttachment(GetMesh(), FName("TempBPSocket"));
 }
 
 void APlayerMain::BeginPlay()
@@ -44,7 +35,7 @@ void APlayerMain::BeginPlay()
         InitialCameraTransform = FirstPersonCamera->GetRelativeTransform();
     }
 
-    if (FlashlightComponent)
+    /*if (FlashlightComponent)
     {
         if (FlashlightComponent->GetHasFlashlight() && PlayerBodyMesh)
         {
@@ -55,7 +46,7 @@ void APlayerMain::BeginPlay()
         {
             FlashlightComponent->Disable();
         }
-    }
+    }*/
 }
 
 void APlayerMain::Tick(float DeltaTime)
@@ -78,12 +69,13 @@ void APlayerMain::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
         EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &APlayerMain::Move);
 
         //Melee
-        EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &APlayerMain::Melee);
+        //EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &APlayerMain::Melee);
 
         //Swapping Weapons
         EnhancedInputComponent->BindAction(UnarmedAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipUnarmed);
         EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipPrimaryWeapon);
         EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipSecondaryWeapon);
+        EnhancedInputComponent->BindAction(MeleeWeaponAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipMeleeWeapon);
     }
 }
 #pragma endregion
@@ -96,55 +88,57 @@ void APlayerMain::Melee()
 {
     if (!bCanMelee) return;
 
-   
-
-    UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
-    if (!AnimInstance)
+    USkeletalMeshComponent* CharacterMesh = GetMesh();
+    if (CharacterMesh)
     {
-        UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null."))
-            return;
-    }
-
-    if (!MeleeMontage)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Melee Montage is null."))
-            return;
-    }
-
-    if (CurrentMovementState == ECharacterMovementState::ECMS_Melee)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Movement state already melee.."))
-            return;
-        
-    }
-
-    if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Starting melee attack."));
-        AnimInstance->Montage_Play(MeleeMontage);
-
-        const int32 RandomMeleeSection = FMath::RandRange(0, 1);
-        FName SectionName = FName();
-
-        switch (RandomMeleeSection)
+        UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+        if (!AnimInstance)
         {
-        case 0:
-            SectionName = FName("Melee_1");
-            break;
-        case 1:
-            SectionName = FName("Melee_2");
-            break;
-        default:
-            UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to play melee montage."));
-            SectionName = FName("Melee_1");
-            break;
+            UE_LOG(LogTemp, Warning, TEXT("AnimInstance is null."))
+                return;
         }
-        AnimInstance->Montage_JumpToSection(SectionName, MeleeMontage);
-        CurrentMovementState = ECharacterMovementState::ECMS_Melee;
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to start melee attack."));
+
+        if (!MeleeMontage)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Melee Montage is null."))
+                return;
+        }
+
+        if (CurrentMovementState == ECharacterMovementState::ECMS_Melee)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Movement state already melee.."))
+                return;
+
+        }
+
+        if (AnimInstance && MeleeMontage && CurrentMovementState != ECharacterMovementState::ECMS_Melee)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Starting melee attack."));
+            AnimInstance->Montage_Play(MeleeMontage);
+
+            const int32 RandomMeleeSection = FMath::RandRange(0, 1);
+            FName SectionName = FName();
+
+            switch (RandomMeleeSection)
+            {
+            case 0:
+                SectionName = FName("Melee_1");
+                break;
+            case 1:
+                SectionName = FName("Melee_2");
+                break;
+            default:
+                UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to play melee montage."));
+                SectionName = FName("Melee_1");
+                break;
+            }
+            AnimInstance->Montage_JumpToSection(SectionName, MeleeMontage);
+            CurrentMovementState = ECharacterMovementState::ECMS_Melee;
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("EclipseRaptureCharacter.cpp/Melee error when trying to start melee attack."));
+        }
     }
 }
 
@@ -227,17 +221,6 @@ UStaticMeshComponent* APlayerMain::GetBuildingBlueprintStaticMesh_Implementation
 
 #pragma endregion
 
-#pragma region Combat
-
-
-
-
-
-
-
-
-#pragma endregion
-
 #pragma region UI
 void APlayerMain::SetCrosshairTexture(UTexture2D* Texture)
 {
@@ -246,39 +229,5 @@ void APlayerMain::SetCrosshairTexture(UTexture2D* Texture)
         CrosshairTexture2D = Texture;
     }
 }
-
-#pragma endregion
-
-
-#pragma region Inventory
-
-void APlayerMain::UseItem(TSubclassOf<AItem> ItemClassToUse)
-{
-    if (!ItemClassToUse) return;
-
-    //TODO: Come back here and fix for new inventory system.
-    // Check if the inventory contains the item class
-    //if (InventoryComponent && InventoryComponent->InventoryItems.Contains(ItemClassToUse))
-    //{
-    //    // Retrieve the instance of the item
-    //    AItem* ItemInstance = InventoryComponent->GetItemInstance(ItemClassToUse);
-
-    //    if (ItemInstance)
-    //    {
-    //        // Call the C++ and Blueprint `Use` functions on the item instance
-    //        ItemInstance->Use(this); // C++ version
-    //        ItemInstance->OnUse(this); // Blueprint version
-    //    }
-    //    else
-    //    {
-    //        UE_LOG(LogTemp, Warning, TEXT("No instance of the specified item class found in the inventory."));
-    //    }
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("Item class not found in inventory."));
-    //}
-}
-
 
 #pragma endregion

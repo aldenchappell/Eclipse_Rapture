@@ -20,6 +20,7 @@ class AWeaponBase;
 class AItem;
 class USkeletalMeshComponent;
 class UCameraShakeBase;
+class ARangedWeaponBase;
 
 UCLASS()
 class ECLIPSE_RAPTURE_API AEclipseRaptureCharacter :
@@ -38,6 +39,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Character Properties")
 	ECharacterType CharacterType;
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipUnarmed();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipPrimaryWeapon();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipSecondaryWeapon();
+
+	UFUNCTION(Blueprintcallable)
+	virtual void EquipMeleeWeapon();
 #pragma endregion
 
 	//For ui mostly
@@ -48,29 +61,20 @@ public:
 	FVector PlayerADSOffset;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
-	void SpawnItem(TSubclassOf<AWeaponBase> WeaponToSpawn);
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
-	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
+	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
 #pragma region Components
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Components | Health Component")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Health Component")
 	TObjectPtr<class UHealthComponent> HealthComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Inventory")
 	TObjectPtr<class UInventoryComponent> InventoryComponent;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Components | Building")
-	//TObjectPtr<class UBuildingComponent> BuildingComponent;
-
 #pragma endregion
 	
 #pragma region Damageable Implementations
 	virtual void TakeDamage_Implementation(FDamageInfo DamageInfo) override;
-
-	virtual void DropItems_Implementation(const TArray<TSubclassOf<class AItem>>& InventoryItems) override;
 
 	virtual float GetMaxHealth_Implementation() override;
 	virtual float GetCurrentHealth_Implementation() override;
@@ -88,8 +92,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SwapWeapon(EWeaponClass NewWeaponClass);
 
-	UFUNCTION(BlueprintCallable)
-	AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
+	//UFUNCTION(BlueprintCallable)
+	//AWeaponBase* GetCurrentWeaponByClass(EWeaponClass WeaponClass);
 
 	//for weapon swapping
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
@@ -101,14 +105,7 @@ protected:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void EquipWeapon(AWeaponBase* Weapon);
 
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipUnarmed();
-
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipPrimaryWeapon();
 	
-	UFUNCTION(Blueprintcallable)
-	virtual void EquipSecondaryWeapon();
 
 	void SetSwapTimer();
 
@@ -229,10 +226,13 @@ protected:
 	float WeaponSwapCooldown = 2.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TMap<EWeaponClass, TObjectPtr<AWeaponBase>> CurrentWeapons;
+	TObjectPtr<ARangedWeaponBase> PrimaryWeapon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
-	TObjectPtr<AWeaponBase> CurrentWeaponBase;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<ARangedWeaponBase> SecondaryWeapon;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
+	TObjectPtr<class AMeleeWeaponBase> MeleeWeapon;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Weapon | Weapon Properties")
 	EWeaponClass CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
@@ -301,11 +301,11 @@ public:
 	UFUNCTION(Blueprintcallable)
 	void SetIsReloading(bool Reloading) { bIsReloading = Reloading; }
 
-	UFUNCTION(Blueprintcallable)
-	class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Character | Getters")
+	class UHealthComponent* GetHealthComponentRef();
 
-	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable)
-	class UInventoryComponent* GetInventoryComponent();
+	UFUNCTION(BlueprintNativeEvent, BlueprintPure, Blueprintcallable, Category = "Character | Getters")
+	class UInventoryComponent* GetInventoryComponentRef();
 
 	UFUNCTION(Blueprintcallable)
 	AItem* SetCurrentlyOverlappingItem(AItem* Item) { return CurrentOverlappingItem = Item; }

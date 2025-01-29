@@ -86,19 +86,3 @@ void UWidgetInventorySlot::NativeOnDragLeave(const FDragDropEvent& InDragDropEve
         ItemThumbnail->SetColorAndOpacity(FLinearColor::White);
     }*/
 }
-
-void UWidgetInventorySlot::ResetCreatedTooltips()
-{
-    if (CreatedTooltips.Num() <= 0) return;
-
-	//for (UWidgetItemTooltip* Tooltip : CreatedTooltips)
-	//{
-	//	if (Tooltip)
-	//	{
-	//		Tooltip->RemoveFromParent();
-	//		Tooltip = nullptr;
- //           CreatedTooltips.Empty();
-	//	}
-	//}
-   
-}

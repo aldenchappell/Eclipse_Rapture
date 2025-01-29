@@ -20,5 +20,5 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly)
-	TObjectPtr<class USphereComponent> PatrolPointSphere;
+	TObjectPtr<class USplineComponent> PatrolSpline;
 };

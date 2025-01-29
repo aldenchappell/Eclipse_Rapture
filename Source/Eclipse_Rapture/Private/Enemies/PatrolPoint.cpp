@@ -2,15 +2,15 @@
 
 
 #include "Enemies/PatrolPoint.h"
-#include "Components/SphereComponent.h"
+#include "Components/SplineComponent.h"
 
 // Sets default values
 APatrolPoint::APatrolPoint()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	PatrolPointSphere = CreateDefaultSubobject<USphereComponent>(TEXT("PatrolPointSphere"));
-	SetRootComponent(PatrolPointSphere);
+	PatrolSpline = CreateDefaultSubobject<USplineComponent>(TEXT("Patrol Spline"));
+	SetRootComponent(PatrolSpline);
 
-	PatrolPointSphere->SetVisibility(bEnablePointSphere);
+	//PatrolPointSphere->SetVisibility(bEnablePointSphere);
 }

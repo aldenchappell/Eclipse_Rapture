@@ -75,6 +75,10 @@
 		{
 			"Name": "PoseSearch",
 			"Enabled": true
+
 		}
+	],
+	"TargetPlatforms": [
+		"Windows"
 	]
 }
