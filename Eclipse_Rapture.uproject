@@ -77,24 +77,8 @@
 			"Enabled": true
 		},
 		{
-			"Name": "FlatNodes",
-			"Enabled": false,
-			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/b719437f3fb54c259b34227363df8cab"
-		},
-		{
-			"Name": "SkeletalMeshModelingTools",
-			"Enabled": true
-		},
-		{
 			"Name": "LudusAI",
 			"Enabled": true
-		},
-		{
-			"Name": "Postshot",
-			"Enabled": false,
-			"SupportedTargetPlatforms": [
-				"Win64"
-			]
 		}
 	],
 	"TargetPlatforms": [
