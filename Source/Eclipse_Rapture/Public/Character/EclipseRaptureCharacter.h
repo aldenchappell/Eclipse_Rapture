@@ -63,10 +63,6 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapon | Weapon Properties")
 	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponToSpawn);
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character | Character Mesh")
-	TObjectPtr<USkeletalMeshComponent> PlayerBodyMesh;
-
 #pragma region Components
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components | Health Component")

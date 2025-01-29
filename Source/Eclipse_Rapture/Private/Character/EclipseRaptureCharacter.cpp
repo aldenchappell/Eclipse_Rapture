@@ -128,11 +128,17 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
         // Update the UI or ammo logic
         OnWeaponUpdateSetAmmo();
 
-        UAnimInstance* AnimInstance = PlayerBodyMesh->GetAnimInstance();
-        if (AnimInstance && CurrentWeapon->GetWeaponData().EquipMontage)
+        USkeletalMeshComponent* CharacterMesh = GetMesh();
+
+        if (CharacterMesh)
         {
-            AnimInstance->Montage_Play(CurrentWeapon->GetWeaponData().EquipMontage);
+            UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+            if (AnimInstance && CurrentWeapon->GetWeaponData().EquipMontage)
+            {
+                AnimInstance->Montage_Play(CurrentWeapon->GetWeaponData().EquipMontage);
+            }
         }
+        
 
         SetBuildingBlueprintVisibility(false);
     }
@@ -152,41 +158,47 @@ void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
     }
 
     // Ensure the weapon is attached to the correct socket on the player's mesh
+    USkeletalMeshComponent* CharacterMesh = GetMesh();
     FName SocketName = Weapon->GetWeaponData().SocketName;
 
-    switch (CharacterType)
+    if (CharacterMesh)
     {
-    case ECharacterType::ECT_Player:
-        if (PlayerBodyMesh->DoesSocketExist(SocketName))
+        switch (CharacterType)
         {
-            Weapon->AttachToComponent(PlayerBodyMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+        case ECharacterType::ECT_Player:
+            if (CharacterMesh->DoesSocketExist(SocketName))
+            {
+                Weapon->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+                UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
+            }
+            break;
+        case ECharacterType::ECT_Enemy:
+            if (CharacterMesh->DoesSocketExist(SocketName))
+            {
+                Weapon->AttachToComponent(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
+                UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on enemy mesh!"), *SocketName.ToString());
+            }
+            break;
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on player mesh!"), *SocketName.ToString());
-        }
-        break;
-    case ECharacterType::ECT_Enemy:
-        if (GetMesh()->DoesSocketExist(SocketName))
-        {
-            Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, SocketName);
-            UE_LOG(LogTemp, Warning, TEXT("Weapon %s attached to socket: %s"), *Weapon->GetName(), *SocketName.ToString());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("Socket %s does not exist on enemy mesh!"), *SocketName.ToString());
-        }
-        break;
+
+        // Ensure the weapon is visible and collision is enabled
+        Weapon->SetActorHiddenInGame(false);
+        Weapon->SetActorEnableCollision(true);
+        Weapon->GetWeaponMesh()->SetVisibility(true, true);  // Force visibility
+
+        // Store the reference to the currently equipped weapon
+        CurrentWeapon = Weapon;
     }
 
-    // Ensure the weapon is visible and collision is enabled
-    Weapon->SetActorHiddenInGame(false);
-    Weapon->SetActorEnableCollision(true);
-    Weapon->GetWeaponMesh()->SetVisibility(true, true);  // Force visibility
-
-    // Store the reference to the currently equipped weapon
-    CurrentWeapon = Weapon;
+   
 }
 
 void AEclipseRaptureCharacter::EquipUnarmed()
