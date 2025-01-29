@@ -117,4 +117,15 @@ struct FWeaponData : public FTableRowBase
 	FName SocketName;
 
 #pragma endregion
+
+#pragma region Visuals
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data | Visuals")
+	float ClippingFOV = 80.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data | Visuals")
+	float ClippingRenderDepth = 0.2f;
+
+
+#pragma endregion
 };
