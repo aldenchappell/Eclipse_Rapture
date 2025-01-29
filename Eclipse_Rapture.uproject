@@ -75,7 +75,10 @@
 		{
 			"Name": "PoseSearch",
 			"Enabled": true
-
+		},
+		{
+			"Name": "LudusAI",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
