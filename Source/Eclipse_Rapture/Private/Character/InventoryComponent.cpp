@@ -61,7 +61,7 @@ void UInventoryComponent::TransferSlots_Implementation(int32 SourceIndex, UInven
 {
 }
 
-bool UInventoryComponent::RemoveFromInventory_Implementation(int32 Index, bool RemoveWholeStack, bool IsConsumed)
+bool UInventoryComponent::RemoveFromInventory_Implementation(int32 Index, bool RemoveWholeStack, bool IsConsumed, bool RemovingAmount)
 {
     return false;
 }
