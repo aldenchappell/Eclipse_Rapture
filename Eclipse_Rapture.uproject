@@ -78,7 +78,7 @@
 		},
 		{
 			"Name": "LudusAI",
-			"Enabled": true
+			"Enabled": false
 		}
 	],
 	"TargetPlatforms": [
