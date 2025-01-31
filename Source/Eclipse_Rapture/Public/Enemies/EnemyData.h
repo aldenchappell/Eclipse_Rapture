@@ -28,6 +28,9 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
 	EEnemyAIType AIType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
+	int32 TeamNumber = 1;
+
 #pragma endregion
 
 #pragma region Weapons
