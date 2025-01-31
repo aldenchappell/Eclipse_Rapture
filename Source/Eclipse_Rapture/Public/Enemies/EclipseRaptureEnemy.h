@@ -37,6 +37,9 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "AI | AI Properties")
     class UBehaviorTree* BehaviorTree;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadonly, Category = "Item Properties | Data")
+    TObjectPtr<class UEnemyDataComponent> EnemyData;
+
 #pragma region Animation
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Character | Animation")
@@ -74,4 +77,13 @@ protected:
     // Editor validation: Ensure designers use valid weapon setups
     virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
+
+
+public:
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Data | Enemy Data")
+    FORCEINLINE FDataTableRowHandle GetEnemyID();
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "Data | Enemy Data")
+    FORCEINLINE FEnemyData GetEnemyData();
 };
