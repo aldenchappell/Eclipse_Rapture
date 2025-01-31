@@ -21,12 +21,6 @@ AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 void AEclipseRaptureEnemy::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (!IsValidWeaponConfiguration())
-    {
-        UE_LOG(LogTemp, Error, TEXT("Invalid weapon configuration for %s. No weapons will be assigned."), *GetName());
-        return;
-    }
 }
 
 void AEclipseRaptureEnemy::Tick(float DeltaTime)
@@ -34,30 +28,8 @@ void AEclipseRaptureEnemy::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-bool AEclipseRaptureEnemy::IsValidWeaponConfiguration() const
-{
-    // Ensure no more than one primary and one secondary weapon
-    int32 PrimaryCount = 0;
-    int32 SecondaryCount = 0;
-
-    for (const auto& WeaponPair : StartingWeapons)
-    {
-        if (WeaponPair.Key == EWeaponClass::EWC_Primary)
-        {
-            PrimaryCount++;
-        }
-        else if (WeaponPair.Key == EWeaponClass::EWC_Secondary)
-        {
-            SecondaryCount++;
-        }
-    }
-
-    return PrimaryCount <= 1 && SecondaryCount <= 1;
-}
-
 void AEclipseRaptureEnemy::EquipStartingWeapon()
 {
-    // Ensure the CurrentWeapons map is populated
     if (!PrimaryWeapon)
     {
         UE_LOG(LogTemp, Warning, TEXT("%s has no weapons in the CurrentWeapons map."), *GetName());
@@ -125,7 +97,7 @@ void AEclipseRaptureEnemy::AddWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeap
 
 void AEclipseRaptureEnemy::SpawnStartingWeapons()
 {
-    for (const auto& WeaponPair : StartingWeapons)
+    for (const auto& WeaponPair : GetEnemyData().StartingWeapons)
     {
         AddWeapon(WeaponPair.Value, WeaponPair.Key);
     }
@@ -139,24 +111,3 @@ FDataTableRowHandle AEclipseRaptureEnemy::GetEnemyID_Implementation()
 {
     return FDataTableRowHandle();
 }
-
-#pragma region Editor 
-
-#if WITH_EDITOR
-void AEclipseRaptureEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-{
-    Super::PostEditChangeProperty(PropertyChangedEvent);
-
-    if (PropertyChangedEvent.Property &&
-        PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AEclipseRaptureEnemy, StartingWeapons))
-    {
-        if (!IsValidWeaponConfiguration() && GEngine)
-        {
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid weapon configuration in editor: Only one Primary and one Secondary weapon allowed."));
-            //UE_LOG(LogTemp, Warning, TEXT("Invalid weapon configuration in editor: Only one Primary and one Secondary weapon allowed."));
-        }
-    }
-}
-
-#endif
-#pragma endregion
