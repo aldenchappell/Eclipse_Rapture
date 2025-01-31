@@ -5,6 +5,8 @@
 #include "Enemies/EnemyAITypes.h"
 #include "Weapons/RangedWeaponBase.h"
 #include "Weapons/MeleeWeaponBase.h"
+#include "Enemies/Components/EnemyDataComponent.h"
+#include "Enemies/EnemyData.h"
 
 AEclipseRaptureEnemy::AEclipseRaptureEnemy()
 {
@@ -13,7 +15,7 @@ AEclipseRaptureEnemy::AEclipseRaptureEnemy()
     // Set the character type to Enemy
     CharacterType = ECharacterType::ECT_Enemy;
 
-
+	EnemyData = CreateDefaultSubobject<UEnemyDataComponent>(TEXT("Enemy Data"));
 }
 
 void AEclipseRaptureEnemy::BeginPlay()
@@ -129,6 +131,16 @@ void AEclipseRaptureEnemy::SpawnStartingWeapons()
     }
 }
 
+FEnemyData AEclipseRaptureEnemy::GetEnemyData_Implementation()
+{
+    return FEnemyData();
+}
+FDataTableRowHandle AEclipseRaptureEnemy::GetEnemyID_Implementation()
+{
+    return FDataTableRowHandle();
+}
+
+#pragma region Editor 
 
 #if WITH_EDITOR
 void AEclipseRaptureEnemy::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -145,4 +157,6 @@ void AEclipseRaptureEnemy::PostEditChangeProperty(FPropertyChangedEvent& Propert
         }
     }
 }
+
 #endif
+#pragma endregion

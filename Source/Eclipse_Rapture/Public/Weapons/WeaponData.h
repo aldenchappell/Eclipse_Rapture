@@ -29,10 +29,10 @@ struct FWeaponData : public FTableRowBase
 	float BaseDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
-	float BodyDamageMultiplier = 1.15f;
+	float BodyDamageMultiplier = 1.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
-	float CriticalDamageMultiplier = 1.3f;
+	float CriticalDamageMultiplier = 1.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Data")
 	float FireRate;
