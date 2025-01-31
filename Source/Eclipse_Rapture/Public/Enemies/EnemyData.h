@@ -20,6 +20,9 @@ struct FEnemyData : public FTableRowBase
 #pragma region AI
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
+	TObjectPtr<class UBehaviorTree> BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
 	EEnemyAIStates PreferredAIState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
