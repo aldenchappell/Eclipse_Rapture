@@ -43,6 +43,9 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
 	EWeaponClass PreferredStartingWeaponClass = EWeaponClass::EWC_Primary;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
+	TObjectPtr<class UMaterialInterface> WeaponMaterial;
+
 #pragma endregion
 
 #pragma region Animation
