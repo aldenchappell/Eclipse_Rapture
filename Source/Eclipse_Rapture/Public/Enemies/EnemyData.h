@@ -17,6 +17,13 @@ struct FEnemyData : public FTableRowBase
 
 #pragma endregion
 
+#pragma region Stats
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | General")
+	float EnemyStartingHealth = 100.f;
+
+#pragma endregion
+
 #pragma region AI
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")

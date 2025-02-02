@@ -28,6 +28,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	bool bShouldDoBoxOverlapCheck = false;
 #pragma endregion
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Melee")
+	void StartMeleeAttack();
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Weapon | Melee")
+	void EndMeleeAttack();
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Properties", meta = (AllowPrivateAccess = "true"))
