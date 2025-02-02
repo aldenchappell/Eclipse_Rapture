@@ -22,6 +22,7 @@ enum class EEnemyAIStates : uint8
 {
 	EEAS_Frozen UMETA(DisplayName = "Frozen"),
 	EEAS_Idle UMETA(DisplayName = "Idle"),
+	EEAS_IdleAggressive UMETA(DisplayName = "Idle Aggressive"),
 	EEAS_RoamPassive UMETA(DisplayName = "Roam Passive"),
 	EEAS_RoamAggressive UMETA(DisplayName = "Roam Aggressive"),
 	EEAS_PatrolPassive UMETA(DisplayName = "Patrol Passive"),
