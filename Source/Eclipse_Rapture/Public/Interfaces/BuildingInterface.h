@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Structures/FInventoryTypes.h"
 #include "Building/BuildingTypes.h"
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
@@ -24,7 +25,7 @@ struct FUpgradeInfo
 
     // List of required items for this upgrade
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
-    TArray<TSubclassOf<class AItem>> RequiredItems;
+    TArray<FItemData> RequiredItemIDs;
 
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     TArray<int32> RequiredQuantities;
@@ -62,7 +63,7 @@ public:
 	void UpgradeBuilding(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
-    TArray<TSubclassOf<AItem>> GetRequiredUpgradeItems(FUpgradeInfo UpgradeInfo);
+    TArray<FItemData> GetRequiredUpgradeItems(FUpgradeInfo UpgradeInfo);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
 	class AEclipseRaptureBuildingItem* GetBuildingItem();
