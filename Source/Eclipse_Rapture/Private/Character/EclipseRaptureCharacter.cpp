@@ -255,6 +255,12 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
         UE_LOG(LogTemp, Warning, TEXT("Hiding secondary weapon: %s"), *SecondaryWeapon->GetName());
     }
 
+    if (MeleeWeapon)
+    {
+		MeleeWeapon->GetWeaponMesh()->SetVisibility(false);
+		UE_LOG(LogTemp, Warning, TEXT("Hiding melee weapon: %s"), *MeleeWeapon->GetName());
+    }
+
 
     PrimaryWeapon->GetWeaponMesh()->SetVisibility(true);
 
@@ -294,6 +300,12 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
         PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
+    if (MeleeWeapon)
+    {
+        MeleeWeapon->GetWeaponMesh()->SetVisibility(false);
+        UE_LOG(LogTemp, Warning, TEXT("Hiding melee weapon: %s"), *MeleeWeapon->GetName());
+    }
+
     SecondaryWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Secondary;
     CurrentWeaponType = EWeaponType::EWT_Secondary;
@@ -306,25 +318,31 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
 
 void AEclipseRaptureCharacter::EquipMeleeWeapon()
 {
-	if (!bCanSwapWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
-		return;
-	}
+    if (!bCanSwapWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Weapon swap on cooldown!"));
+        return;
+    }
 
-	if (!MeleeWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No melee weapon found! Cannot swap to melee."));
-		return;
-	}
+    if (!MeleeWeapon)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No melee weapon found! Cannot swap to melee."));
+        return;
+    }
+
+    if (CurrentWeaponClass == EWeaponClass::EWC_Melee)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Melee weapon is already equipped."));
+        return;
+    }
+
 
     SetSwapTimer();
 
     SwapWeapon(EWeaponClass::EWC_Melee);
+    CurrentWeaponAmmo = -1;
 
-    CurrentWeaponAmmo = 0;
-
-    /*AWeaponBase* PrimaryWeapon = CurrentWeapons.FindRef(EWeaponClass::EWC_Primary);*/
+    // Hide other weapons
     if (PrimaryWeapon)
     {
         PrimaryWeapon->GetWeaponMesh()->SetVisibility(false);
@@ -332,18 +350,19 @@ void AEclipseRaptureCharacter::EquipMeleeWeapon()
 
     if (SecondaryWeapon)
     {
-		SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
+        SecondaryWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 
+    // Equip melee weapon
     MeleeWeapon->GetWeaponMesh()->SetVisibility(true);
     CurrentWeaponClass = EWeaponClass::EWC_Melee;
     CurrentWeaponType = EWeaponType::EWT_Melee;
     CurrentWeaponName = MeleeWeapon->GetWeaponData().WeaponNameType;
-
     CurrentWeapon = MeleeWeapon;
 
-    UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("Swapped to melee weapon: %s"), *MeleeWeapon->GetName());
 }
+
 
 
 void AEclipseRaptureCharacter::ResetSwap()
