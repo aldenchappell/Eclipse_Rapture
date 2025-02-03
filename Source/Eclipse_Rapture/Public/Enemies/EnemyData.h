@@ -15,9 +15,6 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | General")
 	EEnemyTypes EnemyType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | General")
-	FName EnemyDisplayName = "Gerald Crisp"; //Name of the enemy
-
 #pragma endregion
 
 #pragma region Stats
