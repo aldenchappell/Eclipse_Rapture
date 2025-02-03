@@ -2,7 +2,7 @@
 #include "Items/Item.h"
 #include "Character/InventoryComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Items/ItemObject.h"
+#include "Structures/FInventoryTypes.h"
 
 AEclipseRaptureBuildingItem::AEclipseRaptureBuildingItem()
 {
@@ -81,12 +81,6 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
     //Get upgrade requirements for the desired upgrade type
     FUpgradeRequirements Requirements = UpgradeRequirements[UpgradeInfo.UpgradeType];
 
-    ValidateRequiredItems(Requirements, UpgradeTypeDisplayName, Result);
-
-    CheckInventory(Requirements, UpgradeInfo, Result);
-
-    DeductInventoryItems(Requirements, UpgradeInfo);
-
     ApplyUpgradedMaterial(UpgradeInfo, UpgradeTypeDisplayName, Result);
 
     // Update the current upgrade type
@@ -94,37 +88,6 @@ void AEclipseRaptureBuildingItem::UpgradeBuilding_Implementation(FUpgradeInfo Up
     Result.bUpgradeSuccessful = true;
 }
 
-void AEclipseRaptureBuildingItem::ValidateRequiredItems(FUpgradeRequirements& Requirements, FString& UpgradeTypeDisplayName, FUpgradeResults& Result)
-{
-    // Validate required items and quantities
-    if (Requirements.RequiredItems.Num() != Requirements.RequiredQuantities.Num())
-    {
-        FString Message = FString::Printf(TEXT("Upgrade failed: Mismatch between required items and quantities for upgrade type %s."), *UpgradeTypeDisplayName);
-        //UE_LOG(LogTemp, Error, TEXT("%s"), *Message);
-        Result.bUpgradeSuccessful = false;
-        Result.UpgradeResultMessage = FText::FromString(Message);
-        return;
-    }
-}
-
-void AEclipseRaptureBuildingItem::DeductInventoryItems(FUpgradeRequirements& Requirements, FUpgradeInfo& UpgradeInfo)
-{
-    // Deduct required items
-    for (int32 Index = 0; Index < Requirements.RequiredItems.Num(); ++Index)
-    {
-        TSubclassOf<AItem> ItemClass = Requirements.RequiredItems[Index];
-        int32 QuantityToRemove = Requirements.RequiredQuantities[Index];
-
-        //TODO: Come back here and fix for new inventory system.
-        //UpgradeInfo.UpgraderInventory->RemoveItemAmount(ItemClass, QuantityToRemove);
-        FString RemovedItemMessage = FString::Printf(
-            TEXT("Removed %d of item: %s"),
-            QuantityToRemove,
-            *ItemClass->GetName()
-        );
-        //UE_LOG(LogTemp, Log, TEXT("%s"), *RemovedItemMessage);
-    }
-}
 
 void AEclipseRaptureBuildingItem::ApplyUpgradedMaterial(FUpgradeInfo& UpgradeInfo, FString& UpgradeTypeDisplayName, FUpgradeResults& Result)
 {
@@ -132,6 +95,7 @@ void AEclipseRaptureBuildingItem::ApplyUpgradedMaterial(FUpgradeInfo& UpgradeInf
     if (BuildingMesh && Materials.Contains(UpgradeInfo.UpgradeType))
     {
         BuildingMesh->SetMaterial(0, Materials[UpgradeInfo.UpgradeType]);
+		BuildingMesh->SetPhysMaterialOverride(Materials[UpgradeInfo.UpgradeType]->GetPhysicalMaterial());
         FString UpgradeMessage = FString::Printf(TEXT("Building upgraded to type %s."), *UpgradeTypeDisplayName);
         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, UpgradeMessage);
         //UE_LOG(LogTemp, Log, TEXT("%s"), *UpgradeMessage);
@@ -145,59 +109,10 @@ void AEclipseRaptureBuildingItem::ApplyUpgradedMaterial(FUpgradeInfo& UpgradeInf
     }
 }
 
-void AEclipseRaptureBuildingItem::CheckInventory(FUpgradeRequirements& Requirements, FUpgradeInfo& UpgradeInfo, FUpgradeResults& Result)
+
+TArray<FItemData> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo)
 {
-    // Check if the inventory contains enough of the required items
-    for (int32 Index = 0; Index < Requirements.RequiredItems.Num(); ++Index)
-    {
-        TSubclassOf<AItem> ItemClass = Requirements.RequiredItems[Index];
-        int32 RequiredQuantity = Requirements.RequiredQuantities[Index];
-
-        //TODO: Come back here and fix for new inventory system.
-        // Check if the inventory contains enough of the required item
-        //if (!UpgradeInfo.UpgraderInventory->CheckForItem(ItemClass) ||
-        //    UpgradeInfo.UpgraderInventory->GetItemAmount(ItemClass) < RequiredQuantity)
-        //{
-        //    // Get the item display name
-        //    FString ItemDisplayName = "Unknown Item";
-        //    if (ItemClass)
-        //    {
-        //        // Create a default instance of the item to access its display name
-        //        AItem* Item = Cast<AItem>(ItemClass->GetDefaultObject());
-        //        if (Item)
-        //        {
-        //            ItemDisplayName = Item->GetItemObject()->GetItemDisplayName().ToString();
-        //        }
-        //    }
-
-        //    // Create the error message
-        //    FString MissingItemMessage = FString::Printf(
-        //        TEXT("Missing %d of item: %s"),
-        //        RequiredQuantity,
-        //        *ItemDisplayName
-        //    );
-
-        //    // Log and update the result
-        //    UE_LOG(LogTemp, Warning, TEXT("%s"), *MissingItemMessage);
-        //    Result.bUpgradeSuccessful = false;
-        //    Result.UpgradeResultMessage = FText::FromString(MissingItemMessage);
-        //    return;
-        //}
-    }
-}
-
-
-
-TArray<TSubclassOf<AItem>> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo)
-{
-    TArray<TSubclassOf<AItem>> RequiredItems;
-
-    if (UpgradeRequirements.Contains(UpgradeInfo.UpgradeType))
-    {
-        RequiredItems = UpgradeRequirements[UpgradeInfo.UpgradeType].RequiredItems;
-    }
-
-    return RequiredItems;
+    return TArray<FItemData>();
 }
 
 AEclipseRaptureBuildingItem* AEclipseRaptureBuildingItem::GetBuildingItem_Implementation()

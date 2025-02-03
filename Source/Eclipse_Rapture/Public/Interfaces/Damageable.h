@@ -59,5 +59,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
 	bool GetIsDead();
 
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Health Messages")
+	int32 GetTeamNumber();
+
 	//TODO: Add functions for damage areas (could be bone, could be armor, etc)
 };
