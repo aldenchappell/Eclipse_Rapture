@@ -12,7 +12,6 @@ AWeaponPickup::AWeaponPickup()
 
 void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
-	
 	if (Character)
 	{
 		UInventoryComponent* Inventory = Character->GetInventoryComponentRef();
@@ -20,9 +19,8 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 
 		if (CurrentWeapon)
 		{
-			//if the characters current weapon is equal to this pickup's weapon name, then add it to their inventory.
-			//otherwise, spawn it in their hand.
-			if (CurrentWeapon->GetWeaponData().WeaponNameType == WeaponName)
+			// Compare weapon types instead of weapon names
+			if (CurrentWeapon->GetWeaponData().WeaponSlotType == WeaponToSpawn->GetDefaultObject<AWeaponBase>()->GetWeaponData().WeaponSlotType)
 			{
 				if (Inventory)
 				{
@@ -45,15 +43,14 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 			Character->SpawnWeapon(WeaponToSpawn);
 		}
 
-		//should not be necessary. This is just for testing purposes.
+		// Notify UI update
 		if (Inventory)
 		{
 			Inventory->OnInventoryUpdated.Broadcast();
 		}
 
-		Character->SetIsReloading(false);
-
 		Destroy();
 	}
 }
+
 
