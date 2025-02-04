@@ -15,30 +15,36 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 	if (Character)
 	{
 		UInventoryComponent* Inventory = Character->GetInventoryComponentRef();
-		AWeaponBase* CurrentWeapon = Character->GetCurrentWeapon();
 
-		if (CurrentWeapon)
+		// Retrieve the weapon type of the new weapon being picked up
+		EWeaponType NewWeaponType = WeaponToSpawn->GetDefaultObject<AWeaponBase>()->GetWeaponData().WeaponSlotType;
+
+		// Retrieve the player's primary, secondary, and melee weapons
+		AWeaponBase* PrimaryWeapon = Character->GetPrimaryWeapon();
+		AWeaponBase* SecondaryWeapon = Character->GetSecondaryWeapon();
+		AWeaponBase* MeleeWeapon = Character->GetMeleeWeapon();
+
+		// Check if any of these weapons have the same weapon type as the new weapon
+		bool bHasMatchingWeaponType =
+			(PrimaryWeapon && PrimaryWeapon->GetWeaponData().WeaponSlotType == NewWeaponType) ||
+			(SecondaryWeapon && SecondaryWeapon->GetWeaponData().WeaponSlotType == NewWeaponType) ||
+			(MeleeWeapon && MeleeWeapon->GetWeaponData().WeaponSlotType == NewWeaponType);
+
+		if (bHasMatchingWeaponType)
 		{
-			// Compare weapon types instead of weapon names
-			if (CurrentWeapon->GetWeaponData().WeaponSlotType == WeaponToSpawn->GetDefaultObject<AWeaponBase>()->GetWeaponData().WeaponSlotType)
+			// Add to inventory if the player already has a weapon of the same type
+			if (Inventory)
 			{
-				if (Inventory)
-				{
-					FDataTableRowHandle DataRow = DataComponent->ItemID;
-					FName ItemDataID = DataRow.RowName;
-					int32 QuantityLeft = 0;
+				FDataTableRowHandle DataRow = DataComponent->ItemID;
+				FName ItemDataID = DataRow.RowName;
+				int32 QuantityLeft = 0;
 
-					Inventory->AddToInventory(ItemDataID, 1, QuantityLeft);
-				}
-			}
-			else
-			{
-				Character->EquipUnarmed();
-				Character->SpawnWeapon(WeaponToSpawn);
+				Inventory->AddToInventory(ItemDataID, 1, QuantityLeft);
 			}
 		}
 		else
 		{
+			// If the player does not have a weapon of this type, equip it
 			Character->EquipUnarmed();
 			Character->SpawnWeapon(WeaponToSpawn);
 		}
@@ -49,8 +55,10 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 			Inventory->OnInventoryUpdated.Broadcast();
 		}
 
+		// Destroy the weapon pickup actor
 		Destroy();
 	}
 }
+
 
 

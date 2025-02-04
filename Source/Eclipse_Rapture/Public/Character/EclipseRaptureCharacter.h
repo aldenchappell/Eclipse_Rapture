@@ -319,6 +319,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Character | Weapons")
 	AWeaponBase* GetCurrentWeapon();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
+	AWeaponBase* GetPrimaryWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
+	AWeaponBase* GetSecondaryWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
+	AWeaponBase* GetMeleeWeapon();
+
 	//Adjust aim direction based on accuracy
 	UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")
 	FVector GetAdjustedAimDirection(const FVector& OriginalDirection) const;
