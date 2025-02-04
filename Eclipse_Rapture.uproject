@@ -79,6 +79,10 @@
 		{
 			"Name": "LudusAI",
 			"Enabled": false
+		},
+		{
+			"Name": "HairStrands",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
