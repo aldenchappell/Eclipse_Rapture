@@ -51,7 +51,7 @@ struct FEnemyData : public FTableRowBase
 	EWeaponClass PreferredStartingWeaponClass = EWeaponClass::EWC_Primary;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
-	TObjectPtr<class UMaterialInterface> WeaponMaterial;
+	TObjectPtr<class UMaterialInterface> WorldWeaponMaterial;
 
 #pragma endregion
 
