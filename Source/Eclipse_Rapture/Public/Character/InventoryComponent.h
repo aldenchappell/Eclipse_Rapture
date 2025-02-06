@@ -46,7 +46,7 @@ public:
 	bool AddToInventory(FName ItemID, int32 Quantity, int32& QuantityRemaining);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "New Inventory")
-	bool RemoveFromInventory(int32 Index, bool RemoveWholeStack, bool IsConsumed, bool RemovingAmount);
+	bool RemoveFromInventory(int32 Index, int32 Amount, bool RemoveWholeStack, bool IsConsumed, bool RemovingAmount);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintPure, BlueprintCallable, Category = "New Inventory")
 	int32 GetMaxStackSize(FName ItemID);
