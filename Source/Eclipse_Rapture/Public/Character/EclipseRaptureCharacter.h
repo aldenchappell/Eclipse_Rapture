@@ -320,13 +320,13 @@ public:
 	AWeaponBase* GetCurrentWeapon();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
-	AWeaponBase* GetPrimaryWeapon();
+	ARangedWeaponBase* GetPrimaryWeapon();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
-	AWeaponBase* GetSecondaryWeapon();
+	ARangedWeaponBase* GetSecondaryWeapon();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
-	AWeaponBase* GetMeleeWeapon();
+	AMeleeWeaponBase* GetMeleeWeapon();
 
 	//Adjust aim direction based on accuracy
 	UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")
