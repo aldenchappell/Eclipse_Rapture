@@ -19,6 +19,8 @@ struct FItemData: public FTableRowBase
 {
     GENERATED_BODY()
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+    TObjectPtr<class AItem> Item;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	TSubclassOf<class AItem> ItemClass;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     EItemType ItemType;
