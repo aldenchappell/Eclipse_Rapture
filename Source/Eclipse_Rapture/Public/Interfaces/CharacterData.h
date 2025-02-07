@@ -25,6 +25,9 @@ public:
 	FTransform GetLHIK() const;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inverse Kinematics")
+	FTransform GetRHIK() const;
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Inverse Kinematics")
 	void GetHandSwayData(float& SideMove, float& MouseX, float& MouseY) const;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Weapons")
