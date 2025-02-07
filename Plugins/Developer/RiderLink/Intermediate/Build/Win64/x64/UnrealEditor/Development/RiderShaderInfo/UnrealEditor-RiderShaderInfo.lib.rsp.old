@@ -6,6 +6,7 @@
 /NAME:"UnrealEditor-RiderShaderInfo.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\Module.RiderShaderInfo.cpp.obj"
+"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\PerModuleInline.gen.cpp.obj"
 "H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\Default.rc2.res"
 /OUT:"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\UnrealEditor-RiderShaderInfo.lib"

@@ -6,8 +6,6 @@
 /NAME:"UnrealEditor-RiderLogging.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\RiderLogging.cpp.obj"
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\RiderOutputDevice.cpp.obj"
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\PerModuleInline.gen.cpp.obj"
+"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
 "H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
 /OUT:"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"

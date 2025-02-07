@@ -36,12 +36,13 @@
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
 /NOIMPLIB
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
+/NATVIS:"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\RenderCore\RenderCore.natvis"
+"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\PerModuleInline.gen.cpp.obj"
+"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderShaderInfo\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Core\UnrealEditor-Core.lib"
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RD\UnrealEditor-RD.lib"
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderLink\UnrealEditor-RiderLink.lib"
-"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Intermediate\Build\Win64\x64\UnrealEditor\Development\RiderBlueprint\UnrealEditor-RiderBlueprint.lib"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\Projects\UnrealEditor-Projects.lib"
+"..\Intermediate\Build\Win64\x64\UnrealEditor\Development\RenderCore\UnrealEditor-RenderCore.lib"
 "delayimp.lib"
 "wininet.lib"
 "rpcrt4.lib"
@@ -67,6 +68,6 @@
 "synchronization.lib"
 "dwmapi.lib"
 "imm32.lib"
-/OUT:"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderLogging.dll"
-/PDB:"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderLogging.pdb"
+/OUT:"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderShaderInfo.dll"
+/PDB:"H:\UnrealProjects\UpdateRaptureGame\Eclipse_Rapture 5.5\Plugins\Developer\RiderLink\Binaries\Win64\UnrealEditor-RiderShaderInfo.pdb"
 /ignore:4078
