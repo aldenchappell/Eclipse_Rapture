@@ -100,7 +100,7 @@ void AEclipseRaptureCharacter::SwapWeapon(EWeaponClass NewWeaponClass)
     // Handle switching to unarmed
     if (NewWeaponClass == EWeaponClass::EWC_Unarmed)
     {
-        EquipUnarmed();
+        EquipUnarmed(false);
         return;
     }
 
@@ -201,7 +201,7 @@ void AEclipseRaptureCharacter::EquipWeapon_Implementation(AWeaponBase* Weapon)
    
 }
 
-void AEclipseRaptureCharacter::EquipUnarmed()
+void AEclipseRaptureCharacter::EquipUnarmed(bool EnforceTimer)
 {
     UE_LOG(LogTemp, Warning, TEXT("Equipping Unarmed."));
 
@@ -220,7 +220,11 @@ void AEclipseRaptureCharacter::EquipUnarmed()
         MeleeWeapon->GetWeaponMesh()->SetVisibility(false);
     }
 	
-    SetSwapTimer();
+    if (EnforceTimer)
+    {
+        SetSwapTimer();
+    }
+   
 
     CurrentWeaponClass = EWeaponClass::EWC_Unarmed;
     CurrentWeaponType = EWeaponType::EWT_Unarmed;
@@ -230,7 +234,7 @@ void AEclipseRaptureCharacter::EquipUnarmed()
     UE_LOG(LogTemp, Warning, TEXT("Successfully equipped Unarmed."));
 }
 
-void AEclipseRaptureCharacter::EquipPrimaryWeapon()
+void AEclipseRaptureCharacter::EquipPrimaryWeapon(bool EnforceTimer)
 {
     if (!bCanSwapWeapon)
     {
@@ -244,7 +248,10 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
         return;
     }
 
-    SetSwapTimer();
+    if (EnforceTimer)
+    {
+        SetSwapTimer();
+    }
 
     SwapWeapon(EWeaponClass::EWC_Primary);
     CurrentWeaponAmmo = PrimaryAmmo;
@@ -275,7 +282,7 @@ void AEclipseRaptureCharacter::EquipPrimaryWeapon()
     UE_LOG(LogTemp, Warning, TEXT("Swapped to primary weapon: %s"), *PrimaryWeapon->GetName());
 }
 
-void AEclipseRaptureCharacter::EquipSecondaryWeapon()
+void AEclipseRaptureCharacter::EquipSecondaryWeapon(bool EnforceTimer)
 {
     if (!bCanSwapWeapon)
     {
@@ -289,7 +296,10 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
         return;
     }
 
-    SetSwapTimer();
+    if (EnforceTimer)
+    {
+        SetSwapTimer();
+    }
 
     SwapWeapon(EWeaponClass::EWC_Secondary);
     CurrentWeaponAmmo = SecondaryAmmo;
@@ -316,7 +326,7 @@ void AEclipseRaptureCharacter::EquipSecondaryWeapon()
     UE_LOG(LogTemp, Warning, TEXT("Swapped to secondary weapon: %s"), *SecondaryWeapon->GetName());
 }
 
-void AEclipseRaptureCharacter::EquipMeleeWeapon()
+void AEclipseRaptureCharacter::EquipMeleeWeapon(bool EnforceTimer)
 {
     if (!bCanSwapWeapon)
     {
@@ -337,7 +347,10 @@ void AEclipseRaptureCharacter::EquipMeleeWeapon()
     }
 
 
-    SetSwapTimer();
+    if (EnforceTimer)
+    {
+        SetSwapTimer();
+    }
 
     SwapWeapon(EWeaponClass::EWC_Melee);
     CurrentWeaponAmmo = -1;

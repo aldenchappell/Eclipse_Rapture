@@ -4,7 +4,9 @@
 #include "Items/WeaponPickup.h"
 #include "Character/InventoryComponent.h"
 #include "Items/Components/ItemDataComponent.h"
-
+#include "Character/EclipseRaptureCharacter.h"
+#include "Weapons/RangedWeaponBase.h"
+#include "Weapons/MeleeWeaponBase.h"
 AWeaponPickup::AWeaponPickup()
 {
 
@@ -20,9 +22,9 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 		EWeaponType NewWeaponType = WeaponToSpawn->GetDefaultObject<AWeaponBase>()->GetWeaponData().WeaponSlotType;
 
 		// Retrieve the player's primary, secondary, and melee weapons
-		AWeaponBase* PrimaryWeapon = Character->GetPrimaryWeapon();
-		AWeaponBase* SecondaryWeapon = Character->GetSecondaryWeapon();
-		AWeaponBase* MeleeWeapon = Character->GetMeleeWeapon();
+		ARangedWeaponBase* PrimaryWeapon = Character->GetPrimaryWeapon();
+		ARangedWeaponBase* SecondaryWeapon = Character->GetSecondaryWeapon();
+		AMeleeWeaponBase* MeleeWeapon = Character->GetMeleeWeapon();
 
 		// Check if any of these weapons have the same weapon type as the new weapon
 		bool bHasMatchingWeaponType =
@@ -45,7 +47,7 @@ void AWeaponPickup::Interact_Implementation(AEclipseRaptureCharacter* Character)
 		else
 		{
 			// If the player does not have a weapon of this type, equip it
-			Character->EquipUnarmed();
+			Character->EquipUnarmed(false);
 			Character->SpawnWeapon(WeaponToSpawn);
 		}
 
