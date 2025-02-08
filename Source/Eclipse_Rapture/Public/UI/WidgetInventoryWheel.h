@@ -10,6 +10,7 @@
  * 
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuickAccessWheelOpen);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnQuickAccessWheelClosed);
 
 UCLASS()
 class ECLIPSE_RAPTURE_API UWidgetInventoryWheel : public UUserWidget
@@ -20,6 +21,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Wheel | Events")
 	FOnQuickAccessWheelOpen OnQuickAccessWheelOpen;
+
+	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = "Wheel | Events")
+	FOnQuickAccessWheelClosed OnQuickAccessWheelClosed;
 
 protected:
 

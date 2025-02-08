@@ -41,16 +41,16 @@ public:
 	ECharacterType CharacterType;
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipUnarmed();
+	virtual void EquipUnarmed(bool EnforceTimer);
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipPrimaryWeapon();
+	virtual void EquipPrimaryWeapon(bool EnforceTimer);
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipSecondaryWeapon();
+	virtual void EquipSecondaryWeapon(bool EnforceTimer);
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipMeleeWeapon();
+	virtual void EquipMeleeWeapon(bool EnforceTimer);
 #pragma endregion
 
 	//For ui mostly
