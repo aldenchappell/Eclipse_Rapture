@@ -38,6 +38,9 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
 	int32 TeamNumber = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
+	float MaxRememberEnemyTime = 5.f;
+
 #pragma endregion
 
 #pragma region Weapons
