@@ -36,8 +36,8 @@ public:
     UPROPERTY(BlueprintReadonly, meta = (BindWidget))
     TObjectPtr<class UThirstBar> ThirstBar;
 
-    UPROPERTY(BlueprintReadonly, meta = (BindWidget))
-    TObjectPtr<class UWidgetInventoryWheel> QuickAccessWheel;
+   /* UPROPERTY(BlueprintReadonly, meta = (BindWidget))
+    TObjectPtr<class UWidgetInventoryWheel> QuickAccessWheel;*/
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "UI Functions")
 	void ShowContainer(class UInventoryComponent* StorageItemInventory);

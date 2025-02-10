@@ -18,4 +18,7 @@ class ECLIPSE_RAPTURE_API IInteractInterface
 public:
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
     void Interact(AEclipseRaptureCharacter* Character);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Interaction")
+	void Use(AEclipseRaptureCharacter* Character);
 };

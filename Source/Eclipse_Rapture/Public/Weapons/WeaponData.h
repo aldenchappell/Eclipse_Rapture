@@ -79,6 +79,12 @@ struct FWeaponData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon | FX")
 	TObjectPtr<UParticleSystem> MuzzleFlashFX;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
+	TObjectPtr<class UMaterialInterface> ClippingFixedMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
+	TObjectPtr<class UMaterialInterface> WorldWeaponMaterial;
+
 #pragma endregion
 
 #pragma region Sounds
@@ -105,7 +111,8 @@ struct FWeaponData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon Data | Animation")
 	TObjectPtr<UAnimMontage> UnequipMontage;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Data | Animation")
+	TObjectPtr<UAnimMontage> FireModeSwitchMontage;
 
 #pragma endregion
 

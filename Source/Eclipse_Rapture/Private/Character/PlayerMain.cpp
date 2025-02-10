@@ -72,10 +72,10 @@ void APlayerMain::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
         //EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Started, this, &APlayerMain::Melee);
 
         //Swapping Weapons
-        EnhancedInputComponent->BindAction(UnarmedAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipUnarmed);
-        EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipPrimaryWeapon);
-        EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipSecondaryWeapon);
-        EnhancedInputComponent->BindAction(MeleeWeaponAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipMeleeWeapon);
+        EnhancedInputComponent->BindAction(UnarmedAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipUnarmed, true);
+        EnhancedInputComponent->BindAction(PrimaryAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipPrimaryWeapon, true);
+        EnhancedInputComponent->BindAction(SecondaryAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipSecondaryWeapon, true);
+        EnhancedInputComponent->BindAction(MeleeWeaponAction, ETriggerEvent::Triggered, this, &APlayerMain::EquipMeleeWeapon, true);
     }
 }
 #pragma endregion

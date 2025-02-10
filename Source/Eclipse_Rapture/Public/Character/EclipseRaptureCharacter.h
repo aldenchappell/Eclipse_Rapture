@@ -41,16 +41,16 @@ public:
 	ECharacterType CharacterType;
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipUnarmed();
+	virtual void EquipUnarmed(bool EnforceTimer);
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipPrimaryWeapon();
+	virtual void EquipPrimaryWeapon(bool EnforceTimer);
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipSecondaryWeapon();
+	virtual void EquipSecondaryWeapon(bool EnforceTimer);
 
 	UFUNCTION(Blueprintcallable)
-	virtual void EquipMeleeWeapon();
+	virtual void EquipMeleeWeapon(bool EnforceTimer);
 #pragma endregion
 
 	//For ui mostly
@@ -318,6 +318,15 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, Category = "Character | Weapons")
 	AWeaponBase* GetCurrentWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
+	ARangedWeaponBase* GetPrimaryWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
+	ARangedWeaponBase* GetSecondaryWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable, BlueprintPure, Category = "Character | Weapons")
+	AMeleeWeaponBase* GetMeleeWeapon();
 
 	//Adjust aim direction based on accuracy
 	UFUNCTION(BlueprintCallable, Category = "Character | Weapons | Accuracy")

@@ -19,6 +19,11 @@ void AAmmoItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 }
 
+void AAmmoItem::Destroyed()
+{
+	Super::Destroyed();
+}
+
 void AAmmoItem::Interact_Implementation(AEclipseRaptureCharacter* Character)
 {
 	//TODO: Come back here and fix for new inventory system.

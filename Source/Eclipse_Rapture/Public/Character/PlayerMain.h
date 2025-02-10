@@ -246,9 +246,6 @@ public:
 
 	UFUNCTION(Blueprintcallable)
 	float SetVerticalSensitivity(float Sensitivity) { return VerticalSensitivity = Sensitivity; }
-	
-	UFUNCTION(Blueprintcallable)
-	AWeaponBase* GetMeleeWeapon() const { return MeleeWeapon; }
 
 	UFUNCTION(Blueprintcallable)
 	bool SetCanMelee(bool CanMelee) { return bCanMelee = CanMelee; }
