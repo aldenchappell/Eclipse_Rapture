@@ -38,6 +38,9 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
 	int32 TeamNumber = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
+	float MaxRememberEnemyTime = 5.f;
+
 #pragma endregion
 
 #pragma region Weapons
@@ -49,9 +52,6 @@ struct FEnemyData : public FTableRowBase
 	//What weapon class should the enemy start the game with?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
 	EWeaponClass PreferredStartingWeaponClass = EWeaponClass::EWC_Primary;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
-	TObjectPtr<class UMaterialInterface> WorldWeaponMaterial;
 
 #pragma endregion
 
