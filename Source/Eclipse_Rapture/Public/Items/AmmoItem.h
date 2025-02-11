@@ -17,7 +17,7 @@ class ECLIPSE_RAPTURE_API AAmmoItem : public AItem
 public:
 	AAmmoItem();
 	virtual void Interact_Implementation(AEclipseRaptureCharacter* Character) override;
-
+	virtual void BeginPlay() override;
 protected:
 
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

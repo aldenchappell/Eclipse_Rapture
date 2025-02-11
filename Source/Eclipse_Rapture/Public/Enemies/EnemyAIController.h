@@ -4,11 +4,11 @@
 
 #include "Enemies/EnemyAITypes.h"
 #include "CoreMinimal.h"
-#include "AIController.h"
+#include "DetourCrowdAIController.h"
 #include "EnemyAIController.generated.h"
 
 UCLASS()
-class ECLIPSE_RAPTURE_API AEnemyAIController : public AAIController
+class ECLIPSE_RAPTURE_API AEnemyAIController : public ADetourCrowdAIController
 {
 	GENERATED_BODY()
 	
@@ -16,29 +16,29 @@ public:
 	AEnemyAIController();
 
 
-	UPROPERTY(BlueprintReadWrite, Category = "AI | AI Properties")
-	int32 CurrentPatrolPoint = 0;
+	//UPROPERTY(BlueprintReadWrite, Category = "AI | AI Properties")
+	//int32 CurrentPatrolPoint = 0;
 
-	UFUNCTION(BlueprintCallable, Category = "AI | AI Functions")
-	void IncreaseAlertValue(float ValueToAdd);
+	//UFUNCTION(BlueprintCallable, Category = "AI | AI Functions")
+	//void IncreaseAlertValue(float ValueToAdd);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Alert System")
-	EAlertLevel CurrentAlertLevel = EAlertLevel::EAL_Idle;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Alert System")
+	//EAlertLevel CurrentAlertLevel = EAlertLevel::EAL_Idle;
 
-	//Adjust alert level based on stimulus
-	UFUNCTION(BlueprintCallable, Category = "AI | Alert System")
-	void UpdateAlertLevel(float AlertIncrease); 
+	////Adjust alert level based on stimulus
+	//UFUNCTION(BlueprintCallable, Category = "AI | Alert System")
+	//void UpdateAlertLevel(float AlertIncrease); 
 
 #pragma region Blackboard Keys
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
 	FName Key_AttackTarget = "AttackTarget";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
 	FName Key_State = "StateKeyName";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
-	FName Key_PointOfInterest = "PointOfInterest";
+	FName Key_PointOfInterest = "PointOfInterest";*/
 
 		/*	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "AI | Blackboard Keys")
 	FName
@@ -59,11 +59,11 @@ protected:
 	virtual void OnUnPossess() override;
 
 #pragma region Character References
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Targets")
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Targets")
 	TObjectPtr<class AEclipseRaptureEnemy> OwningEnemy;
 
 	UPROPERTY(BlueprintReadWrite, Category = "AI | Targets")
-	TObjectPtr<class AEclipseRaptureCharacter> TargetCharacter;
+	TObjectPtr<class AEclipseRaptureCharacter> TargetCharacter;*/
 
 #pragma endregion
 
@@ -83,14 +83,14 @@ protected:
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	//TObjectPtr<class UAISenseConfig_Team> TeamConfig;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	TObjectPtr<class UDespawningComponent> DespawnComponent;
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	TObjectPtr<class UDespawningComponent> DespawnComponent;*/
 
 #pragma endregion
 
 #pragma region AI Property Values
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	/*UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	float SightRadius = 500.f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
@@ -118,22 +118,22 @@ protected:
 	bool bIsTargetInAcceptanceRadius = false;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	bool bIsTargetInAttackRange = false;
+	bool bIsTargetInAttackRange =false;*/ 
 
 #pragma endregion
 
 private:
 
-	UPROPERTY()
-	float AlertValue = 0.f;
+	/*UPROPERTY()
+	float AlertValue = 0.f;*/
 	
 	//Getters and Setters
 public:
 	
-	UFUNCTION(BlueprintPure, Category = "AI | AI Values")
+	/*UFUNCTION(BlueprintPure, Category = "AI | AI Values")
 	float GetAlertValue() const { return AlertValue; }
 
 	UFUNCTION(BlueprintCallable, Category = "AI | AI Values")
-	void SetAlertValue(float NewAlertValue) { AlertValue = NewAlertValue; }
+	void SetAlertValue(float NewAlertValue) { AlertValue = NewAlertValue; }*/
 
 };
