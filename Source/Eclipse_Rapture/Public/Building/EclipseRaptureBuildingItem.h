@@ -15,7 +15,7 @@ struct FUpgradeRequirements
 public:
     // Array of required item types for this upgrade level
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
-    TArray<FItemData> RequiredItemIDs;
+    TArray<FInventorySlotData> RequiredItemIDs;
 
     // Array of quantities matching the RequiredItems
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Upgrade")
@@ -65,7 +65,7 @@ protected:
 
 #pragma region Building Interface Implementations
     virtual void UpgradeBuilding_Implementation(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result) override;
-    virtual TArray<FItemData> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
+    virtual TArray<FInventorySlotData> GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo) override;
     virtual AEclipseRaptureBuildingItem* GetBuildingItem_Implementation() override;
     virtual EBuildingType GetBuildingType_Implementation() override;
 #pragma endregion

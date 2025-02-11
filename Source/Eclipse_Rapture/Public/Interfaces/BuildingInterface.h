@@ -25,7 +25,7 @@ struct FUpgradeInfo
 
     // List of required items for this upgrade
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
-    TArray<FItemData> RequiredItemIDs;
+    TArray<FInventorySlotData> RequiredItemIDs;
 
     UPROPERTY(BlueprintReadWrite, Category = "Building | Upgrade")
     TArray<int32> RequiredQuantities;
@@ -63,7 +63,7 @@ public:
 	void UpgradeBuilding(FUpgradeInfo UpgradeInfo, FUpgradeResults& Result);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
-    TArray<FItemData> GetRequiredUpgradeItems(FUpgradeInfo UpgradeInfo);
+    TArray<FInventorySlotData> GetRequiredUpgradeItems(FUpgradeInfo UpgradeInfo);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "Building | Interfaces")
 	class AEclipseRaptureBuildingItem* GetBuildingItem();
