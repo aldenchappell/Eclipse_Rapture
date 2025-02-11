@@ -23,18 +23,4 @@ protected:
 	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	virtual void Destroyed() override;
-
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Drop Properties")
-	int32 MinAmount = 5;
-
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Drop Properties")
-	int32 MaxAmount = 25;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Drop Properties")
-	int32 AmmoDropAmount;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Drop Properties")
-	bool bEnableRandomDropAmount = true;
-
-
 };
