@@ -41,6 +41,22 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
 	float MaxRememberEnemyTime = 5.f;
 
+#pragma region AI Senses
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float SightRadius = 3000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float LoseSightRadius = 3000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float PeripheralVisionAngleDegrees = 70.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float HearingRange = 1000.f;
+
+#pragma endregion
+
 #pragma endregion
 
 #pragma region Weapons
