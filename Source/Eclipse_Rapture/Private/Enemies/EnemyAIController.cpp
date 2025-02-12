@@ -8,41 +8,11 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Enemies/PatrolPathComponent.h"
-#include "Enemies/DespawningComponent.h"
+#include "Enemies/EnemyData.h"
 
 AEnemyAIController::AEnemyAIController()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	//AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerceptionComponent"));
-
-	////Setup sight sense
-	//SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	//if (SightConfig)
-	//{
-	//	SightConfig->SightRadius = SightRadius;
-	//	SightConfig->LoseSightRadius = LoseSightRadius;
-	//	SightConfig->PeripheralVisionAngleDegrees = PeripheralVisionAngleDegrees;
-	//	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
-	//	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	//	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-
-	//	AIPerceptionComponent->ConfigureSense(*SightConfig);
-	//}
-
-	////Setup hearing sense
-	//HearingConfig = CreateDefaultSubobject<UAISenseConfig_Hearing>(TEXT("HearingConfig"));
-	//if (HearingConfig)
-	//{
-	//	HearingConfig->HearingRange = HearingRange;
-	//	HearingConfig->DetectionByAffiliation.bDetectEnemies = true;
-	//	HearingConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	//	HearingConfig->DetectionByAffiliation.bDetectFriendlies = true;
-
-	//	AIPerceptionComponent->ConfigureSense(*HearingConfig);
-	//}
-
-	//DespawnComponent = CreateDefaultSubobject<UDespawningComponent>(TEXT("Despawning Component"));
 }
 
 
@@ -55,17 +25,74 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	////if enemy is not assigned already, cast and get a reference now
-	//if (!OwningEnemy)
-	//{
-	//	OwningEnemy = Cast<AEclipseRaptureEnemy>(InPawn);
-	//}
 }
 
 void AEnemyAIController::OnUnPossess()
 {
 	Super::OnUnPossess();
 }
+
+void AEnemyAIController::SetupSenses()
+{
+	UE_LOG(LogTemp, Warning, TEXT("SetupSenses() called in AEnemyAIController"));
+
+	if (!AIPerceptionComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: AIPerceptionComponent is nullptr"));
+		return;
+	}
+
+	if (!OwningEnemy)
+	{
+		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: OwningEnemy is nullptr"));
+		return;
+	}
+
+	FEnemyData EnemyData = OwningEnemy->GetEnemyData();
+
+	// Retrieve sight configuration
+	UAISenseConfig_Sight* ConfigSight = AIPerceptionComponent->GetSenseConfig<UAISenseConfig_Sight>();
+	if (ConfigSight)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Successfully retrieved SightConfig"));
+
+		// Set dynamic sight values
+		float LoseRange = ConfigSight->LoseSightRadius - ConfigSight->SightRadius;
+		ConfigSight->SightRadius = EnemyData.SightRadius;
+		ConfigSight->LoseSightRadius = ConfigSight->SightRadius + LoseRange;
+		ConfigSight->PeripheralVisionAngleDegrees = EnemyData.PeripheralVisionAngleDegrees;
+
+		// Debug log updated sight values
+		UE_LOG(LogTemp, Warning, TEXT("Updated Sight Config: SightRadius = %f, LoseSightRadius = %f, PeripheralVisionAngle = %f"),
+			   ConfigSight->SightRadius, ConfigSight->LoseSightRadius, ConfigSight->PeripheralVisionAngleDegrees);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: Could not retrieve SightConfig"));
+	}
+
+	// Retrieve hearing configuration
+	UAISenseConfig_Hearing* ConfigHearing = AIPerceptionComponent->GetSenseConfig<UAISenseConfig_Hearing>();
+	if (ConfigHearing)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Successfully retrieved HearingConfig"));
+
+		// Set dynamic hearing values
+		ConfigHearing->HearingRange = EnemyData.HearingRange;
+
+		// Debug log updated hearing values
+		UE_LOG(LogTemp, Warning, TEXT("Updated Hearing Config: HearingRange = %f"), ConfigHearing->HearingRange);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: Could not retrieve HearingConfig"));
+	}
+
+	// Ensure AI Perception updates immediately
+	AIPerceptionComponent->RequestStimuliListenerUpdate();
+	UE_LOG(LogTemp, Warning, TEXT("AI Perception settings updated"));
+}
+
 
 //void AEnemyAIController::IncreaseAlertValue(float ValueToAdd)
 //{

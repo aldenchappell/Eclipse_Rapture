@@ -15,7 +15,8 @@ class ECLIPSE_RAPTURE_API AEnemyAIController : public ADetourCrowdAIController
 public:
 	AEnemyAIController();
 
-
+	UFUNCTION(BlueprintCallable, Category = "AI | AI Functions")
+	void SetupSenses();
 	//UPROPERTY(BlueprintReadWrite, Category = "AI | AI Properties")
 	//int32 CurrentPatrolPoint = 0;
 
@@ -59,16 +60,16 @@ protected:
 	virtual void OnUnPossess() override;
 
 #pragma region Character References
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Targets")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | Targets")
 	TObjectPtr<class AEclipseRaptureEnemy> OwningEnemy;
 
-	UPROPERTY(BlueprintReadWrite, Category = "AI | Targets")
+	/*UPROPERTY(BlueprintReadWrite, Category = "AI | Targets")
 	TObjectPtr<class AEclipseRaptureCharacter> TargetCharacter;*/
 
 #pragma endregion
 
 #pragma region AI Components
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AI | AI Properties")
 	TObjectPtr<class UAIPerceptionComponent> AIPerceptionComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
@@ -77,63 +78,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
 	TObjectPtr<class UAISenseConfig_Hearing> HearingConfig;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	TObjectPtr<class UAISenseConfig_Damage> DamageConfig;
-
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	//TObjectPtr<class UAISenseConfig_Team> TeamConfig;
-
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	TObjectPtr<class UDespawningComponent> DespawnComponent;*/
 
 #pragma endregion
 
-#pragma region AI Property Values
-
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	float SightRadius = 500.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	float LoseSightRadius = 600.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	float PeripheralVisionAngleDegrees = 90.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	float HearingRange = 500.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	float AcceptanceRadius = 50.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	float TargetDistance = 0.f;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	bool bIsTargetInSight = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	bool bIsTargetInHearingRange = false;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	bool bIsTargetInAcceptanceRadius = false;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
-	bool bIsTargetInAttackRange =false;*/ 
-
-#pragma endregion
-
 private:
 
-	/*UPROPERTY()
-	float AlertValue = 0.f;*/
 	
-	//Getters and Setters
-public:
-	
-	/*UFUNCTION(BlueprintPure, Category = "AI | AI Values")
-	float GetAlertValue() const { return AlertValue; }
 
-	UFUNCTION(BlueprintCallable, Category = "AI | AI Values")
-	void SetAlertValue(float NewAlertValue) { AlertValue = NewAlertValue; }*/
+public:
+
 
 };
