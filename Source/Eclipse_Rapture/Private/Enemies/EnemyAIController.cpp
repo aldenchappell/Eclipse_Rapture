@@ -34,8 +34,6 @@ void AEnemyAIController::OnUnPossess()
 
 void AEnemyAIController::SetupSenses()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SetupSenses() called in AEnemyAIController"));
-
 	if (!AIPerceptionComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: AIPerceptionComponent is nullptr"));
@@ -54,8 +52,6 @@ void AEnemyAIController::SetupSenses()
 	UAISenseConfig_Sight* ConfigSight = AIPerceptionComponent->GetSenseConfig<UAISenseConfig_Sight>();
 	if (ConfigSight)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Successfully retrieved SightConfig"));
-
 		// Set dynamic sight values
 		float LoseRange = ConfigSight->LoseSightRadius - ConfigSight->SightRadius;
 		ConfigSight->SightRadius = EnemyData.SightRadius;
@@ -63,34 +59,23 @@ void AEnemyAIController::SetupSenses()
 		ConfigSight->PeripheralVisionAngleDegrees = EnemyData.PeripheralVisionAngleDegrees;
 
 		// Debug log updated sight values
-		UE_LOG(LogTemp, Warning, TEXT("Updated Sight Config: SightRadius = %f, LoseSightRadius = %f, PeripheralVisionAngle = %f"),
-			   ConfigSight->SightRadius, ConfigSight->LoseSightRadius, ConfigSight->PeripheralVisionAngleDegrees);
+		/*UE_LOG(LogTemp, Warning, TEXT("Updated Sight Config: SightRadius = %f, LoseSightRadius = %f, PeripheralVisionAngle = %f"),
+			   ConfigSight->SightRadius, ConfigSight->LoseSightRadius, ConfigSight->PeripheralVisionAngleDegrees);*/
 	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: Could not retrieve SightConfig"));
-	}
+	
 
 	// Retrieve hearing configuration
 	UAISenseConfig_Hearing* ConfigHearing = AIPerceptionComponent->GetSenseConfig<UAISenseConfig_Hearing>();
 	if (ConfigHearing)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Successfully retrieved HearingConfig"));
 
 		// Set dynamic hearing values
 		ConfigHearing->HearingRange = EnemyData.HearingRange;
+	}
 
-		// Debug log updated hearing values
-		UE_LOG(LogTemp, Warning, TEXT("Updated Hearing Config: HearingRange = %f"), ConfigHearing->HearingRange);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("SetupSenses() failed: Could not retrieve HearingConfig"));
-	}
 
 	// Ensure AI Perception updates immediately
 	AIPerceptionComponent->RequestStimuliListenerUpdate();
-	UE_LOG(LogTemp, Warning, TEXT("AI Perception settings updated"));
 }
 
 
