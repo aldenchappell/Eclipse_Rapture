@@ -111,7 +111,8 @@ struct FWeaponData : public FTableRowBase
 	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "Weapon Data | Animation")
 	TObjectPtr<UAnimMontage> UnequipMontage;
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = "Weapon Data | Animation")
+	TObjectPtr<UAnimMontage> FireModeSwitchMontage;
 
 #pragma endregion
 

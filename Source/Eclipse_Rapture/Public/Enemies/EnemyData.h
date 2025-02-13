@@ -38,6 +38,25 @@ struct FEnemyData : public FTableRowBase
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
 	int32 TeamNumber = 1;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | AI")
+	float MaxRememberEnemyTime = 5.f;
+
+#pragma region AI Senses
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float SightRadius = 3000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float LoseSightRadius = 3000.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float PeripheralVisionAngleDegrees = 70.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadonly, Category = "AI | AI Properties")
+	float HearingRange = 1000.f;
+
+#pragma endregion
+
 #pragma endregion
 
 #pragma region Weapons
@@ -49,9 +68,6 @@ struct FEnemyData : public FTableRowBase
 	//What weapon class should the enemy start the game with?
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
 	EWeaponClass PreferredStartingWeaponClass = EWeaponClass::EWC_Primary;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy Data | Weapons")
-	TObjectPtr<class UMaterialInterface> WorldWeaponMaterial;
 
 #pragma endregion
 

@@ -110,9 +110,9 @@ void AEclipseRaptureBuildingItem::ApplyUpgradedMaterial(FUpgradeInfo& UpgradeInf
 }
 
 
-TArray<FItemData> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo)
+TArray<FInventorySlotData> AEclipseRaptureBuildingItem::GetRequiredUpgradeItems_Implementation(FUpgradeInfo UpgradeInfo)
 {
-    return TArray<FItemData>();
+    return TArray<FInventorySlotData>();
 }
 
 AEclipseRaptureBuildingItem* AEclipseRaptureBuildingItem::GetBuildingItem_Implementation()
