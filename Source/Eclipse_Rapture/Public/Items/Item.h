@@ -57,4 +57,6 @@ protected:
 	TObjectPtr<UTexture2D> ItemUseIcon;
 
 #pragma endregion
+
+public: 
 };
